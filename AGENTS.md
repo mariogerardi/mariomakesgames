@@ -2,12 +2,12 @@
 
 ## Current phase
 
-H3: complete Syllabl migration.
+H4: complete classic Rarity migration.
 
-Syllabl is playable at its internal route with daily selection, the production
-validation service, completion-only results, device-local restoration, and
-sharing. Do not begin the Rarity migration (H4) until it is explicitly
-requested.
+Syllabl and Rarity are playable at their internal routes. Rarity preserves its
+one-valid-submission lock, continuous score, tiers, device-local restoration,
+and daily result flow. Gemboard remains retired. Do not begin Gridl hardening
+(H5) until it is explicitly requested.
 
 ## Source-of-truth rule
 

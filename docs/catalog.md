@@ -4,8 +4,8 @@
 
 | Priority | Game | Canonical repository | Phase |
 |---:|---|---|---|
-| 1 | Syllabl | `mariogerardi/playsyllabl` | Audited; preservation harness |
-| 2 | Rarity | `mariogerardi/rarity` | Audited; preservation harness |
+| 1 | Syllabl | `mariogerardi/playsyllabl` | Migrated and playable |
+| 2 | Rarity | `mariogerardi/rarity` | Migrated and playable |
 | 3 | Gridl | `mariogerardi/wordgrid` | Audited; preservation harness and content curation |
 | 4 | Expl41n | `mariogerardi/explain-game` | Deep audit required |
 | 5 | Before&After | `mariogerardi/before-after` | Deep audit and web port required |
@@ -24,7 +24,7 @@ The flagship. A six-stage daily constraint puzzle combining:
 - positional placement;
 - syllable count;
 - dictionary validation;
-- frequency-based 1–5 scoring.
+- completion after six accepted words.
 
 ### Rarity
 

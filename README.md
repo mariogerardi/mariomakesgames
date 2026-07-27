@@ -36,7 +36,17 @@ H3 completes the playable Syllabl migration:
 - a responsive daily game interface with live dictionary validation, accepted
   word history, completion, and result sharing.
 
-Rarity migration begins in H4.
+H4 completes the playable classic Rarity migration:
+
+- one valid submission per daily puzzle;
+- the locked continuous rarity-score curve and six tiers;
+- live word validation and dictionary context;
+- device-local result restoration;
+- result sharing and a lightweight daily field comparison;
+- a deterministic rotation over the locked classic archive when the legacy
+  service has no authored puzzle for a date.
+
+Gridl hardening begins in H5.
 
 ## Checks
 

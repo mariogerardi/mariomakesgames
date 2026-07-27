@@ -18,7 +18,7 @@
       "name": "Rarity",
       "repository": "mariogerardi/rarity",
       "sourceStatus": "audited",
-      "migrationStatus": "contracting",
+      "migrationStatus": "migrated",
       "role": "companion-daily",
       "session": "one accepted rarity-scored word"
     },

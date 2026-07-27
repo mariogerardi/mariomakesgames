@@ -5,6 +5,7 @@ import { GameMark } from "../../../src/app-shell/game-mark";
 import { SiteFooter } from "../../../src/app-shell/site-footer";
 import { SiteHeader } from "../../../src/app-shell/site-header";
 import { getHubGame, hubGames } from "../../../src/games/registry";
+import { RarityGame } from "../../../src/games/rarity/rarity-game";
 import { SyllablGame } from "../../../src/games/syllabl/syllabl-game";
 
 type GamePageProps = {
@@ -60,6 +61,8 @@ export default async function GamePage({ params }: GamePageProps) {
 
             {game.id === "syllabl" ? (
               <SyllablGame />
+            ) : game.id === "rarity" ? (
+              <RarityGame />
             ) : (
               <div className="room-stage">
                 <div className="stage-topline">

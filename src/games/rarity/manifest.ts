@@ -7,5 +7,5 @@ export const rarityManifest = {
   description:
     "Find the rarest valid word containing the daily string. You only get one.",
   mechanics: ["One submission", "Daily string", "Continuous score"],
-  stage: "queued",
+  stage: "playable",
 } as const satisfies GameManifest;

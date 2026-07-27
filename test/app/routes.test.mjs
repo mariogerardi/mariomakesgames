@@ -69,6 +69,18 @@ test("the Syllabl route exposes the complete playable migration", () => {
   assert.doesNotMatch(gameSource, /frequency|Rarity score/);
 });
 
+test("the Rarity route exposes the complete playable migration", () => {
+  const routeSource = read("app/games/[gameId]/page.tsx");
+  const gameSource = read("src/games/rarity/rarity-game.tsx");
+  assert.match(routeSource, /RarityGame/);
+  assert.match(gameSource, /handleSubmit/);
+  assert.match(gameSource, /validateRarityLocalRules/);
+  assert.match(gameSource, /submitResultToLeaderboard/);
+  assert.match(gameSource, /rarityDailyStorageKey/);
+  assert.match(gameSource, /handleShare/);
+  assert.match(gameSource, /first valid word locks/i);
+});
+
 test("the starter preview is gone and social metadata is project-specific", () => {
   const layoutSource = read("app/layout.tsx");
   assert.doesNotMatch(layoutSource, /codex-preview|Starter Project/);
