@@ -70,7 +70,16 @@ H7–H8 complete the Expl41n audit and playable migration:
 - a deterministic locked-corpus Daily fallback after the authored dates end;
 - a hardening rule that AI service failures do not consume limited attempts.
 
-The Before&After audit begins in H9.
+H9–H10 complete the Before&After audit and playable web migration:
+
+- the three Before, After, and Before & After bridge positions;
+- unlimited pack attempts and a 15-character answer boundary;
+- a 60-second Daily with unlimited guesses until completion or expiry;
+- a prior-30-day Archive, custom puzzle creation, and device-local progress;
+- 168 Before, 15 After, 11 Before & After, and 10 Minecraft puzzles;
+- explicit `???` and coming-soon placeholders excluded from play.
+
+Shared identity and cross-game progress begin in H11.
 
 ## Checks
 

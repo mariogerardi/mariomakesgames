@@ -1,0 +1,112 @@
+{
+  "id": "pack-4",
+  "name": "minecraft",
+  "requiredSolvedToUnlock": 0,
+  "introText": [
+    "build the clues like a redstone circuit—careful crafting matters.",
+    "these bridges pull straight from the vanilla overworld.",
+    "think in blocks, lanterns, and packed layers."
+  ],
+  "puzzles": [
+    {
+      "id": "minecraft-01",
+      "clueWords": [
+        "block",
+        "carpet"
+      ],
+      "position": "before",
+      "answer": "MOSS",
+      "difficulty": 2
+    },
+    {
+      "id": "minecraft-02",
+      "clueWords": [
+        "lantern",
+        "pickle"
+      ],
+      "position": "before",
+      "answer": "SEA",
+      "difficulty": 2
+    },
+    {
+      "id": "minecraft-03",
+      "clueWords": [
+        "door",
+        "bars"
+      ],
+      "position": "before",
+      "answer": "IRON",
+      "difficulty": 2
+    },
+    {
+      "id": "minecraft-04",
+      "clueWords": [
+        "detector",
+        "powered"
+      ],
+      "position": "after",
+      "answer": "RAIL",
+      "difficulty": 2
+    },
+    {
+      "id": "minecraft-05",
+      "clueWords": [
+        "sand",
+        "soil"
+      ],
+      "position": "before",
+      "answer": "SOUL",
+      "difficulty": 2
+    },
+    {
+      "id": "minecraft-06",
+      "clueWords": [
+        "portal",
+        "rod"
+      ],
+      "position": "before",
+      "answer": "END",
+      "difficulty": 2
+    },
+    {
+      "id": "minecraft-07",
+      "clueWords": [
+        "ice",
+        "mud"
+      ],
+      "position": "before",
+      "answer": "PACKED",
+      "difficulty": 2
+    },
+    {
+      "id": "minecraft-08",
+      "clueWords": [
+        "red",
+        "suspicious"
+      ],
+      "position": "after",
+      "answer": "SAND",
+      "difficulty": 2
+    },
+    {
+      "id": "minecraft-09",
+      "clueWords": [
+        "cluster",
+        "budding"
+      ],
+      "position": "both",
+      "answer": "AMETHYST",
+      "difficulty": 3
+    },
+    {
+      "id": "minecraft-10",
+      "clueWords": [
+        "roots",
+        "signs"
+      ],
+      "position": "before",
+      "answer": "HANGING",
+      "difficulty": 2
+    }
+  ]
+}

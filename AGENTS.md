@@ -2,15 +2,14 @@
 
 ## Current phase
 
-H7–H8: complete Expl41n audit and migration.
+H9–H10: complete Before&After audit and web migration.
 
-Syllabl, Rarity, Gridl, and Expl41n are playable at their internal routes.
-Expl41n preserves Daily, Shuffle, Archive, and Custom modes, the five-attempt
-Daily lock, 25-character clues, shortest-winning-clue scoring, AI feedback,
-the 380-puzzle authored archive, local restoration, and leaderboard
-integration. Post-archive dates use a deterministic locked-corpus fallback.
-Gemboard remains retired. Do not begin Before&After audit work (H9) until it is
-explicitly requested.
+Syllabl, Rarity, Gridl, Expl41n, and Before&After are playable at their internal
+routes. Before&After preserves all three bridge positions, unlimited pack
+attempts, the 15-character answer cap, 60-second Daily play, Archive, Custom,
+local progress, and the full 204-puzzle authored catalog. Explicit placeholders
+are excluded. Gemboard remains retired. Do not begin shared identity and
+progress work (H11) until it is explicitly requested.
 
 ## Source-of-truth rule
 

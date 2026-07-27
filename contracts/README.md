@@ -7,9 +7,12 @@ Contracts capture the smallest pure statements of existing game behavior.
 - [Syllabl](syllabl/CONTRACT.md)
 - [Rarity](rarity/CONTRACT.md)
 - [Gridl](gridl/CONTRACT.md)
+- [Expl41n](expl41n/CONTRACT.md)
+- [Before&After](before-after/CONTRACT.md)
 - [DECODE](decode/CONTRACT.md)
 
-Expl41n and Before&After receive contracts after their H7 and H9 audits.
+All audited launch games now have mechanics contracts. DECODE remains an H1
+contract until its full migration phase.
 
 ## Contract rule
 

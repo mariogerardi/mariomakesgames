@@ -6,6 +6,6 @@ export const beforeAfterManifest = {
   eyebrow: "Find the word in between",
   description:
     "Bridge a pair of clues with the one word that belongs before, after, or both.",
-  mechanics: ["Two clues", "One bridge", "Phrase logic"],
-  stage: "queued",
+  mechanics: ["204 authored puzzles", "Three bridge rules", "Timed Daily"],
+  stage: "playable",
 } as const satisfies GameManifest;

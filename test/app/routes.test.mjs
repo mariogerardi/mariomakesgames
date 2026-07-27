@@ -106,6 +106,19 @@ test("the Expl41n route exposes all four preserved game modes", () => {
   assert.match(gameSource, /handleShare/);
 });
 
+test("the Before&After route exposes the complete bridge game", () => {
+  const routeSource = read("app/games/[gameId]/page.tsx");
+  const gameSource = read(
+    "src/games/before-after/before-after-game.tsx",
+  );
+  assert.match(routeSource, /BeforeAfterGame/);
+  assert.match(gameSource, /"daily", "packs", "archive", "custom", "stats"/);
+  assert.match(gameSource, /BEFORE_AFTER_ANSWER_LIMIT/);
+  assert.match(gameSource, /remainingBridgeSeconds/);
+  assert.match(gameSource, /validateCustomBridgePuzzle/);
+  assert.match(gameSource, /PROGRESS_KEY/);
+});
+
 test("the starter preview is gone and social metadata is project-specific", () => {
   const layoutSource = read("app/layout.tsx");
   assert.doesNotMatch(layoutSource, /codex-preview|Starter Project/);
