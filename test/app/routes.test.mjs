@@ -119,6 +119,19 @@ test("the Before&After route exposes the complete bridge game", () => {
   assert.match(gameSource, /PROGRESS_KEY/);
 });
 
+test("the DECODE route exposes both preserved playable modes", () => {
+  const routeSource = read("app/games/[gameId]/page.tsx");
+  const gameSource = read("src/games/decode/decode-game.tsx");
+  assert.match(routeSource, /DecodeGame/);
+  assert.match(gameSource, /"timed", "daily-5"/);
+  assert.match(gameSource, /deriveDecodeFeedback/);
+  assert.match(gameSource, /evaluateDecodeAttempt/);
+  assert.match(gameSource, /tickDecodeClock/);
+  assert.match(gameSource, /decodeDailyPuzzles/);
+  assert.match(gameSource, /PROGRESS_KEY/);
+  assert.doesNotMatch(gameSource, /zen/i);
+});
+
 test("the starter preview is gone and social metadata is project-specific", () => {
   const layoutSource = read("app/layout.tsx");
   assert.doesNotMatch(layoutSource, /codex-preview|Starter Project/);

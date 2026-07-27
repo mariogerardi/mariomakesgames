@@ -1,0 +1,724 @@
+{
+  "sourceRevision": "db2e50e16b04ef317f116583a37a19a72a0b8fc9",
+  "timed": {
+    "4": [
+      {
+        "id": "timed-4-001",
+        "answer": "BARE",
+        "clueWord": "BAKE",
+        "clue": "stripped; unadorned"
+      },
+      {
+        "id": "timed-4-002",
+        "answer": "WALK",
+        "clueWord": "FOLK",
+        "clue": "stroll"
+      },
+      {
+        "id": "timed-4-003",
+        "answer": "PLUG",
+        "clueWord": "GULP",
+        "clue": "hype; promote"
+      },
+      {
+        "id": "timed-4-004",
+        "answer": "AQUA",
+        "clueWord": "QUIP",
+        "clue": "shade of blue at the swimming pool"
+      },
+      {
+        "id": "timed-4-005",
+        "answer": "DULL",
+        "clueWord": "SULK",
+        "clue": "uninteresting... or pointless?"
+      },
+      {
+        "id": "timed-4-006",
+        "answer": "CITY",
+        "clueWord": "TACO",
+        "clue": "metropolis"
+      },
+      {
+        "id": "timed-4-007",
+        "answer": "EVIL",
+        "clueWord": "LIVE",
+        "clue": "wicked; nefarious"
+      },
+      {
+        "id": "timed-4-008",
+        "answer": "FORK",
+        "clueWord": "OKRA",
+        "clue": "split in two directions... or, an eating implement"
+      },
+      {
+        "id": "timed-4-009",
+        "answer": "CURE",
+        "clueWord": "RACE",
+        "clue": "antidote"
+      },
+      {
+        "id": "timed-4-010",
+        "answer": "MYTH",
+        "clueWord": "HYMN",
+        "clue": "legendary story"
+      },
+      {
+        "id": "timed-4-011",
+        "answer": "WING",
+        "clueWord": "WANT",
+        "clue": "part of a bird or building"
+      },
+      {
+        "id": "timed-4-012",
+        "answer": "IDEA",
+        "clueWord": "DEAL",
+        "clue": "product of brainstorming"
+      },
+      {
+        "id": "timed-4-013",
+        "answer": "WHIM",
+        "clueWord": "SHIN",
+        "clue": "sudden impulse"
+      },
+      {
+        "id": "timed-4-014",
+        "answer": "PLOT",
+        "clueWord": "LOOT",
+        "clue": "storyline; what a spoiler might spoil"
+      },
+      {
+        "id": "timed-4-015",
+        "answer": "TREE",
+        "clueWord": "FEET",
+        "clue": "maple or sequoia, for example"
+      },
+      {
+        "id": "timed-4-016",
+        "answer": "SONG",
+        "clueWord": "SWIG",
+        "clue": "ballad or serenade, for example"
+      },
+      {
+        "id": "timed-4-017",
+        "answer": "FLAG",
+        "clueWord": "CALF",
+        "clue": "national symbol"
+      },
+      {
+        "id": "timed-4-018",
+        "answer": "GLUE",
+        "clueWord": "LURE",
+        "clue": "sticky arts and crafts supply"
+      },
+      {
+        "id": "timed-4-019",
+        "answer": "ALSO",
+        "clueWord": "SOUL",
+        "clue": "in addition"
+      },
+      {
+        "id": "timed-4-020",
+        "answer": "SHOE",
+        "clueWord": "HOSE",
+        "clue": "clog or sneaker, for example"
+      },
+      {
+        "id": "timed-4-021",
+        "answer": "BOWL",
+        "clueWord": "BLOW",
+        "clue": "soup or cereal dish"
+      },
+      {
+        "id": "timed-4-022",
+        "answer": "ONCE",
+        "clueWord": "CONE",
+        "clue": "at some point; without repetition"
+      },
+      {
+        "id": "timed-4-023",
+        "answer": "WOLF",
+        "clueWord": "FLOW",
+        "clue": "common fairytale antagonist"
+      },
+      {
+        "id": "timed-4-024",
+        "answer": "MILK",
+        "clueWord": "KILN",
+        "clue": "half of half-and-half"
+      },
+      {
+        "id": "timed-4-025",
+        "answer": "VEST",
+        "clueWord": "SAVE",
+        "clue": "part of a three-piece suit"
+      },
+      {
+        "id": "timed-4-026",
+        "answer": "WAIT",
+        "clueWord": "TAIL",
+        "clue": "delay"
+      },
+      {
+        "id": "timed-4-027",
+        "answer": "WINK",
+        "clueWord": "KNIT",
+        "clue": "flirtatious gesture, or signal of a kind"
+      },
+      {
+        "id": "timed-4-028",
+        "answer": "PEEL",
+        "clueWord": "PLEA",
+        "clue": "result of a sunburn... or, a banana's skin"
+      },
+      {
+        "id": "timed-4-029",
+        "answer": "ZEST",
+        "clueWord": "SIZE",
+        "clue": "citrus shaving... or, a certain enthusiasm"
+      },
+      {
+        "id": "timed-4-030",
+        "answer": "KICK",
+        "clueWord": "CAKE",
+        "clue": "punt... or, a bit of spice, figuratively"
+      },
+      {
+        "id": "timed-4-031",
+        "answer": "DRUM",
+        "clueWord": "CURD",
+        "clue": "snare or bongo, for example"
+      },
+      {
+        "id": "timed-4-032",
+        "answer": "SHUN",
+        "clueWord": "BUSH",
+        "clue": "ostracize; cold-shoulder"
+      },
+      {
+        "id": "timed-4-033",
+        "answer": "AREA",
+        "clueWord": "AURA",
+        "clue": "vicinity; turf"
+      },
+      {
+        "id": "timed-4-034",
+        "answer": "TRAP",
+        "clueWord": "PART",
+        "clue": "ambush... or, a hip-hop subgenre"
+      },
+      {
+        "id": "timed-4-035",
+        "answer": "BEST",
+        "clueWord": "STAB",
+        "clue": "top; overcome; outdo"
+      }
+    ],
+    "5": [
+      {
+        "id": "timed-5-001",
+        "answer": "PLANK",
+        "clueWord": "FLASK",
+        "clue": "core workout... or, a pirate ship feature"
+      },
+      {
+        "id": "timed-5-002",
+        "answer": "SLEEP",
+        "clueWord": "BLIMP",
+        "clue": "snooze"
+      },
+      {
+        "id": "timed-5-003",
+        "answer": "AMPLE",
+        "clueWord": "ANKLE",
+        "clue": "plenty"
+      },
+      {
+        "id": "timed-5-004",
+        "answer": "EARTH",
+        "clueWord": "HEART",
+        "clue": "you are here"
+      },
+      {
+        "id": "timed-5-005",
+        "answer": "WHEAT",
+        "clueWord": "WHITE",
+        "clue": "toast choice"
+      },
+      {
+        "id": "timed-5-006",
+        "answer": "MANOR",
+        "clueWord": "WAGON",
+        "clue": "large estate or home"
+      },
+      {
+        "id": "timed-5-007",
+        "answer": "JOKER",
+        "clueWord": "COVER",
+        "clue": "wild card in a deck"
+      },
+      {
+        "id": "timed-5-008",
+        "answer": "WASTE",
+        "clueWord": "SWEAT",
+        "clue": "scrap; trash"
+      },
+      {
+        "id": "timed-5-009",
+        "answer": "ANVIL",
+        "clueWord": "VITAL",
+        "clue": "blacksmith's block"
+      },
+      {
+        "id": "timed-5-010",
+        "answer": "RADAR",
+        "clueWord": "RADIO",
+        "clue": "speed-detecting device"
+      },
+      {
+        "id": "timed-5-011",
+        "answer": "CLEAR",
+        "clueWord": "PEARL",
+        "clue": "transparent; unambiguous"
+      },
+      {
+        "id": "timed-5-012",
+        "answer": "ZEBRA",
+        "clueWord": "BLAZE",
+        "clue": "striped zoo animal"
+      },
+      {
+        "id": "timed-5-013",
+        "answer": "TRIAL",
+        "clueWord": "LATER",
+        "clue": "experiment; run-through"
+      },
+      {
+        "id": "timed-5-014",
+        "answer": "FOCUS",
+        "clueWord": "BOGUS",
+        "clue": "concentrate"
+      },
+      {
+        "id": "timed-5-015",
+        "answer": "LIMBO",
+        "clueWord": "BLOOM",
+        "clue": "middle state; gray area"
+      },
+      {
+        "id": "timed-5-016",
+        "answer": "PANIC",
+        "clueWord": "BASIC",
+        "clue": "freak out; hysteria"
+      },
+      {
+        "id": "timed-5-017",
+        "answer": "WHISK",
+        "clueWord": "FRISK",
+        "clue": "egg beating implement"
+      },
+      {
+        "id": "timed-5-018",
+        "answer": "EXTRA",
+        "clueWord": "LATEX",
+        "clue": "additional; not included; more than enough"
+      },
+      {
+        "id": "timed-5-019",
+        "answer": "KIOSK",
+        "clueWord": "SKULK",
+        "clue": "newsstand; tourist information spot"
+      },
+      {
+        "id": "timed-5-020",
+        "answer": "VOWEL",
+        "clueWord": "LOVER",
+        "clue": "y, sometimes"
+      },
+      {
+        "id": "timed-5-021",
+        "answer": "SCORE",
+        "clueWord": "ROCKY",
+        "clue": "obtain points... or, accompanying music for a film"
+      },
+      {
+        "id": "timed-5-022",
+        "answer": "DOUSE",
+        "clueWord": "PAUSE",
+        "clue": "soak; drench"
+      },
+      {
+        "id": "timed-5-023",
+        "answer": "ASKEW",
+        "clueWord": "SKATE",
+        "clue": "a bit off; out of alignment"
+      },
+      {
+        "id": "timed-5-024",
+        "answer": "WHACK",
+        "clueWord": "SHARK",
+        "clue": "hard hit or slap; wallop"
+      },
+      {
+        "id": "timed-5-025",
+        "answer": "ATLAS",
+        "clueWord": "SALTY",
+        "clue": "a book of maps"
+      },
+      {
+        "id": "timed-5-026",
+        "answer": "QUEUE",
+        "clueWord": "QUEST",
+        "clue": "waiting line"
+      },
+      {
+        "id": "timed-5-027",
+        "answer": "MURAL",
+        "clueWord": "LUNAR",
+        "clue": "expansive work of art; wall painting"
+      }
+    ],
+    "6": [
+      {
+        "id": "timed-6-001",
+        "answer": "DRAGON",
+        "clueWord": "JARGON",
+        "clue": "Chinese New Year figure"
+      },
+      {
+        "id": "timed-6-002",
+        "answer": "PILLOW",
+        "clueWord": "YELLOW",
+        "clue": "where one might lay their head?"
+      },
+      {
+        "id": "timed-6-003",
+        "answer": "STAPLE",
+        "clueWord": "PASTEL",
+        "clue": "paperclip alternative"
+      },
+      {
+        "id": "timed-6-004",
+        "answer": "CROUCH",
+        "clueWord": "CRUNCH",
+        "clue": "stoop; lay low"
+      },
+      {
+        "id": "timed-6-005",
+        "answer": "AVATAR",
+        "clueWord": "TRIVIA",
+        "clue": "profile persona"
+      },
+      {
+        "id": "timed-6-006",
+        "answer": "LAMENT",
+        "clueWord": "BEMOAN",
+        "clue": "greatly regret"
+      },
+      {
+        "id": "timed-6-007",
+        "answer": "PEOPLE",
+        "clueWord": "PUZZLE",
+        "clue": "humans"
+      },
+      {
+        "id": "timed-6-008",
+        "answer": "BOTANY",
+        "clueWord": "ROSARY",
+        "clue": "horticulturist's field of study"
+      },
+      {
+        "id": "timed-6-009",
+        "answer": "CANDOR",
+        "clueWord": "CANARY",
+        "clue": "honesty"
+      },
+      {
+        "id": "timed-6-010",
+        "answer": "CRATER",
+        "clueWord": "RACKET",
+        "clue": "lunar feature; meteorite's creation"
+      },
+      {
+        "id": "timed-6-011",
+        "answer": "CREDIT",
+        "clueWord": "TRICKY",
+        "clue": "give recognition... or, a cash alternative"
+      },
+      {
+        "id": "timed-6-012",
+        "answer": "BALLOT",
+        "clueWord": "COBALT",
+        "clue": "voting slip"
+      },
+      {
+        "id": "timed-6-013",
+        "answer": "RECORD",
+        "clueWord": "GROCER",
+        "clue": "best known performance... or, a jukebox item"
+      },
+      {
+        "id": "timed-6-014",
+        "answer": "SUBTLE",
+        "clueWord": "BULLET",
+        "clue": "understated; nuanced"
+      },
+      {
+        "id": "timed-6-015",
+        "answer": "THRIVE",
+        "clueWord": "SHRINE",
+        "clue": "succeed; flourish; prosper"
+      },
+      {
+        "id": "timed-6-016",
+        "answer": "GAZEBO",
+        "clueWord": "BRONZE",
+        "clue": "popular setting for an outdoor wedding"
+      },
+      {
+        "id": "timed-6-017",
+        "answer": "PAPAYA",
+        "clueWord": "BANANA",
+        "clue": "tropical, melon-like fruit"
+      },
+      {
+        "id": "timed-6-018",
+        "answer": "BISQUE",
+        "clueWord": "QUICHE",
+        "clue": "thick, creamy soup"
+      },
+      {
+        "id": "timed-6-019",
+        "answer": "DROWSY",
+        "clueWord": "BROWSE",
+        "clue": "in need of a nap; sleepy"
+      },
+      {
+        "id": "timed-6-020",
+        "answer": "VACUUM",
+        "clueWord": "AUTUMN",
+        "clue": "cleaning device... or, an empty space"
+      },
+      {
+        "id": "timed-6-021",
+        "answer": "MALICE",
+        "clueWord": "FEMALE",
+        "clue": "evil intentions; spitefulness"
+      },
+      {
+        "id": "timed-6-022",
+        "answer": "CHEESE",
+        "clueWord": "SEETHE",
+        "clue": "cottage or blue, for example"
+      }
+    ],
+    "7": [
+      {
+        "id": "timed-7-001",
+        "answer": "ACHIEVE",
+        "clueWord": "RECEIVE",
+        "clue": "accomplish; pull off"
+      },
+      {
+        "id": "timed-7-002",
+        "answer": "BONFIRE",
+        "clueWord": "VAMPIRE",
+        "clue": "celebratory blaze"
+      },
+      {
+        "id": "timed-7-003",
+        "answer": "BLATANT",
+        "clueWord": "PLASTIC",
+        "clue": "obvious; lacking subtlety"
+      },
+      {
+        "id": "timed-7-004",
+        "answer": "CATWALK",
+        "clueWord": "HACKSAW",
+        "clue": "at the center of a fashion show"
+      },
+      {
+        "id": "timed-7-005",
+        "answer": "COMPASS",
+        "clueWord": "CARCASS",
+        "clue": "travel guide, with cardinal directions"
+      },
+      {
+        "id": "timed-7-006",
+        "answer": "COWBELL",
+        "clueWord": "SWOLLEN",
+        "clue": "it may be heard in a herd"
+      },
+      {
+        "id": "timed-7-007",
+        "answer": "CURRANT",
+        "clueWord": "VIBRANT",
+        "clue": "a small black, red, or white berry"
+      },
+      {
+        "id": "timed-7-008",
+        "answer": "CHERISH",
+        "clueWord": "CHEETAH",
+        "clue": "hold dear"
+      },
+      {
+        "id": "timed-7-009",
+        "answer": "DESTINY",
+        "clueWord": "DISPLAY",
+        "clue": "fate; the inevitable"
+      },
+      {
+        "id": "timed-7-010",
+        "answer": "DRASTIC",
+        "clueWord": "PLASTIC",
+        "clue": "having far-reaching effect"
+      },
+      {
+        "id": "timed-7-011",
+        "answer": "FICTION",
+        "clueWord": "MISSION",
+        "clue": "opposite of a true story"
+      },
+      {
+        "id": "timed-7-012",
+        "answer": "HARPOON",
+        "clueWord": "CARTOON",
+        "clue": "a barbed spear or javelin"
+      },
+      {
+        "id": "timed-7-013",
+        "answer": "HELPFUL",
+        "clueWord": "HANDFUL",
+        "clue": "lending a hand; of service"
+      },
+      {
+        "id": "timed-7-014",
+        "answer": "IMITATE",
+        "clueWord": "IMAGINE",
+        "clue": "parrot; mirror"
+      },
+      {
+        "id": "timed-7-015",
+        "answer": "JUBILEE",
+        "clueWord": "SUBJECT",
+        "clue": "anniversary celebration"
+      },
+      {
+        "id": "timed-7-016",
+        "answer": "KILLJOY",
+        "clueWord": "BELLHOP",
+        "clue": "wet blanket; party pooper"
+      },
+      {
+        "id": "timed-7-017",
+        "answer": "LASAGNA",
+        "clueWord": "PANACEA",
+        "clue": "layered pasta dish"
+      },
+      {
+        "id": "timed-7-018",
+        "answer": "MELANIN",
+        "clueWord": "KERATIN",
+        "clue": "skin pigment"
+      },
+      {
+        "id": "timed-7-019",
+        "answer": "NONSTOP",
+        "clueWord": "MOISTEN",
+        "clue": "all day, every day, on and on..."
+      },
+      {
+        "id": "timed-7-020",
+        "answer": "ORGANIC",
+        "clueWord": "SCARING",
+        "clue": "occurring naturally"
+      },
+      {
+        "id": "timed-7-021",
+        "answer": "PANCAKE",
+        "clueWord": "PEACOCK",
+        "clue": "often stacked breakfast staple"
+      },
+      {
+        "id": "timed-7-022",
+        "answer": "QUARREL",
+        "clueWord": "SQUARED",
+        "clue": "altercation; argument"
+      },
+      {
+        "id": "timed-7-023",
+        "answer": "RESPITE",
+        "clueWord": "INSPIRE",
+        "clue": "a quick breather"
+      },
+      {
+        "id": "timed-7-024",
+        "answer": "TRAFFIC",
+        "clueWord": "AFFLICT",
+        "clue": "many commuters, collectively"
+      },
+      {
+        "id": "timed-7-025",
+        "answer": "UNDERGO",
+        "clueWord": "FOUNDER",
+        "clue": "experience; be subjected to"
+      },
+      {
+        "id": "timed-7-026",
+        "answer": "FALLACY",
+        "clueWord": "WALLABY",
+        "clue": "a mistaken belief"
+      },
+      {
+        "id": "timed-7-027",
+        "answer": "MUSICAL",
+        "clueWord": "PURITAN",
+        "clue": "'Cats' or 'Hamilton,' for example"
+      },
+      {
+        "id": "timed-7-028",
+        "answer": "PARADOX",
+        "clueWord": "PHOENIX",
+        "clue": "logical conundrum; catch-22"
+      },
+      {
+        "id": "timed-7-029",
+        "answer": "TWINKLE",
+        "clueWord": "TRICKLE",
+        "clue": "glimmer"
+      }
+    ]
+  },
+  "daily": [
+    {
+      "id": "daily-001",
+      "answer": "FISH",
+      "clueWord": "SWIM",
+      "clue": "salmon or cod, for example"
+    },
+    {
+      "id": "daily-002",
+      "answer": "SQUID",
+      "clueWord": "QUIET",
+      "clue": "ink producer"
+    },
+    {
+      "id": "daily-003",
+      "answer": "SHRIMP",
+      "clueWord": "PERISH",
+      "clue": "cocktail crustacean"
+    },
+    {
+      "id": "daily-004",
+      "answer": "OYSTER",
+      "clueWord": "STEREO",
+      "clue": "pearl-making shellfish"
+    },
+    {
+      "id": "daily-005",
+      "answer": "LOBSTER",
+      "clueWord": "BOTTLER",
+      "clue": "popular Maine export",
+      "theme": "Sea Creatures"
+    }
+  ]
+}

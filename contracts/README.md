@@ -11,8 +11,8 @@ Contracts capture the smallest pure statements of existing game behavior.
 - [Before&After](before-after/CONTRACT.md)
 - [DECODE](decode/CONTRACT.md)
 
-All audited launch games now have mechanics contracts. DECODE remains an H1
-contract until its full migration phase.
+All six playable launch games have mechanics contracts and production
+regressions.
 
 ## Contract rule
 

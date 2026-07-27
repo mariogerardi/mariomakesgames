@@ -9,7 +9,7 @@
 | 3 | Gridl | `mariogerardi/wordgrid` | Audited; preservation harness and content curation |
 | 4 | Expl41n | `mariogerardi/explain-game` | Deep audit required |
 | 5 | Before&After | `mariogerardi/before-after` | Deep audit and web port required |
-| 6 | DECODE | `mariogerardi/mariogerardi.github.io` | Audited; preservation harness |
+| 6 | DECODE | `mariogerardi/mariogerardi.github.io` | Playable migration complete |
 
 The order is a migration priority, not a statement that one game is permanently
 more valuable than another.

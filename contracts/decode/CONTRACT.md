@@ -42,6 +42,9 @@ incomplete attempts do not change score, time, or puzzle progress.
 The locked legacy release contains one fixed sea-creature set; it does not
 rotate by calendar date or persist completion.
 
+The port retains that fixed set. It may record a device-local personal best,
+but that record does not change Daily selection or game state.
+
 ## Known legacy defects
 
 - The visible `ZEN` button calls an undefined function and is not a working
@@ -54,3 +57,6 @@ rotate by calendar date or persist completion.
 
 These corrections are explicit preservation decisions: retain the stated game
 rules, not accidental data-entry errors or a nonfunctional control.
+
+The resulting production catalog contains 113 unique Timed puzzles and five
+Daily puzzles: 118 unique authored puzzles total.

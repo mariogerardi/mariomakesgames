@@ -79,7 +79,18 @@ H9–H10 complete the Before&After audit and playable web migration:
 - 168 Before, 15 After, 11 Before & After, and 10 Minecraft puzzles;
 - explicit `???` and coming-soon placeholders excluded from play.
 
-Shared identity and cross-game progress begin in H11.
+H11–H12 complete the DECODE audit and playable migration:
+
+- all 118 unique authored puzzles from the locked release;
+- duplicate-aware green, blue, and gray positional feedback;
+- Timed mode with a 20-second reset and 4/5/6/7-letter escalation;
+- the original fixed Sea Creatures Daily 5 and its upward elapsed clock;
+- device-local Timed and Daily personal bests;
+- two incorrect authored color arrays derived correctly, one exact duplicate
+  removed, and the nonfunctional ZEN control excluded.
+
+All six launch games are now playable. Shared identity and cross-game progress
+begin in H13.
 
 ## Checks
 

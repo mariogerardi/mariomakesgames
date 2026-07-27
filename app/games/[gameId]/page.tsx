@@ -10,6 +10,7 @@ import { SyllablGame } from "../../../src/games/syllabl/syllabl-game";
 import { GridlGame } from "../../../src/games/gridl/gridl-game";
 import { Expl41nGame } from "../../../src/games/expl41n/expl41n-game";
 import { BeforeAfterGame } from "../../../src/games/before-after/before-after-game";
+import { DecodeGame } from "../../../src/games/decode/decode-game";
 
 type GamePageProps = {
   params: Promise<{ gameId: string }>;
@@ -72,6 +73,8 @@ export default async function GamePage({ params }: GamePageProps) {
               <Expl41nGame />
             ) : game.id === "before-after" ? (
               <BeforeAfterGame />
+            ) : game.id === "decode" ? (
+              <DecodeGame />
             ) : (
               <div className="room-stage">
                 <div className="stage-topline">

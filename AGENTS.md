@@ -2,14 +2,15 @@
 
 ## Current phase
 
-H9–H10: complete Before&After audit and web migration.
+H11–H12: complete DECODE audit and web migration.
 
-Syllabl, Rarity, Gridl, Expl41n, and Before&After are playable at their internal
-routes. Before&After preserves all three bridge positions, unlimited pack
-attempts, the 15-character answer cap, 60-second Daily play, Archive, Custom,
-local progress, and the full 204-puzzle authored catalog. Explicit placeholders
-are excluded. Gemboard remains retired. Do not begin shared identity and
-progress work (H11) until it is explicitly requested.
+All six launch games are playable at their internal routes. DECODE preserves
+Timed and the original fixed Daily 5, duplicate-aware positional feedback,
+20-second Timed resets, four difficulty tiers, the upward Daily clock, and all
+118 unique authored puzzles. The exact duplicate and two incorrect source color
+arrays are corrected; the nonfunctional ZEN control remains excluded. Gemboard
+remains retired. Do not begin shared identity and progress work (H13) until it
+is explicitly requested.
 
 ## Source-of-truth rule
 
