@@ -1,5 +1,9 @@
 node_modules/
 coverage/
 dist/
+.next/
+.vinext/
+.wrangler/
+*.tsbuildinfo
 .DS_Store
 *.log

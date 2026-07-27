@@ -9,7 +9,7 @@ This repository is the mechanics-preserving home for a unified web hub containin
 5. Before&After
 6. DECODE
 
-The current phase is H0–H1:
+H0–H1 established:
 
 - lock the catalog and canonical source revisions;
 - document the behavioral source of truth;
@@ -17,11 +17,21 @@ The current phase is H0–H1:
 - compare those contracts with the legacy implementations;
 - avoid changing any legacy game repository.
 
-The hub application itself begins in H2.
+H2 adds the shared hub application:
+
+- a catalog-driven home page;
+- internal routes for all six launch games;
+- isolated game modules;
+- shared daily-date, storage, analytics, result, and sharing boundaries;
+- a responsive, accessible visual shell.
+
+Playable game ports begin in H3 with Syllabl.
 
 ## Checks
 
 ```bash
+npm run dev
+npm run build
 npm test
 npm run check:catalog
 npm run check

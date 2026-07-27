@@ -2,10 +2,10 @@
 
 ## Current phase
 
-H0–H1: catalog lock and mechanics-preservation harness.
+H2: shared hub scaffold.
 
-Do not begin the React/Vite hub shell until H1 passes and H2 is explicitly
-requested.
+The application shell and internal game routes may evolve, but do not begin a
+playable Syllabl port until H3 is explicitly requested.
 
 ## Source-of-truth rule
 
