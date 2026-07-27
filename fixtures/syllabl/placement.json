@@ -1,0 +1,38 @@
+[
+  {
+    "word": "vague",
+    "puzzleLetters": "gue",
+    "placementRule": 1,
+    "expected": true
+  },
+  {
+    "word": "guess",
+    "puzzleLetters": "gue",
+    "placementRule": 2,
+    "expected": true
+  },
+  {
+    "word": "vague",
+    "puzzleLetters": "gue",
+    "placementRule": 2,
+    "expected": false
+  },
+  {
+    "word": "carton",
+    "puzzleLetters": "art",
+    "placementRule": 3,
+    "expected": true
+  },
+  {
+    "word": "artist",
+    "puzzleLetters": "art",
+    "placementRule": 3,
+    "expected": false
+  },
+  {
+    "word": "antagonistant",
+    "puzzleLetters": "ant",
+    "placementRule": 4,
+    "expected": true
+  }
+]

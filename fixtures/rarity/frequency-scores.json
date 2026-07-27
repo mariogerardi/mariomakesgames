@@ -1,0 +1,10 @@
+[
+  { "frequency": 1000, "expectedScore": 0, "expectedTier": 1 },
+  { "frequency": 100, "expectedScore": 7.78535, "expectedTier": 1 },
+  { "frequency": 10, "expectedScore": 27.39053, "expectedTier": 1 },
+  { "frequency": 1, "expectedScore": 52.59512, "expectedTier": 3 },
+  { "frequency": 0.1, "expectedScore": 77.17754, "expectedTier": 4 },
+  { "frequency": 0.01, "expectedScore": 91.59819, "expectedTier": 5 },
+  { "frequency": 0.001, "expectedScore": 96.26581, "expectedTier": 5 },
+  { "frequency": 0.000001, "expectedScore": 99.9999, "expectedTier": 6 }
+]

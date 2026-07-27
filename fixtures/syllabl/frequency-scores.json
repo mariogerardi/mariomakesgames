@@ -1,0 +1,10 @@
+[
+  { "frequency": 100, "expectedScore": 1 },
+  { "frequency": 99.999, "expectedScore": 2 },
+  { "frequency": 10, "expectedScore": 2 },
+  { "frequency": 9.999, "expectedScore": 3 },
+  { "frequency": 1, "expectedScore": 3 },
+  { "frequency": 0.999, "expectedScore": 4 },
+  { "frequency": 0.1, "expectedScore": 4 },
+  { "frequency": 0.099, "expectedScore": 5 }
+]

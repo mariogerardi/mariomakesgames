@@ -1,0 +1,47 @@
+{
+  "schemaVersion": 1,
+  "verifiedAt": "2026-07-26",
+  "developerRootEnvironmentVariable": "GAMES_DEVELOPER_ROOT",
+  "sources": [
+    {
+      "gameId": "syllabl",
+      "repository": "mariogerardi/playsyllabl",
+      "branch": "main",
+      "revision": "1783c3ab2aa6ae117ea6af82f77969528e5a4f82",
+      "localPathFromDeveloperRoot": "games/playsyllabl",
+      "availability": "local"
+    },
+    {
+      "gameId": "rarity",
+      "repository": "mariogerardi/rarity",
+      "branch": "main",
+      "revision": "f28224c10fc6fbb03b3593bc825e5b2179bf95a4",
+      "localPathFromDeveloperRoot": "games/rarity",
+      "availability": "local"
+    },
+    {
+      "gameId": "gridl",
+      "repository": "mariogerardi/wordgrid",
+      "branch": "main",
+      "revision": "3d74606cfdfb121e277bd352589d9a8e769a3c75",
+      "localPathFromDeveloperRoot": "games/wordgrid",
+      "availability": "local"
+    },
+    {
+      "gameId": "expl41n",
+      "repository": "mariogerardi/explain-game",
+      "branch": "main",
+      "revision": "f86996a7c5cdb34675c000c621d04bf4c18ac435",
+      "localPathFromDeveloperRoot": null,
+      "availability": "remote-only"
+    },
+    {
+      "gameId": "before-after",
+      "repository": "mariogerardi/before-after",
+      "branch": "main",
+      "revision": "131c28d87debd7bc2560b66caf8b671555ae7eb6",
+      "localPathFromDeveloperRoot": "games/wordlink",
+      "availability": "local"
+    }
+  ]
+}

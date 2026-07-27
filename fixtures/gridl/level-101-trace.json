@@ -1,0 +1,15 @@
+{
+  "levelId": "101",
+  "initialHand": ["A", "N", "R", "T"],
+  "actions": [
+    { "type": "place", "fragment": "A", "row": 0, "col": 1 },
+    { "type": "place", "fragment": "T", "row": 0, "col": 2 },
+    { "type": "commit" }
+  ],
+  "expected": {
+    "word": "cat",
+    "win": true,
+    "turnsUsed": 1,
+    "par": 1
+  }
+}

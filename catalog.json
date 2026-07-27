@@ -1,0 +1,119 @@
+{
+  "schemaVersion": 1,
+  "workingHubName": "Games Hub",
+  "launch": [
+    {
+      "priority": 1,
+      "id": "syllabl",
+      "name": "Syllabl",
+      "repository": "mariogerardi/playsyllabl",
+      "sourceStatus": "audited",
+      "migrationStatus": "contracting",
+      "role": "flagship",
+      "session": "six-stage daily vocabulary puzzle"
+    },
+    {
+      "priority": 2,
+      "id": "rarity",
+      "name": "Rarity",
+      "repository": "mariogerardi/rarity",
+      "sourceStatus": "audited",
+      "migrationStatus": "contracting",
+      "role": "companion-daily",
+      "session": "one accepted rarity-scored word"
+    },
+    {
+      "priority": 3,
+      "id": "gridl",
+      "name": "Gridl",
+      "repository": "mariogerardi/wordgrid",
+      "sourceStatus": "audited",
+      "migrationStatus": "contracting",
+      "role": "campaign",
+      "session": "handcrafted spatial word-routing levels"
+    },
+    {
+      "priority": 4,
+      "id": "expl41n",
+      "name": "Expl41n",
+      "repository": "mariogerardi/explain-game",
+      "sourceStatus": "audit-required",
+      "migrationStatus": "not-started",
+      "role": "ai-wildcard",
+      "session": "strategic clues for an AI guesser"
+    },
+    {
+      "priority": 5,
+      "id": "before-after",
+      "name": "Before&After",
+      "repository": "mariogerardi/before-after",
+      "sourceStatus": "audit-required",
+      "migrationStatus": "not-started",
+      "role": "association",
+      "session": "bridge two clues with a shared word"
+    }
+  ],
+  "futureCandidates": [
+    {
+      "id": "orange",
+      "name": "Orange",
+      "repository": "mariogerardi/orange",
+      "status": "audit-required"
+    },
+    {
+      "id": "blanking",
+      "name": "Blanking",
+      "repository": "mariogerardi/blanking",
+      "status": "unassessed"
+    },
+    {
+      "id": "conversationalist",
+      "name": "Conversationalist",
+      "repository": "mariogerardi/conversationalist",
+      "status": "unassessed"
+    }
+  ],
+  "adjacent": [
+    {
+      "id": "elevator",
+      "name": "Elevator",
+      "status": "later-web-candidate"
+    },
+    {
+      "id": "keyz",
+      "name": "Keyz",
+      "status": "later-web-candidate"
+    },
+    {
+      "id": "platformer",
+      "name": "Platformer",
+      "status": "prototype"
+    },
+    {
+      "id": "calorie-game",
+      "name": "CalorieGame",
+      "status": "separate-native-product"
+    }
+  ],
+  "separateProducts": [
+    {
+      "id": "plotter",
+      "name": "Plotter",
+      "repository": "mariogerardi/lettuce",
+      "status": "portfolio-track"
+    }
+  ],
+  "retired": [
+    {
+      "id": "gemboard",
+      "name": "Gemboard",
+      "status": "scrapped-experiment",
+      "mustNotRoute": true
+    }
+  ],
+  "historicalRepositories": [
+    "mariogerardi/syllabl",
+    "mariogerardi/syllabl2",
+    "mariogerardi/syllabl3"
+  ]
+}

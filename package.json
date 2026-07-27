@@ -1,0 +1,17 @@
+{
+  "name": "games-hub",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Mechanics-preserving home for Mario Gerardi's games catalog.",
+  "scripts": {
+    "check": "npm run check:catalog && npm run test",
+    "check:catalog": "node scripts/check-catalog.mjs && node scripts/check-source-lock.mjs",
+    "test": "node --test",
+    "test:contracts": "node --test test/contracts/*.test.mjs",
+    "test:legacy": "node --test test/legacy/*.test.mjs"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}
