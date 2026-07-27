@@ -2,11 +2,12 @@
 
 ## Current phase
 
-H3: completion-only Syllabl engine extraction.
+H3: complete Syllabl migration.
 
-The pure engine, canonical puzzle catalog, validation boundary, and session
-migration may evolve. Do not begin the playable Syllabl UI (H4) until it is
-explicitly requested.
+Syllabl is playable at its internal route with daily selection, the production
+validation service, completion-only results, device-local restoration, and
+sharing. Do not begin the Rarity migration (H4) until it is explicitly
+requested.
 
 ## Source-of-truth rule
 

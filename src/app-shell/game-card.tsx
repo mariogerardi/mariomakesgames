@@ -18,7 +18,7 @@ export function GameCard({ game }: { game: HubGame }) {
           <span>{game.description}</span>
         </div>
         <div className="card-footer">
-          <span>{game.stage === "first-up" ? "First up" : "Explore"}</span>
+          <span>{game.stage === "playable" ? "Play today" : "Explore"}</span>
           <span aria-hidden="true">↗</span>
         </div>
       </Link>

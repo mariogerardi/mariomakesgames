@@ -26,12 +26,16 @@ export function createSyllablWordValidator({ fetcher, endpoint }) {
     const response = await fetcher(
       `${endpoint}?word=${encodeURIComponent(word.trim().toLowerCase())}`,
     );
+    const payload = await response.json().catch(() => null);
     if (!response.ok) {
       return normalizeSyllablWordInfo({
+        ...payload,
         isValid: false,
-        error: "word-service-unavailable",
+        error:
+          payload?.error ??
+          (response.status >= 500 ? "word-service-unavailable" : null),
       });
     }
-    return normalizeSyllablWordInfo(await response.json());
+    return normalizeSyllablWordInfo(payload);
   };
 }

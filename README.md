@@ -25,16 +25,18 @@ H2 adds the shared hub application:
 - shared daily-date, storage, analytics, result, and sharing boundaries;
 - a responsive, accessible visual shell.
 
-H3 extracts Syllabl's production engine:
+H3 completes the playable Syllabl migration:
 
 - the canonical 125-puzzle daily catalog;
 - the exact six placement and syllable constraints;
 - ordered, immutable attempt validation;
 - versioned session persistence and migration;
 - completion as the sole result, with legacy rarity scoring intentionally
-  retired.
+  retired;
+- a responsive daily game interface with live dictionary validation, accepted
+  word history, completion, and result sharing.
 
-The playable Syllabl interface begins in H4.
+Rarity migration begins in H4.
 
 ## Checks
 

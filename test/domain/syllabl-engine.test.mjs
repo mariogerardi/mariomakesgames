@@ -183,3 +183,22 @@ test("the production word boundary deliberately discards frequency", async () =>
   assert.equal(result.isValid, true);
   assert.equal("frequency" in result, false);
 });
+
+test("the word boundary preserves dictionary rejections without scoring data", async () => {
+  const validateWord = createSyllablWordValidator({
+    endpoint: "/api/wordinfo",
+    fetcher: async () => ({
+      ok: false,
+      status: 400,
+      json: async () => ({
+        isValid: false,
+        frequency: 0,
+        error: "not in the dictionary",
+      }),
+    }),
+  });
+  const result = await validateWord("drabzzzz");
+  assert.equal(result.isValid, false);
+  assert.equal(result.error, "not in the dictionary");
+  assert.equal("frequency" in result, false);
+});

@@ -7,5 +7,5 @@ export const syllablManifest = {
   description:
     "Build a word through six increasingly specific clues—placement, syllables, and all.",
   mechanics: ["Six stages", "Daily puzzle", "Completion only"],
-  stage: "first-up",
+  stage: "playable",
 } as const satisfies GameManifest;

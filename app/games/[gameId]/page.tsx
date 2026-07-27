@@ -5,7 +5,7 @@ import { GameMark } from "../../../src/app-shell/game-mark";
 import { SiteFooter } from "../../../src/app-shell/site-footer";
 import { SiteHeader } from "../../../src/app-shell/site-header";
 import { getHubGame, hubGames } from "../../../src/games/registry";
-import { SyllablEngineStatus } from "../../../src/games/syllabl/engine-status";
+import { SyllablGame } from "../../../src/games/syllabl/syllabl-game";
 
 type GamePageProps = {
   params: Promise<{ gameId: string }>;
@@ -59,14 +59,12 @@ export default async function GamePage({ params }: GamePageProps) {
             </div>
 
             {game.id === "syllabl" ? (
-              <SyllablEngineStatus />
+              <SyllablGame />
             ) : (
               <div className="room-stage">
                 <div className="stage-topline">
                   <span className="status-dot" />
-                  {game.stage === "first-up"
-                    ? "First playable build is next"
-                    : "A faithful port is queued"}
+                  A faithful port is queued
                 </div>
                 <div className="stage-center">
                   <span className="stage-number">

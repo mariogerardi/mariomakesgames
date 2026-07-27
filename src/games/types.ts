@@ -12,5 +12,5 @@ export type GameManifest = {
   eyebrow: string;
   description: string;
   mechanics: readonly string[];
-  stage: "first-up" | "queued";
+  stage: "playable" | "queued";
 };
