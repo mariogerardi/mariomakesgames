@@ -1,4 +1,4 @@
-# Syllabl mechanics contract
+# Syllabl legacy mechanics contract
 
 Canonical revision:
 `1783c3ab2aa6ae117ea6af82f77969528e5a4f82`
@@ -22,7 +22,7 @@ Stage indexes run from 0 through 5.
 | 3 | word contains the string but neither begins nor ends with it |
 | 4 | word begins and ends with the string |
 
-## Attempt order
+## Legacy attempt order
 
 1. Normalize to lowercase.
 2. Reject fewer than four letters.
@@ -37,7 +37,7 @@ Stage indexes run from 0 through 5.
 
 Rejected attempts do not change stage, guesses, or score.
 
-## Frequency score
+## Legacy frequency score
 
 | Frequency | Points |
 |---:|---:|
@@ -69,3 +69,14 @@ Storage key:
 ```text
 syllabl_daily_YYYY-MM-DD
 ```
+
+## H3 production deviation
+
+The hub intentionally retires frequency-based scoring. The production engine
+preserves normalization, minimum length, placement, remote validity, alternate
+pronunciations, six-stage progression, rejection immutability, and completion.
+An accepted word advances one stage; completing all six stages is the result.
+
+Legacy score behavior remains documented and executable as migration evidence.
+It is not part of the production Syllabl state or word-validation boundary. See
+`docs/decisions/0005-syllabl-completion-only.md`.

@@ -5,6 +5,7 @@ import { GameMark } from "../../../src/app-shell/game-mark";
 import { SiteFooter } from "../../../src/app-shell/site-footer";
 import { SiteHeader } from "../../../src/app-shell/site-header";
 import { getHubGame, hubGames } from "../../../src/games/registry";
+import { SyllablEngineStatus } from "../../../src/games/syllabl/engine-status";
 
 type GamePageProps = {
   params: Promise<{ gameId: string }>;
@@ -57,24 +58,28 @@ export default async function GamePage({ params }: GamePageProps) {
               </ul>
             </div>
 
-            <div className="room-stage">
-              <div className="stage-topline">
-                <span className="status-dot" />
-                {game.stage === "first-up"
-                  ? "First playable build is next"
-                  : "A faithful port is queued"}
+            {game.id === "syllabl" ? (
+              <SyllablEngineStatus />
+            ) : (
+              <div className="room-stage">
+                <div className="stage-topline">
+                  <span className="status-dot" />
+                  {game.stage === "first-up"
+                    ? "First playable build is next"
+                    : "A faithful port is queued"}
+                </div>
+                <div className="stage-center">
+                  <span className="stage-number">
+                    {String(game.priority).padStart(2, "0")}
+                  </span>
+                  <p>This room is being prepared.</p>
+                </div>
+                <div className="stage-footer">
+                  <span>Mechanics locked</span>
+                  <span>Internal route ready</span>
+                </div>
               </div>
-              <div className="stage-center">
-                <span className="stage-number">
-                  {String(game.priority).padStart(2, "0")}
-                </span>
-                <p>This room is being prepared.</p>
-              </div>
-              <div className="stage-footer">
-                <span>Mechanics locked</span>
-                <span>Internal route ready</span>
-              </div>
-            </div>
+            )}
           </div>
         </section>
 

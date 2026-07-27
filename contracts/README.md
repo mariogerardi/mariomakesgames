@@ -23,5 +23,7 @@ A contract is not a redesign. It records:
 - completion;
 - persistence-relevant state.
 
-The executable modules under `src/contracts/` are migration targets. Tests
-under `test/legacy/` compare them with the locked legacy revisions.
+The executable modules under `src/contracts/` preserve legacy behavior. Tests
+under `test/legacy/` compare them with the locked legacy revisions. Intentional
+production deviations are recorded separately as architecture decisions; the
+first is Syllabl's completion-only result model.

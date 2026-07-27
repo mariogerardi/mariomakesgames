@@ -2,10 +2,11 @@
 
 ## Current phase
 
-H2: shared hub scaffold.
+H3: completion-only Syllabl engine extraction.
 
-The application shell and internal game routes may evolve, but do not begin a
-playable Syllabl port until H3 is explicitly requested.
+The pure engine, canonical puzzle catalog, validation boundary, and session
+migration may evolve. Do not begin the playable Syllabl UI (H4) until it is
+explicitly requested.
 
 ## Source-of-truth rule
 

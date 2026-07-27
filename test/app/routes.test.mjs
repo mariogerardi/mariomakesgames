@@ -57,6 +57,15 @@ test("H2 does not request persistence or upload infrastructure", () => {
   assert.equal(typeof hosting.project_id, "string");
 });
 
+test("the Syllabl route exposes the extracted completion-only engine", () => {
+  const routeSource = read("app/games/[gameId]/page.tsx");
+  const statusSource = read("src/games/syllabl/engine-status.tsx");
+  assert.match(routeSource, /SyllablEngineStatus/);
+  assert.match(statusSource, /Completion engine ready/);
+  assert.match(statusSource, /No obscurity score/);
+  assert.doesNotMatch(statusSource, /Rarity score/);
+});
+
 test("the starter preview is gone and social metadata is project-specific", () => {
   const layoutSource = read("app/layout.tsx");
   assert.doesNotMatch(layoutSource, /codex-preview|Starter Project/);
