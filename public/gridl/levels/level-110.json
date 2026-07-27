@@ -1,0 +1,123 @@
+{
+  "meta": {
+    "id": "110",
+    "name": "Tutorial 10",
+    "par": 5,
+    "intro": "Use what you've learned. You've got this."
+  },
+  "board": {
+    "size": [
+      5,
+      5
+    ],
+    "goal": [
+      4,
+      4
+    ],
+    "seeds": [
+      {
+        "text": "S",
+        "r": 0,
+        "c": 3,
+        "dir": "H"
+      }
+    ],
+    "specials": [
+      {
+        "r": 3,
+        "c": 0,
+        "type": "blocked"
+      },
+      {
+        "r": 3,
+        "c": 1,
+        "type": "blocked"
+      },
+      {
+        "r": 3,
+        "c": 2,
+        "type": "blocked"
+      },
+      {
+        "r": 3,
+        "c": 3,
+        "type": "blocked"
+      },
+      {
+        "r": 3,
+        "c": 4,
+        "type": "blocked"
+      },
+      {
+        "r": 1,
+        "c": 2,
+        "type": "blocked"
+      },
+      {
+        "r": 1,
+        "c": 1,
+        "type": "blocked"
+      },
+      {
+        "r": 1,
+        "c": 3,
+        "type": "blocked"
+      },
+      {
+        "r": 4,
+        "c": 0,
+        "type": "portal",
+        "group": "B"
+      },
+      {
+        "r": 0,
+        "c": 2,
+        "type": "blocked"
+      },
+      {
+        "r": 1,
+        "c": 4,
+        "type": "portal",
+        "group": "A"
+      },
+      {
+        "r": 0,
+        "c": 1,
+        "type": "portal",
+        "group": "B"
+      },
+      {
+        "r": 4,
+        "c": 3,
+        "type": "portal",
+        "group": "A"
+      }
+    ]
+  },
+  "deck": [
+    "TI",
+    "ENT",
+    "FUL",
+    "PA",
+    "LL",
+    "FI",
+    "M",
+    "UTI",
+    "BEA",
+    "CON",
+    "ONS",
+    "GRA",
+    "TULA"
+  ],
+  "startingHand": [],
+  "allowedWords": [
+    "SPA",
+    "PATIENT",
+    "PALL",
+    "FULFILLMENT",
+    "BEAUTIFUL",
+    "BEACON",
+    "CONGRATULATIONS"
+  ],
+  "notes": ""
+}

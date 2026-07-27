@@ -46,7 +46,19 @@ H4 completes the playable classic Rarity migration:
 - a deterministic rotation over the locked classic archive when the legacy
   service has no authored puzzle for a date.
 
-Gridl hardening begins in H5.
+H5–H6 complete the Gridl migration:
+
+- the 31 authored boards from Tutorial, Basics, Building Blocks, Singles, and
+  Portals, with 179 explicit placeholders excluded;
+- fragment-per-cell placement with straight-line multi-placement turns;
+- whole-board word validation, crossings, seed connectivity, blockers, and
+  portal projections;
+- committed-fragment recall into a two-slot reserve;
+- turns, par, best scores, campaign completion, and device-local restoration;
+- a production fix for the legacy defect that erased a portal cell's special
+  state when moving or clearing a staged fragment.
+
+The Expl41n audit begins in H7.
 
 ## Checks
 

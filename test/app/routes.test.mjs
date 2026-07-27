@@ -81,6 +81,19 @@ test("the Rarity route exposes the complete playable migration", () => {
   assert.match(gameSource, /first valid word locks/i);
 });
 
+test("the Gridl route exposes the complete playable campaign migration", () => {
+  const routeSource = read("app/games/[gameId]/page.tsx");
+  const gameSource = read("src/games/gridl/gridl-game.tsx");
+  const rulesSource = read("src/games/gridl/engine/rules.mjs");
+  assert.match(routeSource, /GridlGame/);
+  assert.match(gameSource, /tryStagePlacement/);
+  assert.match(gameSource, /tryStageRecall/);
+  assert.match(gameSource, /getPortalOverlayText/);
+  assert.match(gameSource, /gridlChapters/);
+  assert.match(gameSource, /PROGRESS_KEY/);
+  assert.match(rulesSource, /special: from\.special \|\| null/);
+});
+
 test("the starter preview is gone and social metadata is project-specific", () => {
   const layoutSource = read("app/layout.tsx");
   assert.doesNotMatch(layoutSource, /codex-preview|Starter Project/);

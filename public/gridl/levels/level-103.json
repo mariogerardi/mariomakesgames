@@ -1,0 +1,43 @@
+{
+  "meta": {
+    "id": "103",
+    "name": "Tutorial 3",
+    "par": 2,
+    "intro": "Head to the ★ North Star."
+  },
+  "board": {
+    "size": [
+      5,
+      1
+    ],
+    "goal": [
+      0,
+      0
+    ],
+    "seeds": [
+      {
+        "text": "sh",
+        "r": 2,
+        "c": 0,
+        "dir": "H"
+      }
+    ],
+    "specials": []
+  },
+  "deck": [
+    "AD",
+    "OW",
+    "NO",
+    "PA",
+    "RE",
+    "FO"
+  ],
+  "startingHand": [],
+  "allowedWords": [
+    "shadow",
+    "foreshadow",
+    "show",
+    "fore"
+  ],
+  "notes": ""
+}

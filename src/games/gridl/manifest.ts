@@ -6,6 +6,6 @@ export const gridlManifest = {
   eyebrow: "A word game with a map",
   description:
     "Route fragments from seed to star, threading crossings, blockers, recalls, and portals.",
-  mechanics: ["Handmade levels", "Spatial words", "Chase par"],
-  stage: "queued",
+  mechanics: ["31 authored levels", "Spatial words", "Chase par"],
+  stage: "playable",
 } as const satisfies GameManifest;

@@ -1,0 +1,53 @@
+{
+  "meta": {
+    "id": "105",
+    "name": "Tutorial 5",
+    "par": 5,
+    "intro": "The center is blocked! Take a detour around it."
+  },
+  "board": {
+    "size": [
+      3,
+      3
+    ],
+    "goal": [
+      1,
+      2
+    ],
+    "seeds": [
+      {
+        "text": "TO",
+        "r": 1,
+        "c": 0,
+        "dir": "H"
+      }
+    ],
+    "specials": [
+      {
+        "r": 1,
+        "c": 1,
+        "type": "blocked"
+      }
+    ]
+  },
+  "deck": [
+    "UR",
+    "DE",
+    "nt",
+    "GE",
+    "LE",
+    "TE",
+    "NA"
+  ],
+  "startingHand": [],
+  "allowedWords": [
+    "to",
+    "tour",
+    "detour",
+    "urge",
+    "urgent",
+    "delete",
+    "tenant"
+  ],
+  "notes": ""
+}

@@ -7,6 +7,7 @@ import { SiteHeader } from "../../../src/app-shell/site-header";
 import { getHubGame, hubGames } from "../../../src/games/registry";
 import { RarityGame } from "../../../src/games/rarity/rarity-game";
 import { SyllablGame } from "../../../src/games/syllabl/syllabl-game";
+import { GridlGame } from "../../../src/games/gridl/gridl-game";
 
 type GamePageProps = {
   params: Promise<{ gameId: string }>;
@@ -63,6 +64,8 @@ export default async function GamePage({ params }: GamePageProps) {
               <SyllablGame />
             ) : game.id === "rarity" ? (
               <RarityGame />
+            ) : game.id === "gridl" ? (
+              <GridlGame />
             ) : (
               <div className="room-stage">
                 <div className="stage-topline">

@@ -1,0 +1,59 @@
+{
+  "meta": {
+    "id": "108",
+    "name": "Tutorial 8",
+    "par": 2,
+    "intro": "Use the portals to project your tiles in multiple locations."
+  },
+  "board": {
+    "size": [
+      1,
+      7
+    ],
+    "goal": [
+      0,
+      4
+    ],
+    "seeds": [
+      {
+        "text": "le",
+        "r": 0,
+        "c": 2,
+        "dir": "H"
+      }
+    ],
+    "specials": [
+      {
+        "r": 0,
+        "c": 3,
+        "type": "blocked"
+      },
+      {
+        "r": 0,
+        "c": 1,
+        "type": "portal",
+        "group": "A"
+      },
+      {
+        "r": 0,
+        "c": 5,
+        "type": "portal",
+        "group": "A"
+      }
+    ]
+  },
+  "deck": [
+    "oub",
+    "d",
+    "raz",
+    "utt",
+    "le",
+    "tr"
+  ],
+  "startingHand": [],
+  "allowedWords": [
+    "double",
+    "trouble"
+  ],
+  "notes": ""
+}

@@ -1,0 +1,45 @@
+{
+  "meta": {
+    "id": "101",
+    "name": "Tutorial 1",
+    "par": 1,
+    "intro": "Create a simple word to reach the ★ goal."
+  },
+  "board": {
+    "size": [
+      1,
+      3
+    ],
+    "goal": [
+      0,
+      2
+    ],
+    "seeds": [
+      {
+        "text": "C",
+        "r": 0,
+        "c": 0,
+        "dir": "H"
+      }
+    ],
+    "specials": []
+  },
+  "deck": [
+    "A",
+    "N",
+    "R",
+    "T"
+  ],
+  "startingHand": [
+    "A",
+    "N",
+    "R",
+    "T"
+  ],
+  "allowedWords": [
+    "cat",
+    "car",
+    "can"
+  ],
+  "notes": "Par-1: place two tiles in a single turn to complete either BEGUILED (UI+LED) or BEGINNER (INN+ER)."
+}

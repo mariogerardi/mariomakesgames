@@ -1,0 +1,37 @@
+{
+  "meta": {
+    "id": "102",
+    "name": "Tutorial 2",
+    "par": 2,
+    "intro": "Branch off an existing word to reach the ★ goal."
+  },
+  "board": {
+    "size": [
+      2,
+      2
+    ],
+    "goal": [
+      0,
+      0
+    ],
+    "seeds": [
+      {
+        "text": "AD",
+        "r": 1,
+        "c": 1,
+        "dir": "H"
+      }
+    ],
+    "specials": []
+  },
+  "deck": [
+    "re",
+    "fi"
+  ],
+  "startingHand": [],
+  "allowedWords": [
+    "fire",
+    "read"
+  ],
+  "notes": ""
+}

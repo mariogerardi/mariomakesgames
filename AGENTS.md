@@ -2,12 +2,14 @@
 
 ## Current phase
 
-H4: complete classic Rarity migration.
+H5–H6: complete Gridl hardening and migration.
 
-Syllabl and Rarity are playable at their internal routes. Rarity preserves its
-one-valid-submission lock, continuous score, tiers, device-local restoration,
-and daily result flow. Gemboard remains retired. Do not begin Gridl hardening
-(H5) until it is explicitly requested.
+Syllabl, Rarity, and Gridl are playable at their internal routes. Gridl ships
+the 31 authored legacy levels, preserves placement, recall, validation,
+connectivity, blockers, portals, turns, par, and campaign progress, and fixes
+the legacy staged-movement portal-state defect. The 179 explicit placeholder
+levels are not launch content. Gemboard remains retired. Do not begin the
+Expl41n audit (H7) until it is explicitly requested.
 
 ## Source-of-truth rule
 
