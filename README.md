@@ -58,7 +58,19 @@ H5–H6 complete the Gridl migration:
 - a production fix for the legacy defect that erased a portal cell's special
   state when moving or clearing a staged fragment.
 
-The Expl41n audit begins in H7.
+H7–H8 complete the Expl41n audit and playable migration:
+
+- Daily, Shuffle, Archive, and Custom modes;
+- 25-character clues and the five-attempt Daily lock;
+- AI guesses with confidence, search-space, reasoning, and preserved emotion
+  thresholds;
+- shortest-successful-clue scoring, result sharing, local restoration, and
+  the legacy leaderboard boundary;
+- all 380 authored puzzles from February 1, 2025 through February 15, 2026;
+- a deterministic locked-corpus Daily fallback after the authored dates end;
+- a hardening rule that AI service failures do not consume limited attempts.
+
+The Before&After audit begins in H9.
 
 ## Checks
 

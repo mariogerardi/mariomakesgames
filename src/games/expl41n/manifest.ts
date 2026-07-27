@@ -6,6 +6,6 @@ export const expl41nManifest = {
   eyebrow: "Clue carefully",
   description:
     "Give an AI just enough to guess the secret word—without saying too much.",
-  mechanics: ["Strategic clues", "AI guesser", "Language play"],
-  stage: "queued",
+  mechanics: ["Four game modes", "AI guesser", "Shortest clue wins"],
+  stage: "playable",
 } as const satisfies GameManifest;

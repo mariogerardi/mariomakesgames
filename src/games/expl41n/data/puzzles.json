@@ -1,0 +1,1904 @@
+{
+    "puzzles": [
+        {
+            "word": "Eagle",
+            "date": "February 01, 2025",
+            "funFact": "Did you know? Eagles can see up to eight times farther than humans."
+        },
+        {
+            "word": "Cactus",
+            "date": "February 02, 2025",
+            "funFact": "Did you know? Some species of cacti can live for over 200 years."
+        },
+        {
+            "word": "Space",
+            "date": "February 03, 2025",
+            "funFact": "Did you know? Outer space is completely silent because sound waves need a medium, like air, to travel."
+        },
+        {
+            "word": "Clock",
+            "date": "February 04, 2025",
+            "funFact": "Did you know? The oldest known mechanical clock dates back to the 13th century."
+        },
+        {
+            "word": "Cramp",
+            "date": "February 05, 2025",
+            "funFact": "Did you know? Muscle cramps often occur during intense physical activity and are believed to be caused by dehydration or muscle fatigue."
+        },
+        {
+            "word": "Money",
+            "date": "February 06, 2025",
+            "funFact": "Did you know? The earliest known form of money was cattle and grain, used in ancient Mesopotamia over 3,000 years ago."
+        },
+        {
+            "word": "Pluck",
+            "date": "February 07, 2025",
+            "funFact": "Did you know? String instruments like violins and guitars can be played by plucking the strings to create different tones."
+        },
+        {
+            "word": "Tunnel",
+            "date": "February 08, 2025",
+            "funFact": "Did you know? The longest railway tunnel in the world, the Gotthard Base Tunnel, stretches over 35 miles under the Swiss Alps."
+        },
+        {
+            "word": "Carrot",
+            "date": "February 09, 2025",
+            "funFact": "Did you know? Carrots were originally purple or white before the orange variety became popular in the 17th century."
+        },
+        {
+            "word": "Scramble",
+            "date": "February 10, 2025",
+            "funFact": "Did you know? The term 'scramble' can be traced back to the military, where it referred to a quick, disorganized retreat, often under pressure."
+        },
+        {
+            "word": "Shift",
+            "date": "February 11, 2025",
+            "funFact": "Did you know? The Earth's tectonic plates are constantly shifting, moving at a rate of about an inch per year."
+        },
+        {
+            "word": "Dozen",
+            "date": "February 12, 2025",
+            "funFact": "Did you know? A dozen is a group of twelve items, and the term comes from the Latin word 'duodecim,' meaning 'twelve.'"
+        },
+        {
+            "word": "Answer",
+            "date": "February 13, 2025",
+            "funFact": "Did you know? The word 'answer' comes from Old English and originally meant 'a solemn response or rebuttal' in a debate or challenge."
+        },
+        {
+            "word": "Love",
+            "date": "February 14, 2025",
+            "funFact": "Did you know? The word 'love' has over 100 different meanings in English, ranging from romantic affection to deep admiration or even a fondness for chocolate."
+        },
+        {
+            "word": "Telescope",
+            "date": "February 15, 2025",
+            "funFact": "Did you know? The Hubble Space Telescope has provided some of the clearest images of deep space ever captured."
+        },
+        {
+            "word": "Structure",
+            "funFact": "Did you know? The structure of a building refers to its framework, which supports the entire design, from foundations to the roof.",
+            "date": "February 16, 2025"
+        },
+        {
+            "word": "Trial",
+            "funFact": "Did you know? The first recorded jury trial took place in ancient Greece around 500 BCE, with 501 jurors deciding the case.",
+            "date": "February 17, 2025"
+        },
+        {
+            "word": "Theory",
+            "funFact": "Did you know? A scientific theory is not just a guess but a well-substantiated explanation of natural phenomena based on evidence.",
+            "date": "February 18, 2025"
+        },
+        {
+            "word": "Soap",
+            "funFact": "Did you know? Soap has been used for thousands of years, dating back to Ancient Babylon.",
+            "date": "February 19, 2025"
+        },
+        {
+            "word": "Coin",
+            "funFact": "Did you know? The oldest known coin was minted around 600 BC in Lydia, now part of Turkey.",
+            "date": "February 20, 2025"
+        },
+        {
+            "word": "Tax",
+            "funFact": "Did you know? The first recorded taxes date back to ancient Egypt, where they were collected to fund the construction of pyramids.",
+            "date": "February 21, 2025"
+        },
+        {
+            "word": "Decoy",
+            "funFact": "Did you know? The use of decoys dates back to ancient Egypt, where they were used to lure birds into traps for food.",
+            "date": "February 22, 2025"
+        },
+        {
+            "word": "Helicopter",
+            "funFact": "Did you know? The word 'helicopter' comes from the Greek words 'helix,' meaning spiral, and 'pteron,' meaning wing, referring to its spinning blades.",
+            "date": "February 23, 2025"
+        },
+        {
+            "word": "Sleepwalk",
+            "funFact": "Did you know? Sleepwalking occurs during the deepest stage of sleep, and it’s more common in children. However, it can also be triggered by stress or sleep deprivation in adults.",
+            "date": "February 24, 2025"
+        },
+        {
+            "word": "Cave",
+            "funFact": "Did you know? Mammoth Cave in Kentucky is the longest cave system in the world.",
+            "date": "February 25, 2025"
+        },
+        {
+            "word": "Layer",
+            "funFact": "Did you know? The Earth has four main layers: the crust, mantle, outer core, and inner core.",
+            "date": "February 26, 2025"
+        },
+        {
+            "word": "Keyboard",
+            "funFact": "Did you know? The QWERTY keyboard layout was designed in 1873 to prevent typewriter jams by spacing out commonly used letters.",
+            "date": "February 27, 2025"
+        },
+        {
+            "word": "Fight",
+            "funFact": "Did you know? The longest boxing match in history lasted 110 rounds and took over 7 hours to complete in 1893.",
+            "date": "February 28, 2025"
+        },
+        {
+            "word": "Crush",
+            "funFact": "Did you know? The human bite force is strong enough to crush a walnut shell.",
+            "date": "March 01, 2025"
+        },
+        {
+            "word": "Miracle",
+            "funFact": "Did you know? The term 'miracle' comes from the Latin 'miraculum,' meaning 'something to be wondered at.'",
+            "date": "March 02, 2025"
+        },
+        {
+            "word": "Friend",
+            "funFact": "Did you know? Studies show that strong friendships can increase lifespan and improve overall health.",
+            "date": "March 03, 2025"
+        },
+        {
+            "word": "Link",
+            "funFact": "Did you know? The concept of hyperlinking in digital text was first introduced by Ted Nelson in the 1960s.",
+            "date": "March 04, 2025"
+        },
+        {
+            "word": "Armor",
+            "funFact": "Did you know? Armor was first used in warfare during the Bronze Age and evolved over centuries to protect soldiers on battlefields.",
+            "date": "March 05, 2025"
+        },
+        {
+            "word": "Car",
+            "funFact": "Did you know? The first modern automobile was invented by Karl Benz in 1886.",
+            "date": "March 06, 2025"
+        },
+        {
+            "word": "Business",
+            "funFact": "Did you know? The first recorded use of the word 'business' dates back to the 14th century, referring to personal concerns and affairs.",
+            "date": "March 07, 2025"
+        },
+        {
+            "word": "Smell",
+            "funFact": "Did you know? Humans can distinguish over 1 trillion different smells, with our sense of smell being linked to memory and emotion more than any other sense.",
+            "date": "March 08, 2025"
+        },
+        {
+            "word": "Maroon",
+            "funFact": "Did you know? The color maroon is derived from the French word 'marron,' meaning chestnut, and was first used in the 18th century.",
+            "date": "March 09, 2025"
+        },
+        {
+            "word": "Passport",
+            "funFact": "Did you know? The oldest known passport was issued in 1414 by King Henry V of England to help travelers prove their identity abroad.",
+            "date": "March 10, 2025"
+        },
+        {
+            "word": "Perch",
+            "funFact": "Did you know? Birds have a special tendon locking mechanism that allows them to perch on branches without falling.",
+            "date": "March 11, 2025"
+        },
+        {
+            "word": "Water",
+            "funFact": "Did you know? About 71% of Earth's surface is covered in water, but only 3% of it is freshwater.",
+            "date": "March 12, 2025"
+        },
+        {
+            "word": "Toaster",
+            "funFact": "Did you know? The first electric toaster was invented in 1909, but it could only toast one side of the bread at a time.",
+            "date": "March 13, 2025"
+        },
+        {
+            "word": "Grudge",
+            "funFact": "Did you know? Holding a grudge can be detrimental to your health; studies have shown it can increase stress and negatively affect your immune system.",
+            "date": "March 14, 2025"
+        },
+        {
+            "word": "Shadow",
+            "funFact": "Did you know? Shadows are longest during sunrise and sunset due to the angle of the sun.",
+            "date": "March 15, 2025"
+        },
+        {
+            "word": "Reason",
+            "funFact": "Did you know? The ability to reason is what distinguishes humans from other animals, allowing us to solve problems and make decisions.",
+            "date": "March 16, 2025"
+        },
+        {
+            "word": "Puzzle",
+            "funFact": "Did you know? The first jigsaw puzzle was created in 1767 by John Spilsbury, a London mapmaker, who used a map to create the first 'cut-out' puzzle.",
+            "date": "March 17, 2025"
+        },
+        {
+            "word": "Charm",
+            "funFact": "Did you know? The concept of lucky charms dates back thousands of years, with ancient cultures carrying talismans for protection.",
+            "date": "March 18, 2025"
+        },
+        {
+            "word": "Trivia",
+            "funFact": "Did you know? The word 'trivia' comes from the Latin 'trivium,' which referred to the three foundational arts of grammar, rhetoric, and logic taught in ancient schools.",
+            "date": "March 19, 2025"
+        },
+        {
+            "word": "Impossible",
+            "funFact": "Did you know? The word 'impossible' comes from Latin 'impossibilis,' meaning 'not able to be done,' but many believe nothing is truly impossible.",
+            "date": "March 20, 2025"
+        },
+        {
+            "word": "Bolt",
+            "funFact": "Did you know? A bolt of lightning can heat the air to temperatures hotter than the surface of the sun in a fraction of a second.",
+            "date": "March 21, 2025"
+        },
+        {
+            "word": "Koala",
+            "funFact": "Did you know? Koalas sleep up to 18 hours a day and are herbivores, feeding primarily on eucalyptus leaves.",
+            "date": "March 22, 2025"
+        },
+        {
+            "word": "Doll",
+            "funFact": "Did you know? The Barbie doll was introduced in 1959 by Ruth Handler.",
+            "date": "March 23, 2025"
+        },
+        {
+            "word": "Choice",
+            "funFact": "Did you know? Studies suggest that having too many choices can lead to decision fatigue, making it harder to pick an option.",
+            "date": "March 24, 2025"
+        },
+        {
+            "word": "Memory",
+            "funFact": "Did you know? Studies suggest that strong emotions can enhance memory retention, making certain moments more vivid.",
+            "date": "March 25, 2025"
+        },
+        {
+            "word": "Glitch",
+            "funFact": "Did you know? The term 'glitch' originated from early radio broadcasts, describing sudden electrical interference.",
+            "date": "March 26, 2025"
+        },
+        {
+            "word": "Tight",
+            "funFact": "Did you know? The phrase 'tight-lipped' refers to a person who is secretive or reluctant to share information, often out of caution or privacy.",
+            "date": "March 27, 2025"
+        },
+        {
+            "word": "Compass",
+            "funFact": "Did you know? The magnetic compass was first invented in China over 2,000 years ago.",
+            "date": "March 28, 2025"
+        },
+        {
+            "word": "Dragon",
+            "funFact": "Did you know? The Komodo dragon, the world's largest lizard, can grow over 10 feet long and has venomous saliva that helps it take down prey.",
+            "date": "March 29, 2025"
+        },        
+        {
+            "word": "Paper",
+            "funFact": "Did you know? The first known paper was made from mulberry bark in ancient China around 105 AD.",
+            "date": "March 30, 2025"
+        },
+        {
+            "word": "Taxi",
+            "funFact": "Did you know? The first gas-powered taxi service started in New York City in 1907, with fares initially costing 50 cents per mile.",
+            "date": "March 31, 2025"
+        },
+        {
+            "word": "March",
+            "date": "April 01, 2025",
+            "funFact": "Did you know? The month of March is named after Mars, the Roman god of war, because it was the time of year when military campaigns would resume after winter."
+        },
+        {
+            "word": "Indigo",
+            "funFact": "Did you know? Indigo dye comes from the plant Indigofera and was historically one of the most valuable colors in the world.",
+            "date": "April 02, 2025"
+        },
+        {
+            "word": "Market",
+            "funFact": "Did you know? The Grand Bazaar in Istanbul is one of the world's oldest and largest covered markets, dating back to 1455.",
+            "date": "April 03, 2025"
+        },
+        {
+            "word": "Appetizer",
+            "funFact": "Did you know? Appetizers are traditionally served before the main course to stimulate the appetite and set the tone for a meal, often in small portions.",
+            "date": "April 04, 2025"
+        },
+        {
+            "word": "Angle",
+            "funFact": "Did you know? The word 'angle' comes from the Latin 'angulus,' meaning 'corner'.",
+            "date": "April 05, 2025"
+        },
+        {
+            "word": "Tree",
+            "funFact": "Did you know? Trees can communicate with each other through underground fungal networks.",
+            "date": "April 06, 2025"
+        },
+        {
+            "word": "Gravity",
+            "funFact": "Did you know? Gravity is weaker on the Moon, making objects weigh only about 1/6 of their Earth weight.",
+            "date": "April 07, 2025"
+        },
+        {
+            "word": "Jealousy",
+            "funFact": "Did you know? Jealousy is one of the most complex human emotions, often rooted in feelings of insecurity or fear of losing something valuable, like a relationship.",
+            "date": "April 08, 2025"
+        },
+        {
+            "word": "Kangaroo",
+            "funFact": "Did you know? A baby kangaroo, called a joey, stays in its mother’s pouch for about six months before venturing out.",
+            "date": "April 09, 2025"
+        },
+        {
+            "word": "Sway",
+            "funFact": "Did you know? Swaying is a natural balancing mechanism in both humans and structures — tall buildings are designed to sway slightly in strong winds to prevent damage.",
+            "date": "April 10, 2025"
+        },
+        {
+            "word": "Bird",
+            "funFact": "Did you know? Some birds can sleep while flying.",
+            "date": "April 11, 2025"
+        },
+        {
+            "word": "Knock",
+            "funFact": "Did you know? Knocking on wood as a superstition to avoid bad luck dates back to ancient pagan traditions.",
+            "date": "April 12, 2025"
+        },
+        {
+            "word": "Grave",
+            "funFact": "Did you know? The word 'grave' comes from the Old French 'grave,' meaning 'serious or solemn,' and refers to both burial sites and serious situations.",
+            "date": "April 13, 2025"
+        },
+        {
+            "word": "Prank",
+            "funFact": "Did you know? Pranking has been a popular tradition for centuries, from playful tricks to elaborate practical jokes on April Fools' Day.",
+            "date": "April 14, 2025"
+        },
+        {
+            "word": "Scary",
+            "funFact": "Did you know? The fear of scary things, known as 'phobias,' can range from common ones like arachnophobia (fear of spiders) to rare ones like nomophobia (fear of being without your phone).",
+            "date": "April 15, 2025"
+        },
+        {
+            "word": "Epiphany",
+            "funFact": "Did you know? The word 'epiphany' originates from the Greek 'epiphaneia,' meaning 'manifestation' or 'appearance.'",
+            "date": "April 16, 2025"
+        },
+        {
+            "word": "Otter",
+            "funFact": "Did you know? Otters hold hands while sleeping to keep from drifting apart in the water.",
+            "date": "April 17, 2025"
+        },
+        {
+            "word": "Sparkle",
+            "funFact": "Did you know? The world’s largest glitter ball, weighing 4,000 pounds, was created in 2006 in Australia to celebrate the New Year.",
+            "date": "April 18, 2025"
+        },
+        {
+            "word": "Chaos",
+            "funFact": "Did you know? In Greek mythology, 'Chaos' was the void from which the first gods and the universe emerged.",
+            "date": "April 19, 2025"
+        },
+        {
+            "word": "Souvenir",
+            "funFact": "Did you know? The word 'souvenir' comes from the French word meaning 'to remember' and has been used since the 18th century.",
+            "date": "April 20, 2025"
+        },
+        {
+            "word": "Lighthouse",
+            "funFact": "Did you know? The oldest existing lighthouse, the Tower of Hercules, is nearly 2,000 years old and still in use.",
+            "date": "April 21, 2025"
+        },
+        {
+            "word": "Fence",
+            "funFact": "Did you know? The Great Wall of China is the longest fence in the world.",
+            "date": "April 22, 2025"
+        },
+        {
+            "word": "Fraction",
+            "funFact": "Did you know? Ancient Egyptians used fractions over 4,000 years ago, often writing them as sums of different unit fractions.",
+            "date": "April 23, 2025"
+        },
+        {
+            "word": "Crop",
+            "funFact": "Did you know? Crop rotation is a technique used in agriculture to improve soil health and reduce pest buildup.",
+            "date": "April 24, 2025"
+        },
+        {
+            "word": "Fluff",
+            "funFact": "Did you know? A 'fluffernutter' is a classic sandwich made of marshmallow fluff and peanut butter, loved by kids and foodies alike since the 1960s.",
+            "date": "April 25, 2025"
+        },
+        {
+            "word": "Message",
+            "funFact": "Did you know? The concept of sending messages dates back to ancient civilizations, where messengers were used to communicate across vast distances.",
+            "date": "April 26, 2025"
+        },
+        {
+            "word": "After",
+            "funFact": "Did you know? The word 'after' has been used in English since Old English, meaning 'following in time or place.'",
+            "date": "April 27, 2025"
+        },
+        {
+            "word": "Dog",
+            "funFact": "Did you know? Dogs have been domesticated for over 15,000 years.",
+            "date": "April 28, 2025"
+        },
+        {
+            "word": "Lemon",
+            "funFact": "Did you know? Lemons float in water, while limes sink because they are denser.",
+            "date": "April 29, 2025"
+        },
+        {
+            "word": "Bottle",
+            "funFact": "Did you know? The oldest known bottle was found in the 19th century and dates back to the Roman Empire, made from glass with a cork stopper.",
+            "date": "April 30, 2025"
+        },
+        {
+            "word": "Frog",
+            "funFact": "Did you know? Frogs can absorb water through their skin, which is why you might see them sitting in wet environments without needing to drink.",
+            "date": "May 01, 2025"
+        },
+        {
+            "word": "Sound",
+            "funFact": "Did you know? Sound travels faster in water than in air because water molecules are more densely packed.",
+            "date": "May 02, 2025"
+        },
+        {
+            "word": "Ginger",
+            "funFact": "Did you know? Ginger has been used for thousands of years in cooking and medicine for its anti-inflammatory properties and digestive benefits.",
+            "date": "May 03, 2025"
+        },
+        {
+            "word": "Friend",
+            "funFact": "Did you know? The word 'friend' comes from Old English 'freond,' meaning 'a person attached to another by feelings of affection or personal regard.'",
+            "date": "May 04, 2025"
+        },
+        {
+            "word": "Cake",
+            "funFact": "Did you know? The tradition of birthday cakes started in Ancient Greece.",
+            "date": "May 05, 2025"
+        },
+        {
+            "word": "River",
+            "funFact": "Did you know? Rivers can flow uphill due to gravity anomalies and geological shifts.",
+            "date": "May 06, 2025"
+        },
+        {
+            "word": "Book",
+            "funFact": "Did you know? The first book ever printed was the Gutenberg Bible in the 1450s.",
+            "date": "May 07, 2025"
+        },
+        {
+            "word": "Latch",
+            "funFact": "Did you know? Latches have been used for thousands of years, with early versions dating back to ancient Egypt.",
+            "date": "May 08, 2025"
+        },
+        {
+            "word": "Bubble",
+            "funFact": "Did you know? Soap bubbles always form a perfect sphere because a sphere has the least surface area for a given volume, making it the most efficient shape.",
+            "date": "May 09, 2025"
+        },
+        {
+            "word": "Forget",
+            "funFact": "Did you know? Forgetting can actually be beneficial, as it helps to prioritize important memories and reduce mental clutter.",
+            "date": "May 10, 2025"
+        },
+        {
+            "word": "Rock",
+            "funFact": "Did you know? The oldest rock ever found on Earth is about 4 billion years old.",
+            "date": "May 11, 2025"
+        },
+        {
+            "word": "Scarf",
+            "funFact": "Did you know? Scarves have been worn for over 2,000 years, originally used in ancient Rome as a symbol of status before becoming a fashionable accessory.",
+            "date": "May 12, 2025"
+        },
+        {
+            "word": "Shipwreck",
+            "funFact": "Did you know? The Titanic sank in 1912 and its wreckage was discovered in 1985, more than 12,000 feet below the ocean surface.",
+            "date": "May 13, 2025"
+        },
+        {
+            "word": "Number",
+            "funFact": "Did you know? The concept of zero was first developed by ancient Indian mathematicians around the 5th century AD.",
+            "date": "May 14, 2025"
+        },
+        {
+            "word": "Contrast",
+            "funFact": "Did you know? In photography and art, contrast refers to the difference between light and dark, helping to create emphasis and drama.",
+            "date": "May 15, 2025"
+        },
+        {
+            "word": "Now",
+            "funFact": "Did you know? The concept of 'now' is constantly changing, as it refers to the present moment, which keeps shifting.",
+            "date": "May 16, 2025"
+        },
+        {
+            "word": "Museum",
+            "funFact": "Did you know? The Louvre Museum in Paris is the most visited museum in the world.",
+            "date": "May 17, 2025"
+        },
+        {
+            "word": "Attention",
+            "funFact": "Did you know? Paying attention is a complex mental process that involves focusing cognitive resources on specific information while ignoring distractions.",
+            "date": "May 18, 2025"
+        },
+        {
+            "word": "Mirage",
+            "funFact": "Did you know? A mirage is an optical illusion caused by heat bending light.",
+            "date": "May 19, 2025"
+        },
+        {
+            "word": "Star",
+            "funFact": "Did you know? There are more stars in the universe than grains of sand on Earth.",
+            "date": "May 20, 2025"
+        },
+        {
+            "word": "Twin",
+            "funFact": "Did you know? Twins can be either identical, sharing the same genetic makeup, or fraternal, resulting from two separate fertilized eggs.",
+            "date": "May 21, 2025"
+        },
+        {
+            "word": "Suburb",
+            "funFact": "Did you know? The rise of suburbs in the mid-20th century was closely tied to the automobile boom and the development of affordable housing outside city centers.",
+            "date": "May 22, 2025"
+        },
+        {
+            "word": "Train",
+            "funFact": "Did you know? The first steam-powered train was built in 1804 by Richard Trevithick.",
+            "date": "May 23, 2025"
+        },
+        {
+            "word": "Ball",
+            "funFact": "Did you know? The first soccer balls were made from animal bladders wrapped in leather.",
+            "date": "May 24, 2025"
+        },
+        {
+            "word": "Flash",
+            "funFact": "Did you know? Lightning can produce a flash of light that is five times hotter than the surface of the sun.",
+            "date": "May 25, 2025"
+        },
+        {
+            "word": "Kind",
+            "funFact": "Did you know? The word 'kind' comes from the Old English 'gecynde,' meaning 'nature' or 'character,' and is often associated with generosity and compassion.",
+            "date": "May 26, 2025"
+        },
+        {
+            "word": "Laptop",
+            "funFact": "Did you know? The first laptop computer, the Osborne 1, was released in 1981 and weighed about 24 pounds.",
+            "date": "May 27, 2025"
+        },
+        {
+            "word": "Mother",
+            "funFact": "Did you know? The word 'mother' is one of the most universal words across languages, often starting with an 'm' sound because it's one of the first sounds babies can make.",
+            "date": "May 28, 2025"
+        },        
+        {
+            "word": "Sacrifice",
+            "funFact": "Did you know? Sacrifice has been practiced by many ancient cultures, often as a way to honor gods or ensure good harvests.",
+            "date": "May 29, 2025"
+        },
+        {
+            "word": "Zebra",
+            "funFact": "Did you know? Zebras' black-and-white stripes are unique to each individual, much like human fingerprints.",
+            "date": "May 30, 2025"
+        },
+        {
+            "word": "Guitar",
+            "funFact": "Did you know? The world's largest playable guitar is over 43 feet long.",
+            "date": "May 31, 2025"
+        },
+        {
+            "word": "Olive",
+            "funFact": "Did you know? Olives are harvested from olive trees and have been a staple in Mediterranean cuisine for thousands of years.",
+            "date": "June 01, 2025"
+        },
+        {
+            "word": "Touch",
+            "funFact": "Did you know? The skin contains millions of sensory receptors that allow us to feel temperature, pressure, and pain.",
+            "date": "June 02, 2025"
+        },
+        {
+            "word": "Flower",
+            "funFact": "Did you know? Flowers are not just beautiful—they also play a vital role in the ecosystem by helping plants reproduce through pollination.",
+            "date": "June 03, 2025"
+        },
+        {
+            "word": "Intelligence",
+            "funFact": "Did you know? The word 'intelligence' comes from the Latin 'intelligere,' meaning 'to understand' or 'to perceive clearly.'",
+            "date": "June 04, 2025"
+        },
+        {
+            "word": "Ballet",
+            "funFact": "Did you know? Ballet originated during the Italian Renaissance in the 15th century.",
+            "date": "June 05, 2025"
+        },
+        {
+            "word": "Fox",
+            "funFact": "Did you know? Foxes have been associated with cleverness and cunning in folklore and myths across various cultures for centuries.",
+            "date": "June 06, 2025"
+        },
+        {
+            "word": "Legend",
+            "funFact": "Did you know? The Loch Ness Monster legend dates back to the 6th century.",
+            "date": "June 07, 2025"
+        },
+        {
+            "word": "Rainbow",
+            "funFact": "Did you know? Rainbows are actually circular, but we usually see only a half-arc.",
+            "date": "June 08, 2025"
+        },
+        {
+            "word": "Danger",
+            "funFact": "Did you know? The word 'danger' comes from the Old French word 'dangier,' meaning 'power' or 'control,' referencing the power to inflict harm.",
+            "date": "June 09, 2025"
+        },
+        {
+            "word": "Park",
+            "funFact": "Did you know? Central Park in New York City covers 843 acres and receives over 40 million visitors annually.",
+            "date": "June 10, 2025"
+        },
+        {
+            "word": "Time",
+            "funFact": "Did you know? Time zones were first standardized in 1884 to help coordinate train schedules across different regions.",
+            "date": "June 11, 2025"
+        },
+        {
+            "word": "Energy",
+            "funFact": "Did you know? Energy cannot be created or destroyed, only transformed, according to the First Law of Thermodynamics.",
+            "date": "June 12, 2025"
+        },
+        {
+            "word": "Hiccup",
+            "funFact": "Did you know? Hiccups are caused by involuntary contractions of the diaphragm and can sometimes be triggered by eating too quickly or consuming carbonated drinks.",
+            "date": "June 13, 2025"
+        },
+        {
+            "word": "Silence",
+            "funFact": "Did you know? Complete silence is almost impossible to experience naturally, as even our bodies generate internal sounds.",
+            "date": "June 14, 2025"
+        },
+        {
+            "word": "Coat",
+            "funFact": "Did you know? Coats have been worn by humans for thousands of years, with the first ones likely made from animal pelts for warmth.",
+            "date": "June 15, 2025"
+        },
+        {
+            "word": "Divide",
+            "funFact": "Did you know? The concept of dividing land into smaller pieces is thousands of years old, with early civilizations using physical markers.",
+            "date": "June 16, 2025"
+        },
+        {
+            "word": "Peach",
+            "funFact": "Did you know? The peach color is a warm, soft shade of orange, resembling the fruit of the same name.",
+            "date": "June 17, 2025"
+        },
+        {
+            "word": "Viral",
+            "funFact": "Did you know? In the digital world, 'going viral' refers to content that spreads rapidly across social media platforms.",
+            "date": "June 18, 2025"
+        },
+        {
+            "word": "Ghost",
+            "funFact": "Did you know? The belief in ghosts dates back to ancient civilizations, with people interpreting spiritual apparitions as the souls of the deceased.",
+            "date": "June 19, 2025"
+        },
+        {
+            "word": "Salad",
+            "funFact": "Did you know? Salads have been eaten since ancient times, with early versions made of raw vegetables, herbs, and greens, often dressed in oil and vinegar.",
+            "date": "June 20, 2025"
+        },
+        {
+            "word": "Bland",
+            "funFact": "Did you know? Bland food is often associated with mild flavors and is commonly recommended for people with digestive issues or during illness.",
+            "date": "June 21, 2025"
+        },
+        {
+            "word": "Milk",
+            "funFact": "Did you know? Humans are the only species that drink milk from other animals after infancy.",
+            "date": "June 22, 2025"
+        },
+        {
+            "word": "Chisel",
+            "funFact": "Did you know? Ancient Egyptians used copper chisels to carve intricate hieroglyphs into stone monuments.",
+            "date": "June 23, 2025"
+        },
+        {
+            "word": "Infinity",
+            "funFact": "Did you know? The infinity symbol (∞) was introduced in 1655 by English mathematician John Wallis.",
+            "date": "June 24, 2025"
+        },
+        {
+            "word": "Circle",
+            "funFact": "Did you know? The mathematical constant pi (π) represents the ratio of a circle's circumference to its diameter and is an irrational number.",
+            "date": "June 25, 2025"
+        },
+        {
+            "word": "Strike",
+            "funFact": "Did you know? The term 'strike' has been used in labor movements since the 18th century, where workers would stop working to demand better conditions.",
+            "date": "June 26, 2025"
+        },
+        {
+            "word": "Snow",
+            "funFact": "Did you know? Each snowflake has a unique structure, like fingerprints.",
+            "date": "June 27, 2025"
+        },
+        {
+            "word": "Jumprope",
+            "funFact": "Did you know? Jump rope was originally used in ancient Egypt as a form of exercise and was later popularized as a childhood game.",
+            "date": "June 28, 2025"
+        },
+        {
+            "word": "Fold",
+            "funFact": "Did you know? Origami, the art of paper folding, originated in Japan and dates back over 1,000 years.",
+            "date": "June 29, 2025"
+        },
+        {
+            "word": "Lavender",
+            "funFact": "Did you know? Lavender is named after the fragrant purple flowers of the lavender plant, which are used in perfumes and essential oils.",
+            "date": "June 30, 2025"
+        },
+        {
+            "word": "Fortune",
+            "funFact": "Did you know? The fortune cookie was invented in the U.S., not China.",
+            "date": "July 01, 2025"
+        },
+        {
+            "word": "Third",
+            "funFact": "Did you know? In a race or competition, finishing third is often called taking 'bronze,' a term dating back to ancient Greek athletic games.",
+            "date": "July 02, 2025"
+        },
+        {
+            "word": "Hand",
+            "funFact": "Did you know? Each human hand has 27 bones.",
+            "date": "July 03, 2025"
+        },
+        {
+            "word": "Sculpture",
+            "funFact": "Did you know? Michelangelo’s famous sculpture 'David' was carved from a single block of marble.",
+            "date": "July 04, 2025"
+        },
+        {
+            "word": "Luck",
+            "funFact": "Did you know? The idea of luck has existed for centuries, with cultures worldwide creating their own symbols and rituals to attract good fortune.",
+            "date": "July 05, 2025"
+        },
+        {
+            "word": "Bell",
+            "funFact": "Did you know? The Liberty Bell weighs about 2,080 pounds.",
+            "date": "July 06, 2025"
+        },
+        {
+            "word": "Life",
+            "funFact": "Did you know? Life expectancy has more than doubled over the past 200 years, thanks to advancements in medicine and technology.",
+            "date": "July 07, 2025"
+        },
+        {
+            "word": "Tofu",
+            "funFact": "Did you know? Tofu, also known as bean curd, originated in China over 2,000 years ago and is made by curdling soy milk, similar to how cheese is made from milk.",
+            "date": "July 08, 2025"
+        },
+        {
+            "word": "Fathom",
+            "funFact": "Did you know? Fathom originally referred to the span of a person's outstretched arms, used to measure the depth of water.",
+            "date": "July 09, 2025"
+        },
+        {
+            "word": "Philosophy",
+            "funFact": "Did you know? The word 'philosophy' comes from the Greek 'philosophia,' meaning 'love of wisdom,' and was coined by Pythagoras in the 6th century BCE.",
+            "date": "July 10, 2025"
+        },
+        {
+            "word": "Relief",
+            "funFact": "Did you know? Relief can refer to both physical comfort from pain and the artistic technique where shapes and textures are raised from a flat surface.",
+            "date": "July 11, 2025"
+        },
+        {
+            "word": "Tide",
+            "funFact": "Did you know? Ocean tides are caused by the gravitational pull of the moon and the sun on Earth's waters.",
+            "date": "July 12, 2025"
+        },
+        {
+            "word": "Trace",
+            "funFact": "Did you know? Forensic scientists can identify trace amounts of substances, sometimes as small as a few molecules.",
+            "date": "July 13, 2025"
+        },
+        {
+            "word": "Harvest",
+            "funFact": "Did you know? Ancient Egyptians based their harvests on the annual flooding of the Nile River.",
+            "date": "July 14, 2025"
+        },
+        {
+            "word": "Blame",
+            "funFact": "Did you know? The act of blaming others has been studied in psychology, with research showing that it can affect relationships and one's sense of responsibility.",
+            "date": "July 15, 2025"
+        },
+        {
+            "word": "Glass",
+            "funFact": "Did you know? Glass is actually a slow-moving liquid, though it behaves like a solid at room temperature.",
+            "date": "July 16, 2025"
+        },
+        {
+            "word": "Boat",
+            "funFact": "Did you know? The first known boats were built over 8,000 years ago.",
+            "date": "July 17, 2025"
+        },
+        {
+            "word": "Desk",
+            "funFact": "Did you know? The word 'desk' comes from the Latin 'desca,' meaning 'table for writing' and dates back to the 14th century.",
+            "date": "July 18, 2025"
+        },
+        {
+            "word": "Bamboo",
+            "funFact": "Did you know? Bamboo is the fastest-growing plant in the world, with some species growing up to 35 inches per day.",
+            "date": "July 19, 2025"
+        },
+        {
+            "word": "Lamp",
+            "funFact": "Did you know? The earliest oil lamps, used over 10,000 years ago, were made from hollowed-out stones filled with animal fat.",
+            "date": "July 20, 2025"
+        },
+        {
+            "word": "Ice",
+            "funFact": "Did you know? Ice is less dense than liquid water, which is why ice cubes float in a glass of water.",
+            "date": "July 21, 2025"
+        },
+        {
+            "word": "Rollercoaster",
+            "funFact": "Did you know? The first modern rollercoaster was built in 1884 in Coney Island, and it was made of wood.",
+            "date": "July 22, 2025"
+        },
+        {
+            "word": "Cat",
+            "funFact": "Did you know? Cats can make over 100 different sounds, compared to dogs’ 10.",
+            "date": "July 23, 2025"
+        },
+        {
+            "word": "Bat",
+            "funFact": "Did you know? Bats are the only mammals that can fly, and some species use echolocation to navigate in the dark.",
+            "date": "July 24, 2025"
+        },
+        {
+            "word": "Kite",
+            "funFact": "Did you know? Kites were invented in China over 2,000 years ago and were originally used for military signaling.",
+            "date": "July 25, 2025"
+        },
+        {
+            "word": "Road",
+            "funFact": "Did you know? The Romans built over 50,000 miles of roads across their empire.",
+            "date": "July 26, 2025"
+        },
+        {
+            "word": "Grain",
+            "funFact": "Did you know? One bushel of wheat can produce enough flour to bake about 70 loaves of bread.",
+            "date": "July 27, 2025"
+        },
+        {
+            "word": "Egg",
+            "funFact": "Did you know? The color of an egg’s shell is determined by the breed of the hen, not its diet or environment.",
+            "date": "July 28, 2025"
+        },
+        {
+            "word": "Fault",
+            "funFact": "Did you know? In geology, a fault is a crack in Earth's crust caused by stress, where two pieces of land shift relative to each other.",
+            "date": "July 29, 2025"
+        },
+        {
+            "word": "Change",
+            "funFact": "Did you know? The human body replaces nearly all of its cells every 7 to 10 years.",
+            "date": "July 30, 2025"
+        },
+        {
+            "word": "Shape",
+            "funFact": "Did you know? The strongest geometric shape is the triangle because it evenly distributes weight and pressure.",
+            "date": "July 31, 2025"
+        },
+        {
+            "word": "Wait",
+            "funFact": "Did you know? The concept of 'waiting' has been a subject of philosophical debate, with some cultures seeing it as an opportunity for reflection or patience.",
+            "date": "August 01, 2025"
+        },
+        {
+            "word": "Competition",
+            "funFact": "Did you know? The first known competition dates back to 776 BC when the ancient Greeks held the first Olympic Games.",
+            "date": "August 02, 2025"
+        },
+        {
+            "word": "Family",
+            "funFact": "Did you know? The concept of family has evolved over time, but historically, it has been a key unit for social and economic stability.",
+            "date": "August 03, 2025"
+        },
+        {
+            "word": "Candle",
+            "funFact": "Did you know? Candles were first used by the Ancient Egyptians around 3,000 BC.",
+            "date": "August 04, 2025"
+        },
+        {
+            "word": "Smoke",
+            "funFact": "Did you know? Smoke signals were historically used by indigenous people across the world as a form of long-distance communication.",
+            "date": "August 05, 2025"
+        },
+        {
+            "word": "Simulation",
+            "funFact": "Did you know? Simulation models are used in various fields, from video games to healthcare, to recreate real-world scenarios for study or entertainment.",
+            "date": "August 06, 2025"
+        },
+        {
+            "word": "Soda",
+            "funFact": "Did you know? The first carbonated soft drink, soda water, was invented in 1767 by Joseph Priestley, who discovered a method of infusing water with carbon dioxide.",
+            "date": "August 07, 2025"
+        },
+        {
+            "word": "Struggle",
+            "funFact": "Did you know? Struggling is a natural part of growth, whether it’s physically, mentally, or emotionally, and can lead to resilience.",
+            "date": "August 08, 2025"
+        },
+        {
+            "word": "Depth",
+            "funFact": "Did you know? The deepest part of the ocean, the Mariana Trench, reaches nearly 36,000 feet below the surface.",
+            "date": "August 09, 2025"
+        },
+        {
+            "word": "Waffle",
+            "funFact": "Did you know? Waffles have been enjoyed since the Middle Ages, originally cooked over an open fire in the shape of wooden molds, which is how their iconic pattern developed.",
+            "date": "August 10, 2025"
+        },
+        {
+            "word": "Print",
+            "funFact": "Did you know? The first laser printer was invented in 1969 by Xerox and weighed over 1,000 pounds.",
+            "date": "August 11, 2025"
+        },
+        {
+            "word": "Chance",
+            "funFact": "Did you know? The probability of flipping a fair coin and landing heads 10 times in a row is about 0.1%.",
+            "date": "August 12, 2025"
+        },
+        {
+            "word": "Tread",
+            "funFact": "Did you know? The tread of a tire refers to the pattern on the outer surface that provides traction and helps prevent slipping.",
+            "date": "August 13, 2025"
+        },
+        {
+            "word": "Horizon",
+            "funFact": "Did you know? Due to Earth's curvature, the human eye can see about 3 miles to the horizon at sea level.",
+            "date": "August 14, 2025"
+        },
+        {
+            "word": "Brick",
+            "funFact": "Did you know? The oldest known bricks, made of mud and straw, date back to around 7,000 BC in Mesopotamia.",
+            "date": "August 15, 2025"
+        },
+        {
+            "word": "Meadow",
+            "funFact": "Did you know? Meadows provide habitats for many endangered species.",
+            "date": "August 16, 2025"
+        },
+        {
+            "word": "Less",
+            "funFact": "Did you know? The term 'less' is used to describe a smaller amount of something, and it’s often paired with uncountable nouns.",
+            "date": "August 17, 2025"
+        },
+        {
+            "word": "Melon",
+            "funFact": "Did you know? Cantaloupes, also known as muskmelons, are high in vitamin A and C, making them great for skin health.",
+            "date": "August 18, 2025"
+        },
+        {
+            "word": "Lick",
+            "funFact": "Did you know? A dog’s lick can be a sign of affection, but also a way to explore their surroundings and gather information.",
+            "date": "August 19, 2025"
+        },
+        {
+            "word": "Run",
+            "funFact": "Did you know? The fastest human speed ever recorded is 27.8 mph, achieved by Usain Bolt during a 100-meter race in 2009.",
+            "date": "August 20, 2025"
+        },
+        {
+            "word": "Across",
+            "funFact": "Did you know? The word 'across' has been used in English since the 14th century, originally meaning 'from one side to the other.'",
+            "date": "August 21, 2025"
+        },
+        {
+            "word": "Jelly",
+            "funFact": "Did you know? Jellyfish have been around for over 500 million years, predating dinosaurs.",
+            "date": "August 22, 2025"
+        },
+        {
+            "word": "Echo",
+            "funFact": "Did you know? The word 'echo' comes from Greek mythology, named after a nymph who was cursed to only repeat the words of others.",
+            "date": "August 23, 2025"
+        },
+        {
+            "word": "Earthquake",
+            "funFact": "Did you know? The most powerful recorded earthquake had a magnitude of 9.5 and struck Chile in 1960.",
+            "date": "August 24, 2025"
+        },
+        {
+            "word": "Shock",
+            "funFact": "Did you know? Electric eels can produce shocks of up to 600 volts, enough to stun prey or defend themselves.",
+            "date": "August 25, 2025"
+        },
+        {
+            "word": "Dull",
+            "funFact": "Did you know? The word 'dull' has been used since the 14th century to describe something lacking brightness, sharpness, or interest.",
+            "date": "August 26, 2025"
+        },
+        {
+            "word": "Swallow",
+            "funFact": "Did you know? Swallow birds are known for their long migrations, traveling thousands of miles each year between their breeding grounds and wintering habitats.",
+            "date": "August 27, 2025"
+        },
+        {
+            "word": "Hope",
+            "funFact": "Did you know? Studies show that having hope can improve mental health and even boost the immune system.",
+            "date": "August 28, 2025"
+        },
+        {
+            "word": "Recipe",
+            "funFact": "Did you know? The earliest known recipe book was written on clay tablets over 4,000 years ago in Mesopotamia.",
+            "date": "August 29, 2025"
+        },
+        {
+            "word": "Music",
+            "funFact": "Did you know? Listening to music can activate every major part of the brain, influencing emotions and memory.",
+            "date": "August 30, 2025"
+        },
+        {
+            "word": "Flag",
+            "funFact": "Did you know? Flags have been used for communication and signaling for thousands of years, with the first recorded use dating back to ancient China.",
+            "date": "August 31, 2025"
+        },
+        {
+            "word": "Patience",
+            "funFact": "Did you know? Studies have shown that people who practice patience are less likely to experience stress and are more likely to have better overall health.",
+            "date": "September 01, 2025"
+        },
+        {
+            "word": "Podcast",
+            "funFact": "Did you know? The term 'podcast' comes from the combination of 'iPod' and 'broadcast,' though podcasts are now available on various platforms.",
+            "date": "September 02, 2025"
+        },
+        {
+            "word": "Sun",
+            "funFact": "Did you know? The Sun is about 4.6 billion years old.",
+            "date": "September 03, 2025"
+        },
+        {
+            "word": "Grass",
+            "funFact": "Did you know? Grass is one of the oldest and most widespread plants on Earth, and it accounts for nearly 30% of the Earth's plant biomass.",
+            "date": "September 04, 2025"
+        },
+        {
+            "word": "Block",
+            "funFact": "Did you know? The largest LEGO set ever released is the LEGO Art World Map, consisting of over 11,000 pieces.",
+            "date": "September 05, 2025"
+        },
+        {
+            "word": "Warm",
+            "funFact": "Did you know? The body maintains an average temperature of 98.6°F (37°C), and changes in warmth can affect mood and energy levels.",
+            "date": "September 06, 2025"
+        },
+        {
+            "word": "Curve",
+            "funFact": "Did you know? The concept of a 'curve' in mathematics describes a smooth, continuous line or path that bends in a particular direction.",
+            "date": "September 07, 2025"
+        },
+        {
+            "word": "Algorithm",
+            "funFact": "Did you know? The word 'algorithm' comes from the name of Persian mathematician Al-Khwarizmi, whose work on solving equations influenced modern computation.",
+            "date": "September 08, 2025"
+        },
+        {
+            "word": "Horse",
+            "funFact": "Did you know? Horses can sleep both lying down and standing up.",
+            "date": "September 09, 2025"
+        },
+        {
+            "word": "Skyscraper",
+            "funFact": "Did you know? The first skyscraper, the Home Insurance Building in Chicago, was completed in 1885 and stood just 10 stories tall.",
+            "date": "September 10, 2025"
+        },
+        {
+            "word": "Corner",
+            "funFact": "Did you know? Corners are often used in architecture to strengthen structures, as the angle distributes weight evenly across the building.",
+            "date": "September 11, 2025"
+        },
+        {
+            "word": "Bridge",
+            "funFact": "Did you know? The longest suspension bridge in the world is the Akashi Kaikyō Bridge in Japan.",
+            "date": "September 12, 2025"
+        },
+        {
+            "word": "Brim",
+            "funFact": "Did you know? The brim of a hat was originally designed to shield the wearer’s eyes from the sun.",
+            "date": "September 13, 2025"
+        },
+        {
+            "word": "Whack",
+            "funFact": "Did you know? The term 'whack' was popularized in the 1960s, and it’s often used to describe hitting something with force or sudden impact.",
+            "date": "September 14, 2025"
+        },
+        {
+            "word": "Celebration",
+            "funFact": "Did you know? The tradition of celebrating events dates back to ancient civilizations, where festivals marked important occasions like harvests or religious events.",
+            "date": "September 15, 2025"
+        },
+        {
+            "word": "Toad",
+            "funFact": "Did you know? Unlike frogs, toads have dry, bumpy skin and prefer to live on land rather than in water.",
+            "date": "September 16, 2025"
+        },
+        {
+            "word": "Cruise",
+            "funFact": "Did you know? The largest cruise ship in the world, Icon of the Seas, can carry over 7,000 passengers and has its own water park.",
+            "date": "September 17, 2025"
+        },
+        {
+            "word": "Kettle",
+            "funFact": "Did you know? The first electric kettle was invented in 1891 by the Carpenter Electric Company.",
+            "date": "September 18, 2025"
+        },
+        {
+            "word": "Force",
+            "funFact": "Did you know? The force of gravity on Earth is about 9.8 meters per second squared, keeping everything grounded.",
+            "date": "September 19, 2025"
+        },
+        {
+            "word": "Oxygen",
+            "funFact": "Did you know? Oxygen makes up about 21% of Earth's atmosphere.",
+            "date": "September 20, 2025"
+        },
+        {
+            "word": "Rest",
+            "funFact": "Did you know? Short naps of 10-20 minutes can boost alertness and productivity without causing grogginess.",
+            "date": "September 21, 2025"
+        },
+        {
+            "word": "Pulse",
+            "funFact": "Did you know? The human heart beats about 100,000 times per day, sending pulses of blood through the body.",
+            "date": "September 22, 2025"
+        },
+        {
+            "word": "Light",
+            "funFact": "Did you know? Light from the sun takes about 8 minutes and 20 seconds to reach Earth.",
+            "date": "September 23, 2025"
+        },
+        {
+            "word": "Freedom",
+            "funFact": "Did you know? Freedom of speech and expression is a fundamental human right that has been central to many political revolutions.",
+            "date": "September 24, 2025"
+        },
+        {
+            "word": "Coral",
+            "funFact": "Did you know? Coral reefs are made up of tiny animals called polyps, which build limestone structures over thousands of years.",
+            "date": "September 25, 2025"
+        },
+        {
+            "word": "Drift",
+            "funFact": "Did you know? Continental drift is responsible for moving entire landmasses over millions of years, reshaping Earth’s surface.",
+            "date": "September 26, 2025"
+        },
+        {
+            "word": "Radio",
+            "funFact": "Did you know? The first radio transmission was sent by Guglielmo Marconi in 1895.",
+            "date": "September 27, 2025"
+        },
+        {
+            "word": "Cute",
+            "funFact": "Did you know? Looking at cute animal pictures has been shown to reduce stress and improve focus, which is why kitten videos are often recommended as a productivity hack.",
+            "date": "September 28, 2025"
+        },
+        {
+            "word": "Lesson",
+            "funFact": "Did you know? The word 'lesson' comes from the Latin 'lectio,' meaning 'reading' or 'something read aloud'.",
+            "date": "September 29, 2025"
+        },
+        {
+            "word": "Fresh",
+            "funFact": "Did you know? Fresh food retains more nutrients than processed versions, making it a healthier choice for your body.",
+            "date": "September 30, 2025"
+        },
+        {
+            "word": "Nut",
+            "funFact": "Did you know? Almonds are not true nuts; they are actually seeds of the almond tree's fruit.",
+            "date": "October 01, 2025"
+        },
+        {
+            "word": "Catastrophe",
+            "funFact": "Did you know? The word 'catastrophe' comes from the Greek word 'katastrophē,' meaning 'overturn' or 'sudden disaster,' often marking a dramatic change.",
+            "date": "October 02, 2025"
+        },
+        {
+            "word": "Film",
+            "funFact": "Did you know? The first moving picture was created in 1888 by Louis Le Prince, but it wasn’t until the 20th century that film became a mainstream medium.",
+            "date": "October 03, 2025"
+        },
+        {
+            "word": "Kaleidoscope",
+            "funFact": "Did you know? The kaleidoscope was invented in 1816 by Sir David Brewster and uses mirrors and colored pieces to create symmetrical patterns.",
+            "date": "October 04, 2025"
+        },
+        {
+            "word": "Moon",
+            "funFact": "Did you know? The Moon is slowly drifting away from Earth at a rate of about 3.8 cm per year.",
+            "date": "October 05, 2025"
+        },
+        {
+            "word": "Tip",
+            "funFact": "Did you know? The term 'tip' for a small gratuity comes from the phrase 'To Insure Promptness,' often given to service workers to encourage quick service.",
+            "date": "October 06, 2025"
+        },
+        {
+            "word": "Coffee",
+            "funFact": "Did you know? Coffee is the second most traded commodity in the world, after oil, and it has been consumed for over 1,000 years.",
+            "date": "October 07, 2025"
+        },
+        {
+            "word": "Mirror",
+            "funFact": "Did you know? The first modern mirrors were made in the 19th century by coating glass with a thin layer of silver.",
+            "date": "October 08, 2025"
+        },
+        {
+            "word": "Symphony",
+            "funFact": "Did you know? Beethoven composed some of his greatest symphonies while completely deaf.",
+            "date": "October 09, 2025"
+        },
+        {
+            "word": "Thief",
+            "funFact": "Did you know? The word 'thief' comes from Old English and has been used for centuries to describe someone who steals or unlawfully takes property.",
+            "date": "October 10, 2025"
+        },
+        {
+            "word": "Treasure",
+            "funFact": "Did you know? Pirates often buried treasure, but most found treasure comes from shipwrecks.",
+            "date": "October 11, 2025"
+        },
+        {
+            "word": "Frost",
+            "funFact": "Did you know? Frost occurs when water vapor in the air freezes onto surfaces, forming delicate ice crystals in cold temperatures.",
+            "date": "October 12, 2025"
+        },
+        {
+            "word": "Cheese",
+            "funFact": "Did you know? There are over 1,800 types of cheese in the world, with some aging for years to develop their flavor.",
+            "date": "October 13, 2025"
+        },
+        {
+            "word": "Pen",
+            "funFact": "Did you know? The ballpoint pen was invented in 1938 by László Bíró.",
+            "date": "October 14, 2025"
+        },
+        {
+            "word": "World",
+            "funFact": "Did you know? The word 'world' comes from the Old English 'weoruld,' meaning 'age of man,' and has been used to describe Earth and human civilization for centuries.",
+            "date": "October 15, 2025"
+        },
+        {
+            "word": "Ripple",
+            "funFact": "Did you know? A single drop of water can create ripples that spread outward indefinitely, unless disrupted by other forces.",
+            "date": "October 16, 2025"
+        },
+        {
+            "word": "Blast",
+            "funFact": "Did you know? The word 'blast' comes from Old English and originally meant a strong gust of wind.",
+            "date": "October 17, 2025"
+        },
+        {
+            "word": "Cucumber",
+            "funFact": "Did you know? Cucumbers are made up of 95% water, making them a refreshing addition to any salad.",
+            "date": "October 18, 2025"
+        },
+        {
+            "word": "Dream",
+            "funFact": "Did you know? The average person has about four to six dreams per night, though most are forgotten upon waking.",
+            "date": "October 19, 2025"
+        },
+        {
+            "word": "Pattern",
+            "funFact": "Did you know? The golden ratio appears in many natural patterns, including seashells and galaxies.",
+            "date": "October 20, 2025"
+        },
+        {
+            "word": "Year",
+            "funFact": "Did you know? A year on Earth is 365.25 days, which is why we add an extra day every four years for a leap year.",
+            "date": "October 21, 2025"
+        },
+        {
+            "word": "Pizza",
+            "funFact": "Did you know? The first pizzeria in the United States, Lombardi's, opened in New York City in 1905.",
+            "date": "October 22, 2025"
+        },
+        {
+            "word": "Above",
+            "funFact": "Did you know? In medieval architecture, the phrase 'above the door' often referred to a symbolic representation of power or protection, with many castles featuring elaborate carvings above their entrances.",
+            "date": "October 23, 2025"
+        },
+        {
+            "word": "Emerald",
+            "funFact": "Did you know? Cleopatra was known for her love of emeralds, which were mined in ancient Egypt.",
+            "date": "October 24, 2025"
+        },
+        {
+            "word": "Luggage",
+            "funFact": "Did you know? The first rolling suitcase was invented in 1970 by Bernard Sadow, revolutionizing travel convenience.",
+            "date": "October 25, 2025"
+        },
+        {
+            "word": "Honey",
+            "funFact": "Did you know? Honey never spoils; archaeologists have found pots of honey in ancient Egyptian tombs that are still edible.",
+            "date": "October 26, 2025"
+        },
+        {
+            "word": "Democracy",
+            "funFact": "Did you know? The concept of democracy originated in ancient Greece, with the term meaning 'rule by the people.'",
+            "date": "October 27, 2025"
+        },
+        {
+            "word": "Voyage",
+            "funFact": "Did you know? Magellan's expedition was the first to circumnavigate the Earth in 1522.",
+            "date": "October 28, 2025"
+        },
+        {
+            "word": "Jungle",
+            "funFact": "Did you know? The Amazon Rainforest produces about 20% of the world's oxygen.",
+            "date": "October 29, 2025"
+        },
+        {
+            "word": "Ocean",
+            "funFact": "Did you know? The Pacific Ocean is the largest and deepest ocean on Earth, covering more than 63 million square miles.",
+            "date": "October 30, 2025"
+        },
+        {
+            "word": "Trampoline",
+            "funFact": "Did you know? The trampoline was invented in the 1930s and was originally used by circus performers to practice acrobatics.",
+            "date": "October 31, 2025"
+        },
+        {
+            "word": "Whale",
+            "funFact": "Did you know? The blue whale is the largest animal on the planet, growing up to 100 feet long and weighing over 200 tons.",
+            "date": "November 01, 2025"
+        },
+        {
+            "word": "Sunflower",
+            "funFact": "Did you know? Sunflowers can track the movement of the sun, a behavior known as heliotropism.",
+            "date": "November 02, 2025"
+        },
+        {
+            "word": "Stapler",
+            "funFact": "Did you know? The first stapler was created for King Louis XV of France in the 18th century, with each staple engraved with the royal insignia.",
+            "date": "November 03, 2025"
+        },
+        {
+            "word": "Cloud",
+            "funFact": "Did you know? Cloud computing allows users to access and store data on remote servers, making it easier to share and collaborate globally.",
+            "date": "November 04, 2025"
+        },
+        {
+            "word": "Quarantine",
+            "funFact": "Did you know? The term 'quarantine' comes from the Italian 'quaranta giorni,' meaning '40 days,' the duration ships were isolated during the Black Plague.",
+            "date": "November 05, 2025"
+        },
+        {
+            "word": "Sapphire",
+            "funFact": "Did you know? The largest sapphire ever found weighed over 600 pounds.",
+            "date": "November 06, 2025"
+        },
+        {
+            "word": "Path",
+            "funFact": "Did you know? Ancient roads, like the Silk Road, connected civilizations and facilitated trade for thousands of years.",
+            "date": "November 07, 2025"
+        },
+        {
+            "word": "History",
+            "funFact": "Did you know? The oldest recorded history dates back over 5,000 years.",
+            "date": "November 08, 2025"
+        },
+        {
+            "word": "Beginning",
+            "funFact": "Did you know? The concept of 'beginning' is deeply embedded in various cultures, often marked by celebrations such as New Year’s or birth rituals.",
+            "date": "November 09, 2025"
+        },
+        {
+            "word": "Tomato",
+            "funFact": "Did you know? Although often treated as a vegetable in cooking, tomatoes are botanically a fruit and a member of the nightshade family.",
+            "date": "November 10, 2025"
+        },
+        {
+            "word": "Pose",
+            "funFact": "Did you know? Posing has been a key element in art and photography, allowing subjects to convey emotions or tell stories through body language.",
+            "date": "November 11, 2025"
+        },
+        {
+            "word": "Beach",
+            "funFact": "Did you know? Some beaches in Hawaii have green or black sand due to volcanic activity.",
+            "date": "November 12, 2025"
+        },
+        {
+            "word": "Float",
+            "funFact": "Did you know? Floatation tanks, also known as sensory deprivation tanks, are used for relaxation by reducing external stimuli, including gravity.",
+            "date": "November 13, 2025"
+        },
+        {
+            "word": "Key",
+            "funFact": "Did you know? The oldest known key and lock system dates back over 4,000 years to ancient Mesopotamia.",
+            "date": "November 14, 2025"
+        },
+        {
+            "word": "Tower",
+            "funFact": "Did you know? The Eiffel Tower can grow taller by up to 6 inches in the summer due to heat expansion.",
+            "date": "November 15, 2025"
+        },
+        {
+            "word": "Library",
+            "funFact": "Did you know? The Library of Alexandria was one of the most famous libraries of the ancient world.",
+            "date": "November 16, 2025"
+        },
+        {
+            "word": "Hat",
+            "funFact": "Did you know? The top hat became popular in the 18th century and was a symbol of wealth.",
+            "date": "November 17, 2025"
+        },
+        {
+            "word": "Edge",
+            "funFact": "Did you know? The observable universe has an edge, but beyond it, space may continue infinitely.",
+            "date": "November 18, 2025"
+        },
+        {
+            "word": "Balance",
+            "funFact": "Did you know? The human body maintains balance using the inner ear, vision, and proprioception (body awareness).",
+            "date": "November 19, 2025"
+        },
+        {
+            "word": "Leaf",
+            "funFact": "Did you know? Leaves change color in the fall because of reduced sunlight and temperature.",
+            "date": "November 20, 2025"
+        },
+        {
+            "word": "Gold",
+            "funFact": "Did you know? Gold has been used as currency for over 5,000 years due to its rarity, beauty, and resistance to corrosion.",
+            "date": "November 21, 2025"
+        },
+        {
+            "word": "Question",
+            "funFact": "Did you know? The question mark (?) is believed to have originated in the Middle Ages as a stylized letter 'q' for 'questio' (Latin for 'question').",
+            "date": "November 22, 2025"
+        },
+        {
+            "word": "Fish",
+            "funFact": "Did you know? Some fish can change their sex during their lifetime.",
+            "date": "November 23, 2025"
+        },
+        {
+            "word": "Biology",
+            "funFact": "Did you know? In 1977, a mysterious signal from space, known as the 'Wow!' signal, was detected by a radio telescope, sparking curiosity in biology and the search for extraterrestrial life.",
+            "date": "November 24, 2025"
+        },
+        {
+            "word": "Link",
+            "funFact": "Did you know? The term 'hyperlink' was coined in the 1960s by computer scientist Ted Nelson, leading to the creation of the web.",
+            "date": "November 25, 2025"
+        },
+        {
+            "word": "Castle",
+            "funFact": "Did you know? The oldest castle in the world, Château de Doué-la-Fontaine, dates back to the 9th century.",
+            "date": "November 26, 2025"
+        },
+        {
+            "word": "Squeeze",
+            "funFact": "Did you know? Squeezing a stress ball can help reduce tension and increase blood flow to the hands, offering both physical and mental relief.",
+            "date": "November 27, 2025"
+        },
+        {
+            "word": "Look",
+            "funFact": "Did you know? The phrase 'look before you leap' encourages caution and careful consideration before taking action.",
+            "date": "November 28, 2025"
+        },
+        {
+            "word": "Drama",
+            "funFact": "Did you know? The word 'drama' comes from the Greek word 'dran,' meaning 'to do' or 'to act,' and has been used for storytelling in both theater and film.",
+            "date": "November 29, 2025"
+        },
+        {
+            "word": "Small",
+            "funFact": "Did you know? The smallest bone in the human body is the stapes, located in the ear, measuring just 0.1 inches.",
+            "date": "November 30, 2025"
+        },
+        {
+            "word": "Earth",
+            "funFact": "Did you know? Earth is the only planet known to have liquid water on its surface, which is essential for life as we know it.",
+            "date": "December 01, 2025"
+        },
+        {
+            "word": "Gift",
+            "funFact": "Did you know? The tradition of giving gifts dates back to ancient times and was often tied to seasonal celebrations, religious events, or acts of goodwill.",
+            "date": "December 02, 2025"
+        },
+        {
+            "word": "Airplane",
+            "funFact": "Did you know? The Wright brothers' first flight in 1903 lasted just 12 seconds and covered only 120 feet.",
+            "date": "December 03, 2025"
+        },
+        {
+            "word": "Blend",
+            "funFact": "Did you know? Chameleons change color not to match their surroundings, but to regulate temperature and communicate.",
+            "date": "December 04, 2025"
+        },
+        {
+            "word": "Motion",
+            "funFact": "Did you know? Newton’s First Law states that an object in motion stays in motion unless acted upon by an external force.",
+            "date": "December 05, 2025"
+        },
+        {
+            "word": "Marble",
+            "funFact": "Did you know? The Taj Mahal is made entirely of white marble.",
+            "date": "December 06, 2025"
+        },
+        {
+            "word": "Keyboard",
+            "funFact": "Did you know? The QWERTY keyboard layout was created in 1873 by Christopher Latham Sholes to prevent mechanical typewriter jams.",
+            "date": "December 07, 2025"
+        },
+        {
+            "word": "Couch",
+            "funFact": "Did you know? The word 'couch' comes from the French 'coucher,' meaning 'to lie down' or 'to recline'.",
+            "date": "December 08, 2025"
+        },
+        {
+            "word": "Circuit",
+            "funFact": "Did you know? An electric circuit needs a complete path to allow current to flow.",
+            "date": "December 09, 2025"
+        },
+        {
+            "word": "Science",
+            "funFact": "Did you know? The word 'science' comes from the Latin 'scientia,' meaning 'knowledge' or 'understanding.'",
+            "date": "December 10, 2025"
+        },
+        {
+            "word": "Wind",
+            "funFact": "Did you know? The fastest wind speed ever recorded was 253 mph during a tornado in 1999.",
+            "date": "December 11, 2025"
+        },
+        {
+            "word": "Autumn",
+            "funFact": "Did you know? Autumn is a season marked by the changing color of leaves as chlorophyll breaks down, revealing orange, red, and yellow pigments.",
+            "date": "December 12, 2025"
+        },
+        {
+            "word": "Travel",
+            "funFact": "Did you know? The longest non-stop commercial flight in the world lasts over 19 hours, flying from New York to Singapore.",
+            "date": "December 13, 2025"
+        },
+        {
+            "word": "Flinch",
+            "funFact": "Did you know? Flinching is an involuntary reflex triggered by sudden movement or loud sounds to protect the body from harm.",
+            "date": "December 14, 2025"
+        },
+        {
+            "word": "Fraction",
+            "funFact": "Did you know? The word 'fraction' comes from the Latin 'fractio,' meaning 'a breaking,' referring to a part of a whole.",
+            "date": "December 15, 2025"
+        },
+        {
+            "word": "Goose",
+            "funFact": "Did you know? Geese are known for their strong family bonds and can remember human faces.",
+            "date": "December 16, 2025"
+        },
+        {
+            "word": "Copper",
+            "funFact": "Did you know? Copper is the only metal that naturally has a reddish color.",
+            "date": "December 17, 2025"
+        },
+        {
+            "word": "Burn",
+            "funFact": "Did you know? The oldest recorded use of fire for cooking dates back over 1 million years, helping early humans improve their diet and survive.",
+            "date": "December 18, 2025"
+        },
+        {
+            "word": "Subtle",
+            "funFact": "Did you know? The word 'subtle' comes from the Latin 'subtilis,' meaning 'fine or delicate,' often used to describe things that are barely noticeable but impactful.",
+            "date": "December 19, 2025"
+        },
+        {
+            "word": "Void",
+            "funFact": "Did you know? In astronomy, cosmic voids are vast empty spaces between galaxies, making up most of the universe’s volume.",
+            "date": "December 20, 2025"
+        },
+        {
+            "word": "Meteor",
+            "funFact": "Did you know? A meteor that reaches the Earth's surface is called a meteorite.",
+            "date": "December 21, 2025"
+        },
+        {
+            "word": "Avocado",
+            "funFact": "Did you know? Avocados are technically fruits, not vegetables, and are known for their creamy texture and high healthy fat content.",
+            "date": "December 22, 2025"
+        },
+        {
+            "word": "Quiz",
+            "funFact": "Did you know? The longest quiz show was 'The 24-Hour Quiz Show' in 1999, where contestants went head-to-head in an epic 24-hour challenge.",
+            "date": "December 23, 2025"
+        },
+        {
+            "word": "Apple",
+            "funFact": "Did you know? Apples float in water because they are made up of 25% air.",
+            "date": "December 24, 2025"
+        },
+        {
+            "word": "Tiger",
+            "funFact": "Did you know? Tigers have striped skin, not just striped fur.",
+            "date": "December 25, 2025"
+        },
+        {
+            "word": "Abstract",
+            "funFact": "Did you know? Abstract art focuses on shapes, colors, and forms rather than realistic depictions, and is often open to interpretation.",
+            "date": "December 26, 2025"
+        },
+        {
+            "word": "Quarter",
+            "funFact": "Did you know? A quarter is both a coin worth 25 cents in the U.S. and a term used to divide a year or a group of four.",
+            "date": "December 27, 2025"
+        },
+        {
+            "word": "Puddle",
+            "funFact": "Did you know? Raindrops that land on a puddle create tiny, temporary craters before merging with the water.",
+            "date": "December 28, 2025"
+        },
+        {
+            "word": "Faint",
+            "funFact": "Did you know? Fainting, or syncope, occurs when there is a sudden drop in blood flow to the brain, often triggered by stress or standing up too quickly.",
+            "date": "December 29, 2025"
+        },
+        {
+            "word": "Swift",
+            "funFact": "Did you know? The common swift, a bird known for its incredible flying abilities, spends most of its life in the air, even eating and sleeping while flying.",
+            "date": "December 30, 2025"
+        },
+        {
+            "word": "Boom",
+            "funFact": "Did you know? The loud boom of a sonic boom occurs when an object, like a jet, breaks the sound barrier.",
+            "date": "December 31, 2025"
+        },
+        {
+            "word": "Core",
+            "funFact": "Did you know? The Earth's core is as hot as the surface of the Sun, reaching temperatures over 9,000°F (5,000°C).",
+            "date": "January 01, 2026"
+        },
+        {
+            "word": "Winter",
+            "funFact": "Did you know? The coldest temperature ever recorded on Earth was -128.6°F in Antarctica in 1983.",
+            "date": "January 02, 2026"
+        },
+        {
+            "word": "Summit",
+            "funFact": "Did you know? The highest recorded summit in the world, Mount Everest, reaches 29,032 feet above sea level, and climbing it remains a formidable challenge.",
+            "date": "January 03, 2026"
+        },
+        {
+            "word": "Pencil",
+            "funFact": "Did you know? The average pencil can draw a line about 35 miles long.",
+            "date": "January 04, 2026"
+        },
+        {
+            "word": "Bread",
+            "funFact": "Did you know? Bread has been a staple food for over 10,000 years, dating back to early human civilizations.",
+            "date": "January 05, 2026"
+        },
+        {
+            "word": "Surface",
+            "funFact": "Did you know? In physics, the surface of a material can affect how it interacts with other objects, such as how water droplets form on hydrophobic surfaces.",
+            "date": "January 06, 2026"
+        },
+        {
+            "word": "Piano",
+            "funFact": "Did you know? The piano was invented around the year 1700 by Bartolomeo Cristofori.",
+            "date": "January 07, 2026"
+        },
+        {
+            "word": "Truth",
+            "funFact": "Did you know? The word 'truth' comes from the Old English 'trēowth,' meaning 'faith' or 'fidelity'.",
+            "date": "January 08, 2026"
+        },
+        {
+            "word": "Chair",
+            "funFact": "Did you know? Office chairs with wheels were first invented by Charles Darwin.",
+            "date": "January 09, 2026"
+        },
+        {
+            "word": "Swim",
+            "funFact": "Did you know? Humans have the natural ability to swim from birth, though the ability to swim efficiently is learned.",
+            "date": "January 10, 2026"
+        },
+        {
+            "word": "Zodiac",
+            "funFact": "Did you know? The zodiac signs are based on the position of the Sun relative to certain constellations during a person's birth, influencing astrology.",
+            "date": "January 11, 2026"
+        },
+        {
+            "word": "Yesterday",
+            "funFact": "Did you know? The phrase 'yesterday' refers to the day before today, but it can also symbolize past events and memories.",
+            "date": "January 12, 2026"
+        },
+        {
+            "word": "Relationship",
+            "funFact": "Did you know? Humans form relationships not only with other people but with animals and even inanimate objects, which are known to evoke emotional responses.",
+            "date": "January 13, 2026"
+        },
+        {
+            "word": "Emoji",
+            "funFact": "Did you know? Emojis were first created in 1999 by Japanese designer Shigetaka Kurita as a way to express emotions in text messages.",
+            "date": "January 14, 2026"
+        },
+        {
+            "word": "Knight",
+            "funFact": "Did you know? Medieval knights often wore armor that could weigh up to 60 pounds, requiring years of training to move efficiently in battle.",
+            "date": "January 15, 2026"
+        },
+        {
+            "word": "Festival",
+            "funFact": "Did you know? The Rio Carnival in Brazil is the largest carnival in the world.",
+            "date": "January 16, 2026"
+        },
+        {
+            "word": "Hatch",
+            "funFact": "Did you know? Some reptiles, like sea turtles, use temperature-dependent sex determination, meaning the warmth of the nest influences the gender of the hatchlings.",
+            "date": "January 17, 2026"
+        },
+        {
+            "word": "Fear",
+            "funFact": "Did you know? The amygdala, a small almond-shaped region in the brain, plays a key role in processing fear and emotional responses.",
+            "date": "January 18, 2026"
+        },
+        {
+            "word": "Migrate",
+            "funFact": "Did you know? Migration in animals is often triggered by seasonal changes, with some species traveling thousands of miles to breed or find food.",
+            "date": "January 19, 2026"
+        },
+        {
+            "word": "Fake",
+            "funFact": "Did you know? The first recorded fake news story dates back to 1835, when a New York newspaper published a sensational and entirely fictional account of life on the moon.",
+            "date": "January 20, 2026"
+        },
+        {
+            "word": "Hush",
+            "funFact": "Did you know? The word 'hush' has been used since the 14th century as an onomatopoeic command for silence.",
+            "date": "January 21, 2026"
+        },
+        {
+            "word": "Language",
+            "funFact": "Did you know? There are over 7,000 languages spoken worldwide today.",
+            "date": "January 22, 2026"
+        },
+        {
+            "word": "Equation",
+            "funFact": "Did you know? The equals sign (=) was invented in 1557 by Welsh mathematician Robert Recorde to avoid repeating the phrase 'is equal to'.",
+            "date": "January 23, 2026"
+        },
+        {
+            "word": "Mole",
+            "funFact": "Did you know? Moles can dig tunnels up to 15 feet long in a single hour.",
+            "date": "January 24, 2026"
+        },
+        {
+            "word": "Grasp",
+            "funFact": "Did you know? The ability to grasp objects is a key evolutionary advantage of primates, thanks to their opposable thumbs.",
+            "date": "January 25, 2026"
+        },
+        {
+            "word": "Tooth",
+            "funFact": "Did you know? Humans have two sets of teeth in their lifetime: primary (baby) teeth and permanent teeth that last into adulthood.",
+            "date": "January 26, 2026"
+        },
+        {
+            "word": "Blink",
+            "funFact": "Did you know? The average person blinks around 15-20 times per minute, helping to keep their eyes moist and clean.",
+            "date": "January 27, 2026"
+        },
+        {
+            "word": "Like",
+            "funFact": "Did you know? The word 'like' has been used as a casual filler word in English since the 16th century, often to indicate similarity.",
+            "date": "January 28, 2026"
+        },
+        {
+            "word": "Mark",
+            "funFact": "Did you know? The earliest known written marks date back over 5,000 years and were used for record-keeping.",
+            "date": "January 29, 2026"
+        },
+        {
+            "word": "Mansion",
+            "funFact": "Did you know? The Biltmore Estate in North Carolina is the largest privately-owned home in the U.S.",
+            "date": "January 30, 2026"
+        },
+        {
+            "word": "Satellite",
+            "funFact": "Did you know? The first artificial satellite, Sputnik 1, was launched by the Soviet Union in 1957 and marked the beginning of the space age.",
+            "date": "January 31, 2026"
+        },
+        {
+            "word": "Fossil",
+            "funFact": "Did you know? The oldest known fossils are over 3.5 billion years old.",
+            "date": "February 01, 2026"
+        },
+        {
+            "word": "Falcon",
+            "funFact": "Did you know? The peregrine falcon is the fastest bird, reaching speeds over 240 mph during a dive.",
+            "date": "February 02, 2026"
+        },
+        {
+            "word": "Awe",
+            "funFact": "Did you know? Experiencing awe can trigger a feeling of vastness, often linked to moments like gazing at the stars or seeing breathtaking natural wonders.",
+            "date": "February 03, 2026"
+        },
+        {
+            "word": "Large",
+            "funFact": "Did you know? The largest living organism on Earth is a fungus in Oregon, which spans over 2,385 acres.",
+            "date": "February 04, 2026"
+        },
+        {
+            "word": "School",
+            "funFact": "Did you know? The first recorded school in history dates back to ancient Mesopotamia, where scribes were trained in writing and mathematics.",
+            "date": "February 05, 2026"
+        },
+        {
+            "word": "Nostalgia",
+            "date": "February 06, 2026",
+            "funFact": "Did you know? Nostalgia was once considered a medical condition in the 17th century, thought to cause melancholy in those longing for home."
+        },
+        {
+            "word": "Axolotl",
+            "date": "February 07, 2026",
+            "funFact": "Did you know? Axolotls are one of the few creatures capable of regenerating entire limbs, spinal cord segments, and even parts of their heart and brain!"
+        },
+        {
+            "word": "Tissue",
+            "date": "February 08, 2026",
+            "funFact": "Did you know? The first disposable tissues were created as a replacement for handkerchiefs and were originally marketed for removing cold cream."
+        },
+        {
+            "word": "Puppy",
+            "date": "February 09, 2026",
+            "funFact": "Did you know? Puppies are born blind, deaf, and toothless, and they rely entirely on their mother for the first few weeks of life."
+        },
+        {
+            "word": "Monkey",
+            "date": "February 10, 2026",
+            "funFact": "Did you know? Capuchin monkeys use tools, wash their food, and even use plants with medicinal properties to ward off insects."
+        },
+        {
+            "word": "Emotion",
+            "date": "February 11, 2026",
+            "funFact": "Did you know? Scientists believe emotions evolved as a survival mechanism, helping early humans react quickly to threats and bond with others."
+        },
+        {
+            "word": "Tea",
+            "date": "February 12, 2026",
+            "funFact": "Did you know? The world's most expensive tea, Da Hong Pao, can cost up to $1 million per kilogram and comes from ancient Chinese tea trees."
+        },
+        {
+            "word": "Fire",
+            "date": "February 13, 2026",
+            "funFact": "Did you know? Fire needs three elements to burn: heat, fuel, and oxygen. Remove any one of these, and the fire goes out!"
+        },
+        {
+            "word": "Doctor",
+            "date": "February 14, 2026",
+            "funFact": "Did you know? The word 'doctor' comes from the Latin 'docere,' meaning 'to teach,' reflecting the role of physicians as both healers and educators."
+        },
+        {
+            "word": "Lantern",
+            "funFact": "Did you know? Lanterns have been used in festivals around the world for thousands of years.",
+            "date": "February 15, 2026"
+        }
+    ]
+}

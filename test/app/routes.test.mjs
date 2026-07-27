@@ -94,6 +94,18 @@ test("the Gridl route exposes the complete playable campaign migration", () => {
   assert.match(rulesSource, /special: from\.special \|\| null/);
 });
 
+test("the Expl41n route exposes all four preserved game modes", () => {
+  const routeSource = read("app/games/[gameId]/page.tsx");
+  const gameSource = read("src/games/expl41n/expl41n-game.tsx");
+  assert.match(routeSource, /Expl41nGame/);
+  assert.match(gameSource, /"daily", "shuffle", "archive", "custom"/);
+  assert.match(gameSource, /EXPL41N_CLUE_LIMIT/);
+  assert.match(gameSource, /attemptsRemaining/);
+  assert.match(gameSource, /services\.guess/);
+  assert.match(gameSource, /serializeExpl41nSession/);
+  assert.match(gameSource, /handleShare/);
+});
+
 test("the starter preview is gone and social metadata is project-specific", () => {
   const layoutSource = read("app/layout.tsx");
   assert.doesNotMatch(layoutSource, /codex-preview|Starter Project/);

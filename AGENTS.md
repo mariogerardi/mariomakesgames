@@ -2,14 +2,15 @@
 
 ## Current phase
 
-H5–H6: complete Gridl hardening and migration.
+H7–H8: complete Expl41n audit and migration.
 
-Syllabl, Rarity, and Gridl are playable at their internal routes. Gridl ships
-the 31 authored legacy levels, preserves placement, recall, validation,
-connectivity, blockers, portals, turns, par, and campaign progress, and fixes
-the legacy staged-movement portal-state defect. The 179 explicit placeholder
-levels are not launch content. Gemboard remains retired. Do not begin the
-Expl41n audit (H7) until it is explicitly requested.
+Syllabl, Rarity, Gridl, and Expl41n are playable at their internal routes.
+Expl41n preserves Daily, Shuffle, Archive, and Custom modes, the five-attempt
+Daily lock, 25-character clues, shortest-winning-clue scoring, AI feedback,
+the 380-puzzle authored archive, local restoration, and leaderboard
+integration. Post-archive dates use a deterministic locked-corpus fallback.
+Gemboard remains retired. Do not begin Before&After audit work (H9) until it is
+explicitly requested.
 
 ## Source-of-truth rule
 
