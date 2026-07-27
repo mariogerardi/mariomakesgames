@@ -42,6 +42,15 @@
       "revision": "131c28d87debd7bc2560b66caf8b671555ae7eb6",
       "localPathFromDeveloperRoot": "games/wordlink",
       "availability": "local"
+    },
+    {
+      "gameId": "decode",
+      "repository": "mariogerardi/mariogerardi.github.io",
+      "branch": "main",
+      "revision": "db2e50e16b04ef317f116583a37a19a72a0b8fc9",
+      "localPathFromDeveloperRoot": null,
+      "availability": "remote-only",
+      "publicUrl": "https://mariogerardi.github.io/"
     }
   ]
 }

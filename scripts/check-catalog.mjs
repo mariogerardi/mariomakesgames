@@ -8,10 +8,10 @@ const catalog = JSON.parse(
 );
 
 assert.equal(catalog.schemaVersion, 1);
-assert.equal(catalog.launch.length, 5);
+assert.equal(catalog.launch.length, 6);
 
 const priorities = catalog.launch.map((game) => game.priority);
-assert.deepEqual(priorities, [1, 2, 3, 4, 5]);
+assert.deepEqual(priorities, [1, 2, 3, 4, 5, 6]);
 
 const launchIds = catalog.launch.map((game) => game.id);
 assert.equal(new Set(launchIds).size, launchIds.length);
@@ -21,6 +21,7 @@ assert.deepEqual(launchIds, [
   "gridl",
   "expl41n",
   "before-after",
+  "decode",
 ]);
 
 for (const game of catalog.launch) {
@@ -35,4 +36,4 @@ assert.ok(
   catalog.separateProducts.some((product) => product.id === "plotter"),
 );
 
-console.log("Catalog check passed: 5 launch games, Gemboard retired.");
+console.log("Catalog check passed: 6 launch games, Gemboard retired.");

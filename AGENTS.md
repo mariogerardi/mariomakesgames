@@ -15,6 +15,8 @@ Legacy repositories are read-only behavioral references during H0–H1:
 - `../games/rarity`
 - `../games/wordgrid`
 - `../games/wordlink`
+- remote `mariogerardi/mariogerardi.github.io` at the revision in
+  `sources.lock.json`
 
 Do not modify, commit, push, or deploy from those repositories while working on
 this phase.

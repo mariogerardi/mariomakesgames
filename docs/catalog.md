@@ -9,6 +9,7 @@
 | 3 | Gridl | `mariogerardi/wordgrid` | Audited; preservation harness and content curation |
 | 4 | Expl41n | `mariogerardi/explain-game` | Deep audit required |
 | 5 | Before&After | `mariogerardi/before-after` | Deep audit and web port required |
+| 6 | DECODE | `mariogerardi/mariogerardi.github.io` | Audited; preservation harness |
 
 The order is a migration priority, not a statement that one game is permanently
 more valuable than another.
@@ -51,6 +52,16 @@ must be audited before migration.
 The association game. Players bridge clues with a shared word that can appear
 before, after, or in both relationships. Its current implementation is native
 SwiftUI and therefore requires a mechanics audit followed by a web port.
+
+### DECODE
+
+The clue-decoder. Players transform a colored clue word into the answer using
+same-position, other-position, and absent-letter signals plus a
+definition-style hint. It supports escalating Timed play and a themed
+five-puzzle sequence.
+
+The repository name reflects its original GitHub Pages deployment rather than
+the product name.
 
 ## Not in the launch catalog
 

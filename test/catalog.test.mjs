@@ -17,6 +17,7 @@ test("launch catalog is ordered and stable", () => {
       { priority: 3, id: "gridl" },
       { priority: 4, id: "expl41n" },
       { priority: 5, id: "before-after" },
+      { priority: 6, id: "decode" },
     ],
   );
 });

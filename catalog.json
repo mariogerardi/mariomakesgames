@@ -51,6 +51,17 @@
       "migrationStatus": "not-started",
       "role": "association",
       "session": "bridge two clues with a shared word"
+    },
+    {
+      "priority": 6,
+      "id": "decode",
+      "name": "DECODE",
+      "repository": "mariogerardi/mariogerardi.github.io",
+      "publicUrl": "https://mariogerardi.github.io/",
+      "sourceStatus": "audited",
+      "migrationStatus": "contracting",
+      "role": "clue-decoder",
+      "session": "decode a transformed word using positional colors and a definition"
     }
   ],
   "futureCandidates": [

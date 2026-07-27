@@ -7,6 +7,7 @@ This repository is the mechanics-preserving home for a unified web hub containin
 3. Gridl
 4. Expl41n
 5. Before&After
+6. DECODE
 
 The current phase is H0–H1:
 

@@ -2,6 +2,7 @@
 
 - Status: Accepted
 - Date: 2026-07-26
+- Amended by: ADR 0003
 
 ## Context
 
@@ -22,6 +23,7 @@ The v1 launch catalog is:
 3. Gridl
 4. Expl41n
 5. Before&After
+6. DECODE
 
 Migration follows that order unless Mario explicitly changes it.
 

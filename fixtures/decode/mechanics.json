@@ -1,0 +1,81 @@
+{
+  "sourceRevision": "db2e50e16b04ef317f116583a37a19a72a0b8fc9",
+  "corpus": {
+    "timedByLength": {
+      "4": 35,
+      "5": 27,
+      "6": 23,
+      "7": 29
+    },
+    "daily": 5,
+    "total": 119,
+    "unique": 118
+  },
+  "feedbackCases": [
+    {
+      "clue": "EXPANSE",
+      "answer": "EXAMPLE",
+      "expected": [
+        "correct",
+        "correct",
+        "present",
+        "present",
+        "absent",
+        "absent",
+        "correct"
+      ]
+    },
+    {
+      "clue": "RECEIVE",
+      "answer": "ACHIEVE",
+      "expected": [
+        "absent",
+        "present",
+        "present",
+        "absent",
+        "present",
+        "correct",
+        "correct"
+      ]
+    }
+  ],
+  "daily": {
+    "lengths": [4, 5, 6, 6, 7],
+    "theme": "Sea Creatures"
+  },
+  "legacyDataAnomalies": [
+    {
+      "clue": "LURE",
+      "answer": "GLUE",
+      "authored": ["absent", "present", "present", "present"],
+      "derived": ["present", "present", "absent", "correct"]
+    },
+    {
+      "clue": "PHOENIX",
+      "answer": "PARADOX",
+      "authored": [
+        "correct",
+        "absent",
+        "present",
+        "absent",
+        "absent",
+        "absent",
+        "absent"
+      ],
+      "derived": [
+        "correct",
+        "absent",
+        "present",
+        "absent",
+        "absent",
+        "absent",
+        "correct"
+      ]
+    },
+    {
+      "clue": "COBALT",
+      "answer": "BALLOT",
+      "issue": "exact duplicate at six-letter source indexes 11 and 12"
+    }
+  ]
+}
