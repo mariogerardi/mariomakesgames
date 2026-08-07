@@ -66,6 +66,11 @@ test("the Syllabl route exposes the complete playable migration", () => {
   assert.match(gameSource, /syllablDailyStorageKey/);
   assert.match(gameSource, /handleShare/);
   assert.match(gameSource, /Six for six/);
+  assert.match(gameSource, /data-syllabl-theme/);
+  assert.match(gameSource, /"light", name: "Light"/);
+  assert.match(gameSource, /"peachy", name: "Peachy"/);
+  assert.match(gameSource, /"menu" \| "daily" \| "how-to" \| "themes" \| "stats" \| "about"/);
+  assert.doesNotMatch(gameSource, /shuffle|all-puzzles|create-puzzle/i);
   assert.doesNotMatch(gameSource, /frequency|Rarity score/);
 });
 

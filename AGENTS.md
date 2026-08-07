@@ -2,7 +2,9 @@
 
 ## Current phase
 
-Pre-H13: complete the full-viewport game-shell redesign.
+Pre-H13: restore each migrated game's source-faithful styling inside the
+full-viewport game shell. Syllabl is complete; proceed game-by-game only when
+explicitly requested.
 
 All six launch games are playable at their internal routes. DECODE preserves
 Timed and the original fixed Daily 5, duplicate-aware positional feedback,
@@ -15,6 +17,9 @@ is explicitly requested.
 All game routes use the shared compact hub header, route bar, and full-viewport
 game canvas. Preserve that hierarchy and the flat game-specific color fields;
 do not restore the former editorial identity column or constrained outer cards.
+Syllabl owns its original eight scoped theme palettes within its canvas. Its
+Daily, How to Play, Themes, Statistics, and About views are functional; do not
+add dead controls for legacy modes that have not been migrated.
 
 ## Source-of-truth rule
 

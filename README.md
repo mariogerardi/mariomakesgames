@@ -99,6 +99,14 @@ Before H13, the game routes were consolidated into a full-viewport play shell:
 - flat, vibrant game-specific canvases instead of card-like previews;
 - centered readable controls on wide screens and the same hierarchy on mobile.
 
+Syllabl is the first game to receive its source-faithful visual restoration:
+
+- its Fredoka wordmark, rounded gradient controls, puzzle panel, progress bar,
+  accepted-word chips, and original eight-theme family;
+- a working in-game menu for Daily, How to Play, Themes, Statistics, and About;
+- completion-only play and the H3 mechanics preserved without modification;
+- unavailable legacy modes omitted instead of represented by dead controls.
+
 ## Checks
 
 ```bash
