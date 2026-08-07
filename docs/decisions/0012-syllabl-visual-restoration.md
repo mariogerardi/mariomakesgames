@@ -31,3 +31,9 @@ The original standalone page occupied the whole browser. In the hub, Syllabl
 occupies the complete canvas below the compact global header and game route bar.
 Desktop preserves the original tile-menu composition; mobile converts it to a
 two-column flow and keeps submission available through the keyboard Enter key.
+
+The Daily view uses a bounded two-column work area on wide screens: the active
+challenge and input stay on the left, while all six constraints and accepted
+answers remain visible on the right. The columns collapse below tablet width.
+Every grid child is allowed to shrink, and the Syllabl canvas clips accidental
+horizontal overflow so long words or controls cannot widen the page.

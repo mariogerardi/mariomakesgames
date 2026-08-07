@@ -400,64 +400,83 @@ export function SyllablGame() {
           </header>
 
           <main className="syllabl-play-stage">
-            <div className="syllabl-token-block">
-              <span>your three letters</span>
-              <strong aria-label={`Puzzle letters ${token}`}>{token}</strong>
-            </div>
-
-            {isComplete ? (
-              <div className="syllabl-complete">
-                <p className="syllabl-complete-kicker">complete</p>
-                <h2>Six for six.</h2>
-                <p>You met every placement and syllable constraint in today’s puzzle.</p>
-                <button className="syllabl-share-button" onClick={handleShare}>
-                  share result <span aria-hidden="true">↗</span>
-                </button>
-                <span className="syllabl-share-status" role="status">{shareStatus}</span>
+            <section className="syllabl-play-primary" aria-label="Current challenge">
+              <div className="syllabl-token-block">
+                <span>your three letters</span>
+                <strong aria-label={`Puzzle letters ${token}`}>{token}</strong>
               </div>
-            ) : (
-              <>
-                <div className="syllabl-current-rule" key={session.currentStage}>
-                  <span>level {session.currentStage + 1} of 6</span>
-                  <p>
-                    enter a word that <strong>{placementCopy[activeConstraint.placementCode as keyof typeof placementCopy].verb} {token}</strong>
-                    {" "}and has <strong>{activeConstraint.syllablesRequired} {activeConstraint.syllablesRequired === 1 ? "syllable" : "syllables"}</strong>
-                  </p>
+
+              {isComplete ? (
+                <div className="syllabl-complete">
+                  <p className="syllabl-complete-kicker">complete</p>
+                  <h2>Six for six.</h2>
+                  <p>You met every placement and syllable constraint in today’s puzzle.</p>
+                  <button className="syllabl-share-button" onClick={handleShare}>
+                    share result <span aria-hidden="true">↗</span>
+                  </button>
+                  <span className="syllabl-share-status" role="status">{shareStatus}</span>
                 </div>
-
-                <form className="syllabl-entry" onSubmit={handleSubmit}>
-                  <label htmlFor="syllabl-guess">enter your word</label>
-                  <div>
-                    <input
-                      ref={inputRef}
-                      id="syllabl-guess"
-                      value={guess}
-                      onChange={(event) => setGuess(event.target.value.replace(/[^a-z]/gi, ""))}
-                      minLength={4}
-                      autoComplete="off"
-                      autoCapitalize="none"
-                      spellCheck={false}
-                      placeholder="enter your word..."
-                      disabled={isChecking}
-                    />
-                    <button disabled={isChecking || guess.length < 4} type="submit">
-                      {isChecking ? "checking…" : "submit"}
-                    </button>
+              ) : (
+                <>
+                  <div className="syllabl-current-rule" key={session.currentStage}>
+                    <span>level {session.currentStage + 1} of 6</span>
+                    <p>
+                      enter a word that <strong>{placementCopy[activeConstraint.placementCode as keyof typeof placementCopy].verb} {token}</strong>
+                      {" "}and has <strong>{activeConstraint.syllablesRequired} {activeConstraint.syllablesRequired === 1 ? "syllable" : "syllables"}</strong>
+                    </p>
                   </div>
-                </form>
-              </>
-            )}
 
-            <p className={`syllabl-feedback is-${feedbackTone}`} aria-live="polite" role="status">{feedback}</p>
+                  <form className="syllabl-entry" onSubmit={handleSubmit}>
+                    <label htmlFor="syllabl-guess">enter your word</label>
+                    <div>
+                      <input
+                        ref={inputRef}
+                        id="syllabl-guess"
+                        value={guess}
+                        onChange={(event) => setGuess(event.target.value.replace(/[^a-z]/gi, ""))}
+                        minLength={4}
+                        autoComplete="off"
+                        autoCapitalize="none"
+                        spellCheck={false}
+                        placeholder="enter your word..."
+                        disabled={isChecking}
+                      />
+                      <button disabled={isChecking || guess.length < 4} type="submit">
+                        {isChecking ? "checking…" : "submit"}
+                      </button>
+                    </div>
+                  </form>
+                </>
+              )}
 
-            <ol className="syllabl-guess-log" aria-label="Accepted words">
-              {session.guesses.map((acceptedGuess, index) => (
-                <li key={`${acceptedGuess.word}-${index}`}>
-                  <span>{acceptedGuess.syllableList.join("·")}</span>
-                  <small>{placementCopy[session.puzzle.inputsEnabled[index] as keyof typeof placementCopy].short}</small>
-                </li>
-              ))}
-            </ol>
+              <p className={`syllabl-feedback is-${feedbackTone}`} aria-live="polite" role="status">{feedback}</p>
+            </section>
+
+            <aside className="syllabl-play-sidebar" aria-label="Today’s six levels">
+              <header>
+                <div>
+                  <span>today’s puzzle</span>
+                  <strong>{isComplete ? "complete" : `${6 - session.currentStage} to go`}</strong>
+                </div>
+                <b>{session.currentStage}<small>/6</small></b>
+              </header>
+              <ol className="syllabl-stage-list">
+                {session.puzzle.inputsEnabled.map((placement, index) => {
+                  const acceptedGuess = session.guesses[index];
+                  const isCurrent = index === session.currentStage && !isComplete;
+                  return (
+                    <li className={acceptedGuess ? "is-done" : isCurrent ? "is-current" : ""} key={`${placement}-${index}`}>
+                      <span className="syllabl-stage-index">{acceptedGuess ? "✓" : index + 1}</span>
+                      <span className="syllabl-stage-rule">
+                        <b>{placementCopy[placement as keyof typeof placementCopy].short}</b>
+                        <small>{session.puzzle.syllablesRequired[index]} {session.puzzle.syllablesRequired[index] === 1 ? "syllable" : "syllables"}</small>
+                      </span>
+                      <em>{acceptedGuess ? acceptedGuess.syllableList.join("·") : isCurrent ? "now" : "—"}</em>
+                    </li>
+                  );
+                })}
+              </ol>
+            </aside>
           </main>
         </div>
       ) : (
