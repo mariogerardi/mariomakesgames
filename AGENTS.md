@@ -3,8 +3,8 @@
 ## Current phase
 
 Pre-H13: restore each migrated game's source-faithful styling inside the
-full-viewport game shell. Syllabl is complete; proceed game-by-game only when
-explicitly requested.
+full-viewport game shell. Syllabl and classic Rarity are complete; proceed
+game-by-game only when explicitly requested.
 
 All six launch games are playable at their internal routes. DECODE preserves
 Timed and the original fixed Daily 5, duplicate-aware positional feedback,
@@ -20,6 +20,10 @@ do not restore the former editorial identity column or constrained outer cards.
 Syllabl owns its original eight scoped theme palettes within its canvas. Its
 Daily, How to Play, Themes, Statistics, and About views are functional; do not
 add dead controls for legacy modes that have not been migrated.
+Rarity owns its eight original scoped themes, gem identity, on-screen keyboard,
+and five live-field Daily Insights panels. Preserve the classic one-valid-word
+mechanic. Do not substitute the separate board-mode spec or advertise Vault,
+Rarity-Off, auth, profiles, friends, or badges before they are migrated.
 
 ## Source-of-truth rule
 

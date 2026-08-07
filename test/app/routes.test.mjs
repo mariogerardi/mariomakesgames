@@ -86,6 +86,12 @@ test("the Rarity route exposes the complete playable migration", () => {
   assert.match(gameSource, /rarityDailyStorageKey/);
   assert.match(gameSource, /handleShare/);
   assert.match(gameSource, /first valid word locks/i);
+  assert.match(gameSource, /data-rarity-theme/);
+  assert.match(gameSource, /"home" \| "daily" \| "how-to" \| "themes" \| "about" \| "insights"/);
+  assert.match(gameSource, /daily insights/i);
+  assert.match(gameSource, /rarity-insight-panel/);
+  assert.match(gameSource, /rarity-keyboard/);
+  assert.doesNotMatch(gameSource, /rarity-off|vault|friends|badges/i);
 });
 
 test("the Gridl route exposes the complete playable campaign migration", () => {

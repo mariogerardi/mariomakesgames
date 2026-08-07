@@ -107,6 +107,16 @@ Syllabl is the first game to receive its source-faithful visual restoration:
 - completion-only play and the H3 mechanics preserved without modification;
 - unavailable legacy modes omitted instead of represented by dead controls.
 
+Rarity now has its source-faithful classic presentation as well:
+
+- IBM Plex Sans, a faceted gem identity, the original blue/gray default, its
+  six-tier color spectrum, and all eight scoped themes;
+- a working Rarity landing menu and keyboard-centered Daily interface;
+- a responsive two-column play/result room;
+- five post-game Daily Insights panels driven by the live leaderboard field;
+- classic one-shot mechanics preserved, with the separate board-mode spec and
+  unmigrated platform features intentionally excluded.
+
 ## Checks
 
 ```bash
