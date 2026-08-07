@@ -3,7 +3,7 @@
 ## Current phase
 
 Pre-H13: restore each migrated game's source-faithful styling inside the
-full-viewport game shell. Syllabl, classic Rarity, and Gridl are complete;
+full-viewport game shell. Syllabl, classic Rarity, Gridl, and Before&After are complete;
 proceed game-by-game only when explicitly requested.
 
 All six launch games are playable at their internal routes. DECODE preserves
@@ -29,6 +29,12 @@ four functional themes, First Puzzle milestone, and click/drag/touch-friendly
 play room. Preserve the 31-board authored catalog and tested engine. Do not
 restore the 179 placeholders, unfinished themes, `???` achievements, Settings,
 or the experimental editor as player-facing features.
+Before&After owns its bundled Sansita Swashed identity, menu-first navigation,
+four complete themes, phrase-first play room, celebration, local Daily insights,
+four real puzzle packs, playable archive, custom creator, statistics, and reset
+control. Preserve the 204-puzzle authored corpus and tested bridge engine. Do
+not restore placeholder rank packs, preview-only achievements, developer tools,
+dead sharing, or fabricated community guesses and leaderboards.
 
 ## Source-of-truth rule
 
