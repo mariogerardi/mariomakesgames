@@ -3,8 +3,8 @@
 ## Current phase
 
 Pre-H13: restore each migrated game's source-faithful styling inside the
-full-viewport game shell. Syllabl and classic Rarity are complete; proceed
-game-by-game only when explicitly requested.
+full-viewport game shell. Syllabl, classic Rarity, and Gridl are complete;
+proceed game-by-game only when explicitly requested.
 
 All six launch games are playable at their internal routes. DECODE preserves
 Timed and the original fixed Daily 5, duplicate-aware positional feedback,
@@ -24,6 +24,11 @@ Rarity owns its eight original scoped themes, gem identity, on-screen keyboard,
 and five live-field Daily Insights panels. Preserve the classic one-valid-word
 mechanic. Do not substitute the separate board-mode spec or advertise Vault,
 Rarity-Off, auth, profiles, friends, or badges before they are migrated.
+Gridl owns its Jost/blue grid identity, Daily-first view, five authored packs,
+four functional themes, First Puzzle milestone, and click/drag/touch-friendly
+play room. Preserve the 31-board authored catalog and tested engine. Do not
+restore the 179 placeholders, unfinished themes, `???` achievements, Settings,
+or the experimental editor as player-facing features.
 
 ## Source-of-truth rule
 

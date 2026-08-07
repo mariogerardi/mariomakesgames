@@ -104,6 +104,18 @@ test("the Gridl route exposes the complete playable campaign migration", () => {
   assert.match(gameSource, /getPortalOverlayText/);
   assert.match(gameSource, /gridlChapters/);
   assert.match(gameSource, /PROGRESS_KEY/);
+  assert.match(gameSource, /data-gridl-theme/);
+  assert.match(gameSource, /gridlDailyLevelId/);
+  assert.match(gameSource, /type GridlView/);
+  assert.match(gameSource, /\| "packs"/);
+  assert.match(gameSource, /\| "pack"/);
+  assert.match(gameSource, /\| "how"/);
+  assert.match(gameSource, /\| "themes"/);
+  assert.match(gameSource, /Frutiger Aero/);
+  assert.match(gameSource, /Puzzle Packs/);
+  assert.match(gameSource, /How to Play/);
+  assert.match(gameSource, /GRIDL_DRAG_TYPE/);
+  assert.doesNotMatch(gameSource, /Level Editor|Coming soon|\?\?\?/i);
   assert.match(rulesSource, /special: from\.special \|\| null/);
 });
 

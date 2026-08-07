@@ -117,6 +117,21 @@ Rarity now has its source-faithful classic presentation as well:
 - classic one-shot mechanics preserved, with the separate board-mode spec and
   unmigrated platform features intentionally excluded.
 
+Gridl now restores the source game's complete player-facing identity around
+the locked migrated engine:
+
+- Jost typography, the powder-blue and royal-blue default, compact white
+  surfaces, the animated par meter, and distinct seed, goal, blocker,
+  projection, selection, and portal treatments;
+- a Daily-first home, five authored Puzzle Packs, pack-level browsing, a full
+  How to Play reference, four functional themes, and the real First Puzzle
+  milestone;
+- a wide board-and-tray play room with click, keyboard-friendly controls, and
+  desktop drag-and-drop, collapsing cleanly for touch-sized screens;
+- the deterministic original daily hash limited to the 31 authored boards;
+- placeholder levels, unfinished themes, `???` achievements, Settings, and
+  the experimental level editor excluded from the player product.
+
 ## Checks
 
 ```bash
