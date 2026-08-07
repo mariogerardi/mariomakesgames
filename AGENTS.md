@@ -2,7 +2,7 @@
 
 ## Current phase
 
-H11–H12: complete DECODE audit and web migration.
+Pre-H13: complete the full-viewport game-shell redesign.
 
 All six launch games are playable at their internal routes. DECODE preserves
 Timed and the original fixed Daily 5, duplicate-aware positional feedback,
@@ -11,6 +11,10 @@ Timed and the original fixed Daily 5, duplicate-aware positional feedback,
 arrays are corrected; the nonfunctional ZEN control remains excluded. Gemboard
 remains retired. Do not begin shared identity and progress work (H13) until it
 is explicitly requested.
+
+All game routes use the shared compact hub header, route bar, and full-viewport
+game canvas. Preserve that hierarchy and the flat game-specific color fields;
+do not restore the former editorial identity column or constrained outer cards.
 
 ## Source-of-truth rule
 

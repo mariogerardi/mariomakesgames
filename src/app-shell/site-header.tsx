@@ -10,7 +10,7 @@ export function SiteHeader() {
         </Link>
         <nav aria-label="Primary navigation">
           <Link href="/#games">All games</Link>
-          <a href="#about">About</a>
+          <Link href="/#about">About</Link>
         </nav>
       </div>
     </header>

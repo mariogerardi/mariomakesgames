@@ -92,6 +92,13 @@ H11–H12 complete the DECODE audit and playable migration:
 All six launch games are now playable. Shared identity and cross-game progress
 begin in H13.
 
+Before H13, the game routes were consolidated into a full-viewport play shell:
+
+- one compact global hub header and game route bar;
+- the complete game surface filling the remaining screen;
+- flat, vibrant game-specific canvases instead of card-like previews;
+- centered readable controls on wide screens and the same hierarchy on mobile.
+
 ## Checks
 
 ```bash

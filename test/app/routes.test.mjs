@@ -132,6 +132,19 @@ test("the DECODE route exposes both preserved playable modes", () => {
   assert.doesNotMatch(gameSource, /zen/i);
 });
 
+test("game routes use the full-viewport shared play shell", () => {
+  const routeSource = read("app/games/[gameId]/page.tsx");
+  const styles = read("app/globals.css");
+  assert.match(routeSource, /className="game-route-bar"/);
+  assert.match(routeSource, /className="game-canvas"/);
+  assert.doesNotMatch(routeSource, /className="room-grid"/);
+  assert.doesNotMatch(routeSource, /<SiteFooter/);
+  assert.match(styles, /\.game-canvas > \.syllabl-game-card/);
+  assert.match(styles, /min-height: calc\(100dvh - 128px\)/);
+  assert.match(styles, /--game-canvas: #ffca3a/);
+  assert.match(styles, /--game-canvas: #73d4ec/);
+});
+
 test("the starter preview is gone and social metadata is project-specific", () => {
   const layoutSource = read("app/layout.tsx");
   assert.doesNotMatch(layoutSource, /codex-preview|Starter Project/);

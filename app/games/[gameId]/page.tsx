@@ -2,7 +2,6 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { GameMark } from "../../../src/app-shell/game-mark";
-import { SiteFooter } from "../../../src/app-shell/site-footer";
 import { SiteHeader } from "../../../src/app-shell/site-header";
 import { getHubGame, hubGames } from "../../../src/games/registry";
 import { RarityGame } from "../../../src/games/rarity/rarity-game";
@@ -37,74 +36,45 @@ export default async function GamePage({ params }: GamePageProps) {
   const game = getHubGame(gameId);
   if (!game) notFound();
 
-  const currentIndex = hubGames.findIndex((entry) => entry.id === game.id);
-  const nextGame = hubGames[(currentIndex + 1) % hubGames.length];
-
   return (
     <div className="site-frame" data-game={game.id}>
       <SiteHeader />
-      <main>
-        <section className="game-room page-width">
-          <Link className="back-link" href="/#games">
+      <main className="game-page">
+        <section className="game-route-bar" aria-label={`${game.name} navigation`}>
+          <Link className="game-route-back" href="/#games">
             <span aria-hidden="true">←</span>
-            All games
+            Games
           </Link>
-
-          <div className="room-grid">
-            <div className="room-identity">
-              <GameMark game={game} size="large" />
-              <p className="eyebrow">{game.eyebrow}</p>
+          <div className="game-route-identity">
+            <GameMark game={game} />
+            <div>
               <h1>{game.name}</h1>
-              <p className="room-description">{game.description}</p>
-              <ul className="mechanic-list" aria-label={`${game.name} features`}>
-                {game.mechanics.map((mechanic) => (
-                  <li key={mechanic}>{mechanic}</li>
-                ))}
-              </ul>
+              <p>{game.eyebrow}</p>
             </div>
-
-            {game.id === "syllabl" ? (
-              <SyllablGame />
-            ) : game.id === "rarity" ? (
-              <RarityGame />
-            ) : game.id === "gridl" ? (
-              <GridlGame />
-            ) : game.id === "expl41n" ? (
-              <Expl41nGame />
-            ) : game.id === "before-after" ? (
-              <BeforeAfterGame />
-            ) : game.id === "decode" ? (
-              <DecodeGame />
-            ) : (
-              <div className="room-stage">
-                <div className="stage-topline">
-                  <span className="status-dot" />
-                  A faithful port is queued
-                </div>
-                <div className="stage-center">
-                  <span className="stage-number">
-                    {String(game.priority).padStart(2, "0")}
-                  </span>
-                  <p>This room is being prepared.</p>
-                </div>
-                <div className="stage-footer">
-                  <span>Mechanics locked</span>
-                  <span>Internal route ready</span>
-                </div>
-              </div>
-            )}
           </div>
+          <ul className="game-route-features" aria-label={`${game.name} features`}>
+            {game.mechanics.map((mechanic) => (
+              <li key={mechanic}>{mechanic}</li>
+            ))}
+          </ul>
         </section>
 
-        <section className="next-room page-width">
-          <p>Next in the collection</p>
-          <Link href={`/games/${nextGame.id}`}>
-            <span>{nextGame.name}</span>
-            <span aria-hidden="true">→</span>
-          </Link>
+        <section className="game-canvas" aria-label={`${game.name} play area`}>
+          {game.id === "syllabl" ? (
+            <SyllablGame />
+          ) : game.id === "rarity" ? (
+            <RarityGame />
+          ) : game.id === "gridl" ? (
+            <GridlGame />
+          ) : game.id === "expl41n" ? (
+            <Expl41nGame />
+          ) : game.id === "before-after" ? (
+            <BeforeAfterGame />
+          ) : game.id === "decode" ? (
+            <DecodeGame />
+          ) : null}
         </section>
       </main>
-      <SiteFooter />
     </div>
   );
 }
