@@ -27,6 +27,7 @@ import {
   type RarityWordInfo,
 } from "./services.mjs";
 import { gameStorageKey } from "../../platform/storage";
+import { GameLocalBar } from "../../app-shell/game-local-bar";
 
 const API_ROOT =
   "https://rminygbqxd.execute-api.us-east-1.amazonaws.com";
@@ -557,6 +558,20 @@ export function RarityGame() {
       }
       aria-label={view === "daily" ? "Daily Rarity" : "Rarity"}
     >
+      <GameLocalBar
+        ariaLabel="Rarity"
+        brand={<RarityBrand compact />}
+        className="game-local-bar--rarity"
+        items={[
+          { label: "Home", current: view === "home", onSelect: () => openView("home") },
+          { label: "Daily", current: view === "daily", onSelect: () => openView("daily") },
+          { label: "How to play", current: view === "how-to", onSelect: () => openView("how-to") },
+          { label: "Themes", current: view === "themes", onSelect: () => openView("themes") },
+          { label: "About", current: view === "about", onSelect: () => openView("about") },
+          { label: "Insights", current: view === "insights", disabled: !submission, onSelect: () => openView("insights") },
+        ]}
+        onHome={() => openView("home")}
+      />
       {view === "home" ? (
         <div className="rarity-home">
           <main className="rarity-home-hero">
@@ -591,12 +606,6 @@ export function RarityGame() {
         </div>
       ) : view === "daily" ? (
         <div className="rarity-daily">
-          <header className="rarity-local-header">
-            <button className="rarity-back" onClick={() => openView("home")} aria-label="Return to Rarity menu">←</button>
-            <RarityBrand compact />
-            <span>{submission ? "locked in" : "one submission"}</span>
-          </header>
-
           <main className="rarity-play-layout">
             <section className="rarity-daily-panel" aria-label="Today’s challenge">
               {!submission ? (
@@ -703,12 +712,6 @@ export function RarityGame() {
         </div>
       ) : view === "insights" && submission && insights ? (
         <div className="rarity-insights-view">
-          <header className="rarity-local-header">
-            <button className="rarity-back" onClick={() => openView("daily")} aria-label="Return to today’s result">←</button>
-            <RarityBrand compact />
-            <span>{insightIndex + 1} / {insightTitles.length}</span>
-          </header>
-
           <main className="rarity-insights-shell">
             <button className="rarity-insight-arrow is-back" onClick={() => setInsightIndex((current) => Math.max(0, current - 1))} disabled={insightIndex === 0} aria-label="Previous insight">‹</button>
             <article className="rarity-insight-panel" aria-live="polite">
@@ -769,10 +772,6 @@ export function RarityGame() {
         </div>
       ) : (
         <div className="rarity-info-view">
-          <header className="rarity-local-header">
-            <button className="rarity-back" onClick={() => openView("home")} aria-label="Return to Rarity menu">←</button>
-            <RarityBrand compact />
-          </header>
           <article className="rarity-info-card">
             <p className="rarity-panel-kicker">rarity</p>
             <h2>{view === "how-to" ? "how to play" : view}</h2>

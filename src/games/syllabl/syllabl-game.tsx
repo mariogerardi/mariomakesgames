@@ -18,6 +18,7 @@ import {
   type SyllablWordInfo,
 } from "./word-validator.mjs";
 import { gameStorageKey } from "../../platform/storage";
+import { GameLocalBar } from "../../app-shell/game-local-bar";
 
 const WORD_INFO_ENDPOINT =
   "https://fr9m4nzsu1.execute-api.us-east-1.amazonaws.com/wordinfo";
@@ -349,6 +350,19 @@ export function SyllablGame() {
       data-syllabl-theme={theme}
       aria-label={view === "daily" ? "Daily Syllabl" : "Syllabl menu"}
     >
+      <GameLocalBar
+        ariaLabel="Syllabl"
+        brand={<SyllablWordmark compact />}
+        className="game-local-bar--syllabl"
+        items={[
+          { label: "Menu", current: view === "menu", onSelect: () => openView("menu") },
+          { label: "Daily", current: view === "daily", onSelect: () => openView("daily") },
+          { label: "How to play", current: view === "how-to", onSelect: () => openView("how-to") },
+          { label: "Themes", current: view === "themes", onSelect: () => openView("themes") },
+          { label: "About", current: view === "about", onSelect: () => openView("about") },
+        ]}
+        onHome={() => openView("menu")}
+      />
       {view === "menu" ? (
         <div className="syllabl-home">
           <div className="syllabl-home-inner">
@@ -386,15 +400,6 @@ export function SyllablGame() {
           >
             <span style={{ width: `${(session.currentStage / 6) * 100}%` }} />
           </div>
-
-          <header className="syllabl-game-header">
-            <button className="syllabl-back" onClick={() => openView("menu")} aria-label="Return to Syllabl menu">←</button>
-            <SyllablWordmark compact />
-            <div className="syllabl-daily-meta">
-              <b>{session.currentStage} / 6</b>
-              <span>Daily #{setup.dayNumber}</span>
-            </div>
-          </header>
 
           <main className="syllabl-play-stage">
             <section className="syllabl-play-primary" aria-label="Current challenge">
@@ -478,10 +483,6 @@ export function SyllablGame() {
         </div>
       ) : (
         <div className="syllabl-info-view">
-          <header>
-            <button className="syllabl-back" onClick={() => openView("menu")} aria-label="Return to Syllabl menu">←</button>
-            <SyllablWordmark compact />
-          </header>
           <article className="syllabl-info-card">
             <p className="syllabl-info-kicker">sy·lla·bl</p>
             <h2>{pageTitle[view]}</h2>

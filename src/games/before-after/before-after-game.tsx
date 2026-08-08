@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { gameStorageKey } from "../../platform/storage";
+import { GameLocalBar } from "../../app-shell/game-local-bar";
 import {
   bridgeArchive,
   bridgeDateKey,
@@ -413,6 +414,22 @@ export function BeforeAfterGame() {
 
   return (
     <div className="before-after-game-card" data-theme={theme}>
+      <GameLocalBar
+        ariaLabel="Before and After"
+        brand={<Wordmark compact />}
+        className="game-local-bar--before-after"
+        items={[
+          { label: "Menu", current: view === "menu" && !isPlaying, onSelect: () => openView("menu") },
+          { label: "Daily", current: (view === "daily" || view === "insights") && (isPlaying || view === "insights"), onSelect: () => openView("daily") },
+          { label: "Packs", current: view === "packs" || (isPlaying && session?.mode === "packs"), onSelect: () => openView("packs") },
+          { label: "Archive", current: view === "archive" || (isPlaying && session?.mode === "archive"), onSelect: () => openView("archive") },
+          { label: "Custom", current: view === "custom" || (isPlaying && session?.mode === "custom"), onSelect: () => openView("custom") },
+          { label: "Stats", current: view === "stats", onSelect: () => openView("stats") },
+          { label: "Themes", current: view === "themes", onSelect: () => openView("themes") },
+          { label: "Settings", current: view === "settings", onSelect: () => openView("settings") },
+        ]}
+        onHome={() => openView("menu")}
+      />
       {view === "menu" ? (
         <MainMenu progress={progress} onOpen={openView} />
       ) : isPlaying && session ? (
@@ -439,7 +456,7 @@ export function BeforeAfterGame() {
         />
       ) : (
         <section className="ba-view">
-          <ViewHeader title={view === "stats" ? "statistics" : view} onBack={() => openView("menu")} />
+          <header className="ba-view-heading"><h2>{view === "stats" ? "statistics" : view}</h2></header>
           {view === "packs" && (
             <PacksView currentPack={currentPack} packId={packId} progress={progress} onPack={choosePack} onPuzzle={choosePackPuzzle} />
           )}
@@ -510,16 +527,6 @@ function MainMenu({ progress, onOpen }: { progress: BridgeProgress; onOpen: (vie
         ))}
       </div>
     </section>
-  );
-}
-
-function ViewHeader({ title, onBack }: { title: string; onBack: () => void }) {
-  return (
-    <header className="ba-view-header">
-      <button onClick={onBack} type="button" aria-label="Back to menu">‹</button>
-      <h2>{title}</h2>
-      <Wordmark compact />
-    </header>
   );
 }
 

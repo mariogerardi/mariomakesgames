@@ -15,7 +15,10 @@ remains retired. Do not begin shared identity and progress work (H13) until it
 is explicitly requested.
 
 All game routes use the shared compact hub header and a full-viewport game
-canvas with one floating back-to-Games control. Preserve that hierarchy and the flat game-specific color fields;
+canvas with one floating back-to-Games control. Every game also owns a
+persistent local navigation bar whose left padding reserves that floating
+control's lane; preserve the shared bar structure, game-specific branding, and
+only real destinations. Preserve that hierarchy and the flat game-specific color fields;
 do not restore the former editorial identity column or constrained outer cards.
 Syllabl owns its original eight scoped theme palettes within its canvas. Its
 Daily, How to Play, Themes, and About views are functional; do not

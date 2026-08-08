@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { gameStorageKey } from "../../platform/storage";
+import { GameLocalBar } from "../../app-shell/game-local-bar";
 import {
   decodeDailyPuzzles,
   selectTimedDecodePuzzle,
@@ -164,15 +165,16 @@ export function DecodeGame() {
     setCorrectPulse(false);
   }
 
-  function handleBegin() {
+  function handleBegin(nextMode: DecodeMode = mode) {
     clearTransition();
     recordedExpiry.current = false;
-    const nextRun = createDecodeState(mode);
-    const nextPuzzle = mode === "timed" ? selectTimedDecodePuzzle(4) : decodeDailyPuzzles[0];
+    setMode(nextMode);
+    const nextRun = createDecodeState(nextMode);
+    const nextPuzzle = nextMode === "timed" ? selectTimedDecodePuzzle(4) : decodeDailyPuzzles[0];
     setRun(nextRun);
     setPuzzle(nextPuzzle);
     setAnswer("");
-    setFeedback(mode === "timed" ? "Twenty seconds. Read both signals." : "Five sea creatures. Take the time you need.");
+    setFeedback(nextMode === "timed" ? "Twenty seconds. Read both signals." : "Five sea creatures. Take the time you need.");
     setTone("neutral");
     queueMicrotask(() => inputRef.current?.focus());
   }
@@ -190,6 +192,15 @@ export function DecodeGame() {
         : "Solve the original five-puzzle Sea Creatures sequence.",
     );
     setTone("neutral");
+  }
+
+  function handleHome() {
+    clearTransition();
+    setRun(null);
+    setPuzzle(null);
+    setAnswer("");
+    setTone("neutral");
+    setFeedback("Choose a mode, then begin your run.");
   }
 
   function handleSubmit() {
@@ -266,17 +277,22 @@ export function DecodeGame() {
 
   return (
     <div className={`decode-game-card${urgent ? " is-urgent" : ""}`}>
-      <header className="decode-header">
-        <DecodeWordmark />
-        <nav aria-label="DECODE modes">
-          {MODES.map((item) => (
-            <button className={mode === item ? "is-current" : ""} disabled={active} key={item} onClick={() => handleMode(item)} type="button">
-              {modeLabel(item)}
-            </button>
-          ))}
-          <button className="decode-how-button" onClick={() => setShowHow(true)} type="button">How to play</button>
-        </nav>
-      </header>
+      <GameLocalBar
+        ariaLabel="DECODE"
+        brand={<DecodeWordmark />}
+        className="game-local-bar--decode"
+        items={[
+          { label: "Home", current: !run, onSelect: handleHome },
+          ...MODES.map((item) => ({
+            label: modeLabel(item),
+            current: run?.mode === item,
+            disabled: active && run?.mode !== item,
+            onSelect: () => active ? undefined : handleBegin(item),
+          })),
+          { label: "How to play", current: showHow, onSelect: () => setShowHow(true) },
+        ]}
+        onHome={handleHome}
+      />
 
       {puzzle && run ? (
         <>
@@ -336,16 +352,16 @@ export function DecodeGame() {
                     <span>Decode</span><small>enter ↵</small>
                   </button>
                   <p className={`decode-feedback is-${tone}`} id="decode-feedback" aria-live="polite">{feedback}</p>
-                  <button className="decode-reset" onClick={handleBegin} type="button">restart run</button>
+                  <button className="decode-reset" onClick={() => handleBegin()} type="button">restart run</button>
                 </>
               ) : (
-                <ResultPanel mode={run.mode} progress={progress} puzzle={puzzle} run={run} onAgain={handleBegin} />
+                <ResultPanel mode={run.mode} progress={progress} puzzle={puzzle} run={run} onAgain={() => handleBegin()} />
               )}
             </aside>
           </main>
         </>
       ) : (
-        <Welcome mode={mode} progress={progress} onBegin={handleBegin} onHow={() => setShowHow(true)} onMode={handleMode} />
+        <Welcome mode={mode} progress={progress} onBegin={() => handleBegin()} onHow={() => setShowHow(true)} onMode={handleMode} />
       )}
 
       <footer className="decode-footer">

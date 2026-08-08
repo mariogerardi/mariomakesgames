@@ -9,6 +9,7 @@ import {
   useState,
 } from "react";
 import { gameStorageKey } from "../../platform/storage";
+import { GameLocalBar } from "../../app-shell/game-local-bar";
 import {
   chapterForGridlLevel,
   gridlChapters,
@@ -219,7 +220,6 @@ export function GridlGame() {
   const [feedbackTone, setFeedbackTone] =
     useState<FeedbackTone>("neutral");
   const [won, setWon] = useState(false);
-  const [menuOpen, setMenuOpen] = useState(false);
   const [toast, setToast] = useState("");
 
   useEffect(() => {
@@ -324,7 +324,6 @@ export function GridlGame() {
 
   function showView(nextView: GridlView) {
     setView(nextView);
-    setMenuOpen(false);
   }
 
   function openDaily() {
@@ -594,37 +593,20 @@ export function GridlGame() {
 
   return (
     <div className="gridl-game-card" data-gridl-theme={progress.theme}>
-      <header className="gridl-local-header">
-        <button
-          aria-label="Open Gridl menu"
-          className="gridl-wordmark"
-          onClick={() => showView("home")}
-          type="button"
-        >
-          gridl
-        </button>
-        <div className="gridl-local-menu-wrap">
-          <button
-            aria-expanded={menuOpen}
-            aria-label="Gridl menu"
-            className="gridl-menu-button"
-            onClick={() => setMenuOpen((open) => !open)}
-            type="button"
-          >
-            <span /><span /><span /><span />
-          </button>
-          {menuOpen && (
-            <nav aria-label="Gridl navigation" className="gridl-local-menu">
-              <button onClick={() => showView("home")} type="button">Home</button>
-              <button onClick={openDaily} type="button">Daily Puzzle</button>
-              <button onClick={() => showView("packs")} type="button">Puzzle Packs</button>
-              <button onClick={() => showView("how")} type="button">How to Play</button>
-              <button onClick={() => showView("themes")} type="button">Themes</button>
-              <button onClick={() => showView("achievements")} type="button">Milestones</button>
-            </nav>
-          )}
-        </div>
-      </header>
+      <GameLocalBar
+        ariaLabel="Gridl"
+        brand={<span className="gridl-bar-wordmark">gridl</span>}
+        className="game-local-bar--gridl"
+        items={[
+          { label: "Home", current: view === "home", onSelect: () => showView("home") },
+          { label: "Daily", current: view === "play" && playKind === "daily", onSelect: openDaily },
+          { label: "Packs", current: view === "packs" || view === "pack" || (view === "play" && playKind === "campaign"), onSelect: () => showView("packs") },
+          { label: "How to play", current: view === "how", onSelect: () => showView("how") },
+          { label: "Themes", current: view === "themes", onSelect: () => showView("themes") },
+          { label: "Milestones", current: view === "achievements", onSelect: () => showView("achievements") },
+        ]}
+        onHome={() => showView("home")}
+      />
 
       <main className={`gridl-view is-${view}`}>
         {view === "home" && (

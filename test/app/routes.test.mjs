@@ -213,6 +213,24 @@ test("game routes use the full-viewport shared play shell", () => {
   assert.match(styles, /--game-canvas: #73d4ec/);
 });
 
+test("every non-Expl41n game adopts the persistent local navigation bar", () => {
+  const barSource = read("src/app-shell/game-local-bar.tsx");
+  const styles = read("app/globals.css");
+  assert.match(barSource, /className={`game-local-bar \$\{className\}`}/);
+  assert.match(barSource, /aria-current=\{item\.current \? "page" : undefined\}/);
+  assert.match(styles, /padding: 10px 28px 10px 116px/);
+  assert.match(styles, /\.game-local-bar--syllabl/);
+  assert.match(styles, /\.game-local-bar--rarity/);
+  assert.match(styles, /\.game-local-bar--gridl/);
+  assert.match(styles, /\.game-local-bar--before-after/);
+  assert.match(styles, /\.game-local-bar--decode/);
+
+  for (const game of ["syllabl", "rarity", "gridl", "before-after", "decode"]) {
+    const source = read(`src/games/${game}/${game}-game.tsx`);
+    assert.match(source, /GameLocalBar/, `${game} should render the shared local bar`);
+  }
+});
+
 test("the starter preview is gone and social metadata is project-specific", () => {
   const layoutSource = read("app/layout.tsx");
   assert.doesNotMatch(layoutSource, /codex-preview|Starter Project/);
