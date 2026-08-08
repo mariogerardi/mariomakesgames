@@ -3,7 +3,7 @@
 ## Current phase
 
 Pre-H13: restore each migrated game's source-faithful styling inside the
-full-viewport game shell. Syllabl, classic Rarity, Gridl, and Before&After are complete;
+full-viewport game shell. Syllabl, classic Rarity, Gridl, Before&After, and DECODE are complete;
 proceed game-by-game only when explicitly requested.
 
 All six launch games are playable at their internal routes. DECODE preserves
@@ -35,6 +35,13 @@ four real puzzle packs, playable archive, custom creator, statistics, and reset
 control. Preserve the 204-puzzle authored corpus and tested bridge engine. Do
 not restore placeholder rank packs, preview-only achievements, developer tools,
 dead sharing, or fabricated community guesses and leaderboards.
+DECODE owns its restrained dark decoding-console identity, two-mode landing
+screen, semantic color-and-symbol clue tiles, responsive two-column play room,
+Timed difficulty ladder, fixed Sea Creatures progress track, decoding protocol,
+and mode-specific result summaries. Preserve both tested modes, all 118 unique
+authored puzzles, duplicate-aware feedback, exact clocks, and the four Timed
+length tiers. Do not add a calendar rotation, cosmetic themes, skips, power-ups,
+or community features.
 
 ## Source-of-truth rule
 
