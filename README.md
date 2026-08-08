@@ -94,7 +94,7 @@ begin in H13.
 
 Before H13, the game routes were consolidated into a full-viewport play shell:
 
-- one compact global hub header and game route bar;
+- one compact global hub header and a floating in-game back control;
 - the complete game surface filling the remaining screen;
 - flat, vibrant game-specific canvases instead of card-like previews;
 - centered readable controls on wide screens and the same hierarchy on mobile.

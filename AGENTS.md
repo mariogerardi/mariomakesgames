@@ -14,8 +14,8 @@ arrays are corrected; the nonfunctional ZEN control remains excluded. Gemboard
 remains retired. Do not begin shared identity and progress work (H13) until it
 is explicitly requested.
 
-All game routes use the shared compact hub header, route bar, and full-viewport
-game canvas. Preserve that hierarchy and the flat game-specific color fields;
+All game routes use the shared compact hub header and a full-viewport game
+canvas with one floating back-to-Games control. Preserve that hierarchy and the flat game-specific color fields;
 do not restore the former editorial identity column or constrained outer cards.
 Syllabl owns its original eight scoped theme palettes within its canvas. Its
 Daily, How to Play, Themes, and About views are functional; do not

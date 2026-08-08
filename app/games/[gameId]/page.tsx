@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { GameMark } from "../../../src/app-shell/game-mark";
 import { SiteHeader } from "../../../src/app-shell/site-header";
 import { getHubGame, hubGames } from "../../../src/games/registry";
 import { RarityGame } from "../../../src/games/rarity/rarity-game";
@@ -40,26 +39,12 @@ export default async function GamePage({ params }: GamePageProps) {
     <div className="site-frame" data-game={game.id}>
       <SiteHeader />
       <main className="game-page">
-        <section className="game-route-bar" aria-label={`${game.name} navigation`}>
-          <Link className="game-route-back" href="/#games">
+        <section className="game-canvas" aria-label={`${game.name} play area`}>
+          <h1 className="game-canvas-title">{game.name}</h1>
+          <Link className="game-canvas-back" href="/#games" aria-label="Back to all games">
             <span aria-hidden="true">←</span>
             Games
           </Link>
-          <div className="game-route-identity">
-            <GameMark game={game} />
-            <div>
-              <h1>{game.name}</h1>
-              <p>{game.eyebrow}</p>
-            </div>
-          </div>
-          <ul className="game-route-features" aria-label={`${game.name} features`}>
-            {game.mechanics.map((mechanic) => (
-              <li key={mechanic}>{mechanic}</li>
-            ))}
-          </ul>
-        </section>
-
-        <section className="game-canvas" aria-label={`${game.name} play area`}>
           {game.id === "syllabl" ? (
             <SyllablGame />
           ) : game.id === "rarity" ? (
