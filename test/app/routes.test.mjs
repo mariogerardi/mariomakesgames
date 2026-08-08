@@ -71,7 +71,8 @@ test("the Syllabl route exposes the complete playable migration", () => {
   assert.match(gameSource, /syllabl-play-sidebar/);
   assert.match(gameSource, /"light", name: "Light"/);
   assert.match(gameSource, /"peachy", name: "Peachy"/);
-  assert.match(gameSource, /"menu" \| "daily" \| "how-to" \| "themes" \| "stats" \| "about"/);
+  assert.match(gameSource, /"menu" \| "daily" \| "how-to" \| "themes" \| "about"/);
+  assert.doesNotMatch(gameSource, /syllabl-menu-stats|view === "stats"/);
   assert.doesNotMatch(gameSource, /shuffle|all-puzzles|create-puzzle/i);
   assert.doesNotMatch(gameSource, /frequency|Rarity score/);
 });
@@ -91,6 +92,8 @@ test("the Rarity route exposes the complete playable migration", () => {
   assert.match(gameSource, /daily insights/i);
   assert.match(gameSource, /rarity-insight-panel/);
   assert.match(gameSource, /rarity-keyboard/);
+  assert.match(gameSource, /\/rarity\/logo\.png/);
+  assert.ok(fs.existsSync(path.join(repositoryRoot, "public", "rarity", "logo.png")));
   assert.doesNotMatch(gameSource, /rarity-off|vault|friends|badges/i);
 });
 
@@ -107,6 +110,8 @@ test("the Gridl route exposes the complete playable campaign migration", () => {
   assert.match(gameSource, /data-gridl-theme/);
   assert.match(gameSource, /gridlDailyLevelId/);
   assert.match(gameSource, /type GridlView/);
+  assert.match(gameSource, /\| "home"/);
+  assert.match(gameSource, /useState<GridlView>\("home"\)/);
   assert.match(gameSource, /\| "packs"/);
   assert.match(gameSource, /\| "pack"/);
   assert.match(gameSource, /\| "how"/);

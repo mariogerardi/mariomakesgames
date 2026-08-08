@@ -35,7 +35,7 @@ const syllablThemes = [
 ] as const;
 
 type SyllablTheme = (typeof syllablThemes)[number]["id"];
-type SyllablView = "menu" | "daily" | "how-to" | "themes" | "stats" | "about";
+type SyllablView = "menu" | "daily" | "how-to" | "themes" | "about";
 
 function SyllablWordmark({ compact = false }: { compact?: boolean }) {
   return (
@@ -340,7 +340,6 @@ export function SyllablGame() {
   const pageTitle = {
     "how-to": "how to play",
     themes: "themes",
-    stats: "statistics",
     about: "about",
   } as const;
 
@@ -352,30 +351,28 @@ export function SyllablGame() {
     >
       {view === "menu" ? (
         <div className="syllabl-home">
-          <div className="syllabl-menu-grid" aria-label="Syllabl menu">
-            <button className="syllabl-menu-daily" onClick={() => openView("daily")}>
-              <span>dai<i>·</i>ly mode</span>
-              <small>today’s six-stage puzzle</small>
-            </button>
-            <button className="syllabl-menu-how" onClick={() => openView("how-to")}>
-              <span>how to play</span>
-              <small>learn the rules</small>
-            </button>
-            <button className="syllabl-menu-themes" onClick={() => openView("themes")}>
-              <span>themes</span>
-              <small>choose your colors</small>
-            </button>
-            <button className="syllabl-menu-stats" onClick={() => openView("stats")}>
-              <span>sta<i>·</i>tis<i>·</i>tics</span>
-              <small>today’s progress</small>
-            </button>
+          <div className="syllabl-home-inner">
             <h2 className="syllabl-home-wordmark"><SyllablWordmark /></h2>
-            <button className="syllabl-menu-about" onClick={() => openView("about")}>
-              <span>a<i>·</i>bout</span>
-              <small>the story of the game</small>
-            </button>
+            <div className="syllabl-menu-grid" aria-label="Syllabl menu">
+              <button className="syllabl-menu-daily" onClick={() => openView("daily")}>
+                <span>dai<i>·</i>ly mode</span>
+                <small>today’s six-stage puzzle</small>
+              </button>
+              <button className="syllabl-menu-how" onClick={() => openView("how-to")}>
+                <span>how to play</span>
+                <small>learn the rules</small>
+              </button>
+              <button className="syllabl-menu-themes" onClick={() => openView("themes")}>
+                <span>themes</span>
+                <small>choose your colors</small>
+              </button>
+              <button className="syllabl-menu-about" onClick={() => openView("about")}>
+                <span>a<i>·</i>bout</span>
+                <small>the story of the game</small>
+              </button>
+            </div>
+            <p className="syllabl-home-date">Daily #{setup.dayNumber} · {setup.displayDate}</p>
           </div>
-          <p className="syllabl-home-date">Daily #{setup.dayNumber} · {setup.displayDate}</p>
         </div>
       ) : view === "daily" ? (
         <div className="syllabl-play">
@@ -512,13 +509,6 @@ export function SyllablGame() {
                     <small>{theme === choice.id ? "selected" : "select"}</small>
                   </button>
                 ))}
-              </div>
-            ) : view === "stats" ? (
-              <div className="syllabl-stats">
-                <div><strong>{session.currentStage}</strong><span>words found today</span></div>
-                <div><strong>{isComplete ? "yes" : "not yet"}</strong><span>daily complete</span></div>
-                <div><strong>{6 - session.currentStage}</strong><span>levels remaining</span></div>
-                <button className="syllabl-primary-action" onClick={() => openView("daily")}>{isComplete ? "view today’s result" : "continue today’s puzzle"}</button>
               </div>
             ) : (
               <div className="syllabl-prose">

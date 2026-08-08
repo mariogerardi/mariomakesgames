@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { rarityClassicPuzzles } from "./catalog";
 import {
@@ -136,7 +137,7 @@ function buildInsights(entries: LeaderboardEntry[], submission: RaritySubmission
 function RarityGem({ small = false }: { small?: boolean }) {
   return (
     <span className={`rarity-gem${small ? " is-small" : ""}`} aria-hidden="true">
-      <i /><i /><i /><i /><i />
+      <Image alt="" height={600} src="/rarity/logo.png" width={600} />
     </span>
   );
 }

@@ -267,10 +267,7 @@ export function DecodeGame() {
   return (
     <div className={`decode-game-card${urgent ? " is-urgent" : ""}`}>
       <header className="decode-header">
-        <div>
-          <DecodeWordmark />
-          <small>color · clue · transform</small>
-        </div>
+        <DecodeWordmark />
         <nav aria-label="DECODE modes">
           {MODES.map((item) => (
             <button className={mode === item ? "is-current" : ""} disabled={active} key={item} onClick={() => handleMode(item)} type="button">
@@ -283,13 +280,10 @@ export function DecodeGame() {
 
       {puzzle && run ? (
         <>
-          <RunRail clock={clock} mode={run.mode} progress={progress} run={run} urgent={urgent} />
+          <RunRail clock={clock} progress={progress} run={run} urgent={urgent} />
           <main className="decode-play-layout">
             <section className="decode-signal-panel">
-              <div className="decode-panel-heading">
-                <span>01 / letter signal</span>
-                <b>{puzzle.answer.length} characters</b>
-              </div>
+              <span className="decode-signal-label">Clue word</span>
               <ClueWord feedback={clueFeedback} puzzle={puzzle} />
               <div className="decode-legend" aria-label="Color key">
                 <span><i className="is-correct">●</i>Same spot</span>
@@ -297,11 +291,11 @@ export function DecodeGame() {
                 <span><i className="is-absent">×</i>Not used</span>
               </div>
               <div className={`decode-definition${correctPulse ? " is-correct" : ""}${wrongPulse ? " is-wrong" : ""}`}>
-                <span>02 / meaning signal</span>
+                <span>Definition</span>
                 <p>“{puzzle.clue}”</p>
               </div>
               <div className="decode-answer-zone">
-                <div><span>03 / decoded word</span><small>{answer.length}/{puzzle.answer.length}</small></div>
+                <div><span>Answer</span><small>{answer.length}/{puzzle.answer.length}</small></div>
                 <button
                   aria-label="Focus answer entry"
                   className={`decode-answer-grid${wrongPulse ? " is-wrong" : ""}${correctPulse ? " is-correct" : ""}`}
@@ -355,8 +349,7 @@ export function DecodeGame() {
       )}
 
       <footer className="decode-footer">
-        <button onClick={() => setShowHow(true)} type="button"><span>?</span> Read the decoding protocol</button>
-        <div><span>Timed runs <b>{progress.timedRuns}</b></span><span>Daily completions <b>{progress.dailyCompletions}</b></span></div>
+        <button onClick={() => setShowHow(true)} type="button"><span>?</span> How to play</button>
       </footer>
 
       {showHow && <HowToPlay onClose={() => setShowHow(false)} />}
@@ -364,9 +357,8 @@ export function DecodeGame() {
   );
 }
 
-function RunRail({ clock, mode, progress, run, urgent }: {
+function RunRail({ clock, progress, run, urgent }: {
   clock: number;
-  mode: DecodeMode;
   progress: DecodeProgress;
   run: DecodeState;
   urgent: boolean;
@@ -375,14 +367,13 @@ function RunRail({ clock, mode, progress, run, urgent }: {
   const meter = timed ? Math.max(0, Math.min(100, (clock / 20) * 100)) : Math.min(100, (run.score / 5) * 100);
   return (
     <section className="decode-run-rail" aria-label="Run status">
-      <div><span>Mode</span><strong>{modeLabel(mode)}</strong></div>
       <div className={`decode-clock${urgent ? " is-urgent" : ""}`}>
-        <span>{timed ? "Time remaining" : "Elapsed time"}</span>
+        <span>{timed ? "Time" : "Elapsed"}</span>
         <strong>{formatDecodeTime(clock)}</strong>
         <i><span style={{ width: `${meter}%` }} /></i>
       </div>
       <div><span>{timed ? "Score" : "Puzzle"}</span><strong>{timed ? run.score : `${Math.min(run.dailyIndex + 1, 5)}/5`}</strong></div>
-      <div><span>Personal best</span><strong>{timed ? `${progress.bestTimedScore} decoded` : progress.bestDailySeconds === null ? "No time yet" : formatDecodeTime(progress.bestDailySeconds)}</strong></div>
+      <div><span>Best</span><strong>{timed ? progress.bestTimedScore : progress.bestDailySeconds === null ? "—" : formatDecodeTime(progress.bestDailySeconds)}</strong></div>
     </section>
   );
 }
@@ -405,18 +396,16 @@ function ClueWord({ feedback, puzzle }: { feedback: DecodeFeedback[]; puzzle: De
 
 function TierLadder({ score }: { score: number }) {
   const currentLength = decodeTimedWordLength(score);
-  const nextAt = score < 30 ? 10 - (score % 10) : null;
   return (
     <section className="decode-progress-card">
-      <div className="decode-console-heading"><span>Difficulty signal</span><b>{currentLength} letters</b></div>
+      <div className="decode-console-heading"><span>Difficulty</span><b>{currentLength} letters</b></div>
       <div className="decode-tier-ladder">
         {TIERS.map((tier) => {
           const current = tier.length === currentLength;
           const complete = tier.length < currentLength;
-          return <div className={`${current ? "is-current" : ""}${complete ? " is-complete" : ""}`} key={tier.length}><i>{complete ? "✓" : tier.length}</i><span><b>{tier.label}</b><small>score {tier.range}</small></span></div>;
+          return <div aria-label={`${tier.label}, ${tier.length} letters`} className={`${current ? "is-current" : ""}${complete ? " is-complete" : ""}`} key={tier.length}><i>{complete ? "✓" : tier.length}</i></div>;
         })}
       </div>
-      <p>{nextAt ? `${nextAt} more ${nextAt === 1 ? "solve" : "solves"} until the next word length.` : "Maximum signal length reached."}</p>
     </section>
   );
 }
@@ -424,15 +413,14 @@ function TierLadder({ score }: { score: number }) {
 function DailyProgress({ run }: { run: Extract<DecodeState, { mode: "daily-5" }> }) {
   return (
     <section className="decode-progress-card">
-      <div className="decode-console-heading"><span>Original sequence</span><b>Sea Creatures</b></div>
+      <div className="decode-console-heading"><span>Daily 5</span><b>{Math.min(run.dailyIndex + 1, 5)}/5</b></div>
       <div className="decode-daily-track">
         {decodeDailyPuzzles.map((puzzle, index) => {
           const complete = index < run.dailyIndex || run.status === "complete";
           const current = index === run.dailyIndex && run.status === "playing";
-          return <div className={`${complete ? "is-complete" : ""}${current ? " is-current" : ""}`} key={puzzle.id}><i>{complete ? "✓" : index + 1}</i><span><b>{complete ? puzzle.answer : `${puzzle.answer.length} letters`}</b><small>{current ? "decoding now" : complete ? "decoded" : "locked"}</small></span></div>;
+          return <div aria-label={`Puzzle ${index + 1}${complete ? ", complete" : current ? ", current" : ""}`} className={`${complete ? "is-complete" : ""}${current ? " is-current" : ""}`} key={puzzle.id}><i>{complete ? "✓" : index + 1}</i></div>;
         })}
       </div>
-      <p>This is the original fixed five-puzzle set.</p>
     </section>
   );
 }
@@ -488,23 +476,18 @@ function Welcome({ mode, progress, onBegin, onHow, onMode }: {
   return (
     <main className="decode-welcome">
       <section className="decode-welcome-copy">
-        <span className="decode-kicker">Two signals. One answer.</span>
-        <h1>Read the color.<br />Read the clue.<br /><em>Decode the word.</em></h1>
-        <p>Transform one word into another using positional letter signals and a crossword-style definition.</p>
-        <div><button onClick={onBegin} type="button">Begin {modeLabel(mode)}</button><button onClick={onHow} type="button">See an example</button></div>
+        <span className="decode-kicker">DECODE</span>
+        <h1>Two clues.<br /><em>One word.</em></h1>
+        <p>Use color and meaning to find the answer.</p>
+        <div><button onClick={onBegin} type="button">Begin</button><button onClick={onHow} type="button">How to play</button></div>
       </section>
       <section className="decode-mode-cards" aria-label="Choose a game mode">
         <button className={mode === "timed" ? "is-current" : ""} onClick={() => onMode("timed")} type="button">
-          <span>01</span><div><strong>Timed</strong><p>Twenty seconds per word. Length rises every ten solves.</p></div><b>{progress.bestTimedScore}<small>best score</small></b>
+          <div><strong>Timed</strong><p>Twenty seconds per word.</p></div><b>{progress.bestTimedScore}<small>best</small></b>
         </button>
         <button className={mode === "daily-5" ? "is-current" : ""} onClick={() => onMode("daily-5")} type="button">
-          <span>02</span><div><strong>Daily 5</strong><p>The original fixed Sea Creatures sequence, against the clock.</p></div><b>{progress.bestDailySeconds === null ? "--" : formatDecodeTime(progress.bestDailySeconds)}<small>best time</small></b>
+          <div><strong>Daily 5</strong><p>Five puzzles against the clock.</p></div><b>{progress.bestDailySeconds === null ? "--" : formatDecodeTime(progress.bestDailySeconds)}<small>best</small></b>
         </button>
-        <div className="decode-mini-example">
-          <span>Signal preview</span>
-          <div>{"EXPANSE".split("").map((letter, index) => <i className={index === 0 || index === 1 || index === 6 ? "is-correct" : index === 2 || index === 3 ? "is-present" : "is-absent"} key={index}>{letter}</i>)}</div>
-          <p>“instruction clarifier” <b>→ EXAMPLE</b></p>
-        </div>
       </section>
     </main>
   );

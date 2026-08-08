@@ -67,6 +67,7 @@ const gridlThemes = [
 
 type GridlThemeId = (typeof gridlThemes)[number]["id"];
 type GridlView =
+  | "home"
   | "play"
   | "packs"
   | "pack"
@@ -195,7 +196,7 @@ export function GridlGame() {
     () => gridlDailyLevelId(todayKey, gridlLevelIds),
     [todayKey],
   );
-  const [view, setView] = useState<GridlView>("play");
+  const [view, setView] = useState<GridlView>("home");
   const [playKind, setPlayKind] = useState<PlayKind>("daily");
   const [levelId, setLevelId] = useState(dailyLevelId);
   const [selectedChapterId, setSelectedChapterId] = useState("tutorial");
@@ -595,9 +596,9 @@ export function GridlGame() {
     <div className="gridl-game-card" data-gridl-theme={progress.theme}>
       <header className="gridl-local-header">
         <button
-          aria-label="Open Daily Puzzle"
+          aria-label="Open Gridl menu"
           className="gridl-wordmark"
-          onClick={openDaily}
+          onClick={() => showView("home")}
           type="button"
         >
           gridl
@@ -614,6 +615,7 @@ export function GridlGame() {
           </button>
           {menuOpen && (
             <nav aria-label="Gridl navigation" className="gridl-local-menu">
+              <button onClick={() => showView("home")} type="button">Home</button>
               <button onClick={openDaily} type="button">Daily Puzzle</button>
               <button onClick={() => showView("packs")} type="button">Puzzle Packs</button>
               <button onClick={() => showView("how")} type="button">How to Play</button>
@@ -625,6 +627,43 @@ export function GridlGame() {
       </header>
 
       <main className={`gridl-view is-${view}`}>
+        {view === "home" && (
+          <section className="gridl-home-view">
+            <div className="gridl-home-copy">
+              <p>Word-building, one route at a time</p>
+              <h2>Build the route.</h2>
+              <span>Place fragments, form valid words, and connect your path to the star.</span>
+            </div>
+            <div className="gridl-home-menu" aria-label="Gridl game menu">
+              <button className="is-daily" onClick={openDaily} type="button">
+                <small>{formattedDate}</small>
+                <strong>Daily Puzzle</strong>
+                <span>Start today’s route →</span>
+              </button>
+              <button onClick={() => showView("packs")} type="button">
+                <small>31 boards</small>
+                <strong>Puzzle Packs</strong>
+                <span>Explore the full collection →</span>
+              </button>
+              <button onClick={() => showView("how")} type="button">
+                <small>Six essentials</small>
+                <strong>How to Play</strong>
+                <span>Learn the route →</span>
+              </button>
+              <button onClick={() => showView("themes")} type="button">
+                <small>Four looks</small>
+                <strong>Themes</strong>
+                <span>Choose your grid →</span>
+              </button>
+              <button onClick={() => showView("achievements")} type="button">
+                <small>{progress.completed.length} complete</small>
+                <strong>Milestones</strong>
+                <span>See your progress →</span>
+              </button>
+            </div>
+          </section>
+        )}
+
         {view === "play" && (!level || !state) && (
           <div className="gridl-game-loading">Preparing the grid…</div>
         )}

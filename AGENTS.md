@@ -18,13 +18,13 @@ All game routes use the shared compact hub header, route bar, and full-viewport
 game canvas. Preserve that hierarchy and the flat game-specific color fields;
 do not restore the former editorial identity column or constrained outer cards.
 Syllabl owns its original eight scoped theme palettes within its canvas. Its
-Daily, How to Play, Themes, Statistics, and About views are functional; do not
+Daily, How to Play, Themes, and About views are functional; do not
 add dead controls for legacy modes that have not been migrated.
 Rarity owns its eight original scoped themes, gem identity, on-screen keyboard,
 and five live-field Daily Insights panels. Preserve the classic one-valid-word
 mechanic. Do not substitute the separate board-mode spec or advertise Vault,
 Rarity-Off, auth, profiles, friends, or badges before they are migrated.
-Gridl owns its Jost/blue grid identity, Daily-first view, five authored packs,
+Gridl owns its Jost/blue grid identity, menu-first view, five authored packs,
 four functional themes, First Puzzle milestone, and click/drag/touch-friendly
 play room. Preserve the 31-board authored catalog and tested engine. Do not
 restore the 179 placeholders, unfinished themes, `???` achievements, Settings,
