@@ -36,8 +36,10 @@ Preserve its tested engine, 380-puzzle corpus, four modes, five-attempt Daily,
 25-character clue limit, shortest-clue scoring, AI-service failure hardening,
 and original confidence thresholds. The eleven semantic mascot states include
 idle, thinking, and 30-second sleepy behavior as well as every threshold and
-terminal outcome. Do not restore the legacy themes, achievements, Settings, or
-stale dialogue references to those unavailable features.
+terminal outcome. Keep the nine `/expl41n/emotions/` files as compatibility
+aliases for already-open legacy clients, but never reference them from current
+UI code. Do not restore the legacy themes, achievements, Settings, or stale
+dialogue references to those unavailable features.
 Before&After owns its bundled Sansita Swashed identity, menu-first navigation,
 four complete themes, phrase-first play room, celebration, local Daily insights,
 four real puzzle packs, playable archive, custom creator, statistics, and reset

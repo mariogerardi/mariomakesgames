@@ -143,6 +143,9 @@ test("the Expl41n route exposes its restored game room and all preserved modes",
   assert.match(gameSource, /handleShare/);
   assert.match(gameSource, /greetingsData/);
   assert.match(gameSource, /SLEEP_DELAY = 30_000/);
+  assert.match(gameSource, /EXPL41N_PRESENTATION = "galaxy-menu-v2"/);
+  assert.match(gameSource, /data-presentation=\{EXPL41N_PRESENTATION\}/);
+  assert.match(gameSource, /event\.currentTarget\.src = "\/expl41n\/mascot\/idle\.png"/);
   assert.match(gameSource, /expl41n-archive-screen/);
   assert.match(gameSource, /expl41n-custom-screen/);
   assert.match(gameSource, /expl41n-how-screen/);
@@ -157,6 +160,15 @@ test("the Expl41n route exposes its restored game room and all preserved modes",
     assert.ok(
       fs.existsSync(path.join(repositoryRoot, "public", "expl41n", "mascot", `${state}.png`)),
       `missing Expl41n mascot state: ${state}`,
+    );
+  }
+  for (const legacyMood of [
+    "angry", "confused", "happy", "sad", "side-eye", "sleepy",
+    "surprised", "suspicious", "victory",
+  ]) {
+    assert.ok(
+      fs.existsSync(path.join(repositoryRoot, "public", "expl41n", "emotions", `${legacyMood}.png`)),
+      `missing Expl41n legacy expression alias: ${legacyMood}`,
     );
   }
 });

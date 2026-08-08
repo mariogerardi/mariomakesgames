@@ -37,6 +37,7 @@ const DAILY_KEY = gameStorageKey("expl41n", "daily");
 const PROGRESS_KEY = gameStorageKey("expl41n", "progress");
 const USERNAME_KEY = gameStorageKey("expl41n", "username");
 const SLEEP_DELAY = 30_000;
+const EXPL41N_PRESENTATION = "galaxy-menu-v2";
 
 type Expl41nView = "home" | "play" | "archive" | "custom" | "how";
 
@@ -124,6 +125,12 @@ function Mascot({
       alt={`Expl41n connection guide is ${state}`}
       className={className}
       height={1254}
+      key={state}
+      onError={(event) => {
+        if (!event.currentTarget.src.endsWith("/expl41n/mascot/idle.png")) {
+          event.currentTarget.src = "/expl41n/mascot/idle.png";
+        }
+      }}
       priority={state === "idle"}
       src={`/expl41n/mascot/${state}.png`}
       unoptimized
@@ -449,7 +456,7 @@ export function Expl41nGame() {
   const activeNav = view === "play" ? mode : view;
 
   return (
-    <div className="expl41n-game-card">
+    <div className="expl41n-game-card" data-presentation={EXPL41N_PRESENTATION}>
       <header className="expl41n-local-header">
         <button className="expl41n-wordmark" onClick={openHome} type="button">
           Expl<span>41</span>n
