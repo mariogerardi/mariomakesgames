@@ -132,6 +132,22 @@ the locked migrated engine:
 - placeholder levels, unfinished themes, `???` achievements, Settings, and
   the experimental level editor excluded from the player product.
 
+Expl41n now has a complete source-informed visual restoration around its locked
+gameplay engine:
+
+- a refined Galaxy identity, mode-first landing, and responsive two-column
+  connection room with live circular metrics, attempt history, and leaderboard;
+- dedicated Archive, Custom, and How-to experiences for all four preserved
+  modes and the complete 380-puzzle authored corpus;
+- the original mode, win, and loss dialogue personality restored with stale
+  references to unavailable legacy features filtered out;
+- a new eleven-state connection-core mascot with idle, thinking, confidence,
+  terminal, and 30-second sleepy behavior;
+- the five-attempt Daily, 25-character clue boundary, shortest-clue scoring,
+  service-failure protection, persistence, and sharing mechanics unchanged;
+- legacy themes, achievements, and Settings kept out until their behavior is
+  intentionally migrated.
+
 ## Checks
 
 ```bash

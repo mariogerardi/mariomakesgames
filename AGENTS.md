@@ -3,7 +3,7 @@
 ## Current phase
 
 Pre-H13: restore each migrated game's source-faithful styling inside the
-full-viewport game shell. Syllabl, classic Rarity, Gridl, Before&After, and DECODE are complete;
+full-viewport game shell. Syllabl, classic Rarity, Gridl, Expl41n, Before&After, and DECODE are complete;
 proceed game-by-game only when explicitly requested.
 
 All six launch games are playable at their internal routes. DECODE preserves
@@ -29,6 +29,15 @@ four functional themes, First Puzzle milestone, and click/drag/touch-friendly
 play room. Preserve the 31-board authored catalog and tested engine. Do not
 restore the 179 placeholders, unfinished themes, `???` achievements, Settings,
 or the experimental editor as player-facing features.
+Expl41n owns its refined Galaxy identity, mode-first landing, two-column
+connection room, dedicated Archive, Custom, and How views, circular live
+metrics, restored source dialogue, and the new connection-core mascot family.
+Preserve its tested engine, 380-puzzle corpus, four modes, five-attempt Daily,
+25-character clue limit, shortest-clue scoring, AI-service failure hardening,
+and original confidence thresholds. The eleven semantic mascot states include
+idle, thinking, and 30-second sleepy behavior as well as every threshold and
+terminal outcome. Do not restore the legacy themes, achievements, Settings, or
+stale dialogue references to those unavailable features.
 Before&After owns its bundled Sansita Swashed identity, menu-first navigation,
 four complete themes, phrase-first play room, celebration, local Daily insights,
 four real puzzle packs, playable archive, custom creator, statistics, and reset

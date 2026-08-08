@@ -124,16 +124,41 @@ test("the Gridl route exposes the complete playable campaign migration", () => {
   assert.match(rulesSource, /special: from\.special \|\| null/);
 });
 
-test("the Expl41n route exposes all four preserved game modes", () => {
+test("the Expl41n route exposes its restored game room and all preserved modes", () => {
   const routeSource = read("app/games/[gameId]/page.tsx");
   const gameSource = read("src/games/expl41n/expl41n-game.tsx");
+  const presentationSource = read("src/games/expl41n/presentation.mjs");
   assert.match(routeSource, /Expl41nGame/);
-  assert.match(gameSource, /"daily", "shuffle", "archive", "custom"/);
+  assert.match(gameSource, /type Expl41nView/);
+  assert.match(gameSource, /"home" \| "play" \| "archive" \| "custom" \| "how"/);
+  assert.match(gameSource, /useState<Expl41nView>\("home"\)/);
+  assert.match(gameSource, /openMode\("daily"\)/);
+  assert.match(gameSource, /openMode\("shuffle"\)/);
+  assert.match(gameSource, /openMode\("archive"\)/);
+  assert.match(gameSource, /openMode\("custom"\)/);
   assert.match(gameSource, /EXPL41N_CLUE_LIMIT/);
   assert.match(gameSource, /attemptsRemaining/);
   assert.match(gameSource, /services\.guess/);
   assert.match(gameSource, /serializeExpl41nSession/);
   assert.match(gameSource, /handleShare/);
+  assert.match(gameSource, /greetingsData/);
+  assert.match(gameSource, /SLEEP_DELAY = 30_000/);
+  assert.match(gameSource, /expl41n-archive-screen/);
+  assert.match(gameSource, /expl41n-custom-screen/);
+  assert.match(gameSource, /expl41n-how-screen/);
+  assert.match(gameSource, /\/expl41n\/mascot\/\$\{state\}\.png/);
+  assert.doesNotMatch(gameSource, /\/expl41n\/emotions\//);
+  assert.match(presentationSource, /EXPL41N_MASCOT_STATES/);
+  assert.match(presentationSource, /expl41nAvatarMood/);
+  for (const state of [
+    "idle", "thinking", "frustrated", "confused", "suspicious",
+    "skeptical", "confident", "surprised", "sleepy", "victory", "defeat",
+  ]) {
+    assert.ok(
+      fs.existsSync(path.join(repositoryRoot, "public", "expl41n", "mascot", `${state}.png`)),
+      `missing Expl41n mascot state: ${state}`,
+    );
+  }
 });
 
 test("the Before&After route exposes the complete bridge game", () => {
