@@ -8135,11 +8135,17 @@ button:focus-visible {
   border: 0;
   border-radius: 18px;
   color: var(--syllabl-button-text);
-  background: linear-gradient(145deg, var(--syllabl-accent), var(--syllabl-hover));
+  background: linear-gradient(145deg, color-mix(in srgb, var(--syllabl-accent) 78%, white), color-mix(in srgb, var(--syllabl-hover) 78%, white));
   box-shadow: 0 6px 14px rgb(0 0 0 / 0.16);
   cursor: pointer;
   animation: syllabl-rise 420ms both;
   transition: transform 180ms ease, box-shadow 180ms ease, filter 180ms ease;
+}
+
+.syllabl-menu-grid > button:not(.syllabl-menu-daily) {
+  background: linear-gradient(145deg, color-mix(in srgb, var(--syllabl-accent) 40%, white), color-mix(in srgb, var(--syllabl-hover) 52%, white));
+  opacity: 0.96;
+  box-shadow: 0 4px 12px rgb(0 0 0 / 0.12);
 }
 
 .syllabl-menu-grid > button:hover {
@@ -8167,11 +8173,26 @@ button:focus-visible {
 }
 
 .syllabl-menu-grid button small {
-  font-size: 0.66rem;
-  font-weight: 450;
-  letter-spacing: 0.05em;
-  opacity: 0.82;
+  font-size: 0.58rem;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  opacity: 0.76;
   text-transform: uppercase;
+}
+
+.syllabl-menu-daily {
+  grid-column: 1 / -1;
+  min-height: 118px;
+  padding: 18px 18px 16px;
+  box-shadow: 0 10px 20px rgb(0 0 0 / 0.2);
+}
+
+.syllabl-menu-daily span {
+  font-size: clamp(1.35rem, 2vw, 1.85rem);
+}
+
+.syllabl-menu-daily small {
+  opacity: 0.82;
 }
 
 .syllabl-home-wordmark {
