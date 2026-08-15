@@ -7,12 +7,16 @@ import { resolveDeveloperPath } from "../../src/support/paths.mjs";
 import { readFixture } from "../helpers/fixtures.mjs";
 
 const gridlRoot = resolveDeveloperPath("games/wordgrid");
-const importLegacy = (relativePath) =>
-  import(pathToFileURL(path.join(gridlRoot, relativePath)).href);
 
-const stateEngine = await importLegacy("public/engine/state.js");
-const rulesEngine = await importLegacy("public/engine/rules.js");
-const levelEngine = await importLegacy("public/engine/levelLoader.js");
+if (!fs.existsSync(gridlRoot)) {
+  test.skip("Gridl legacy parity checks require a sibling games/wordgrid repo", () => {});
+} else {
+  const importLegacy = (relativePath) =>
+    import(pathToFileURL(path.join(gridlRoot, relativePath)).href);
+
+  const stateEngine = await importLegacy("public/engine/state.js");
+  const rulesEngine = await importLegacy("public/engine/rules.js");
+  const levelEngine = await importLegacy("public/engine/levelLoader.js");
 
 test("Gridl golden level 101 completes CAT at par", () => {
   const trace = readFixture("gridl/level-101-trace.json");
@@ -316,4 +320,5 @@ function startCustomLevel(overrides) {
   const state = stateEngine.initState(level);
   stateEngine.startLevel(state, level);
   return { level, state };
+}
 }

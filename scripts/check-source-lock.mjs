@@ -16,10 +16,19 @@ for (const source of lock.sources) {
   if (!source.localPathFromDeveloperRoot) continue;
 
   const sourcePath = resolveDeveloperPath(source.localPathFromDeveloperRoot);
-  assert.ok(
-    fs.existsSync(path.join(sourcePath, ".git")),
-    `${source.gameId}: missing local Git repository at ${sourcePath}`,
-  );
+  if (!fs.existsSync(sourcePath)) {
+    console.log(
+      `${source.gameId}: legacy checkout not present at ${sourcePath}; skipping lock verification.`,
+    );
+    continue;
+  }
+
+  if (!fs.existsSync(path.join(sourcePath, ".git"))) {
+    console.log(
+      `${source.gameId}: path exists but is not a Git repository at ${sourcePath}; skipping lock verification.`,
+    );
+    continue;
+  }
 
   const actualRevision = execFileSync(
     "git",

@@ -1,4 +1,5 @@
 import assert from "node:assert/strict";
+import fs from "node:fs";
 import test from "node:test";
 import {
   scoreSyllablFrequency,
@@ -9,21 +10,25 @@ import { readFixture } from "../helpers/fixtures.mjs";
 import { loadLegacyFunction } from "../helpers/legacy-function.mjs";
 
 const scriptPath = resolveDeveloperPath("games/playsyllabl/script.js");
-const legacyScore = loadLegacyFunction(
-  scriptPath,
-  "determineScoreFromFrequency",
-);
-const legacyState = {
-  puzzle: {
-    puzzleLetters: "",
-    inputsEnabled: [1],
-    syllablesRequired: [1],
-  },
-  currentStage: 0,
-};
-const legacyValidateGuess = loadLegacyFunction(scriptPath, "validateGuess", {
-  state: legacyState,
-});
+
+if (!fs.existsSync(scriptPath)) {
+  test.skip("Syllabl legacy parity checks require a sibling games/playsyllabl repo", () => {});
+} else {
+  const legacyScore = loadLegacyFunction(
+    scriptPath,
+    "determineScoreFromFrequency",
+  );
+  const legacyState = {
+    puzzle: {
+      puzzleLetters: "",
+      inputsEnabled: [1],
+      syllablesRequired: [1],
+    },
+    currentStage: 0,
+  };
+  const legacyValidateGuess = loadLegacyFunction(scriptPath, "validateGuess", {
+    state: legacyState,
+  });
 
 test("Syllabl score contract matches the locked legacy function", () => {
   for (const fixture of readFixture("syllabl/frequency-scores.json")) {
@@ -50,3 +55,4 @@ test("Syllabl placement contract matches the locked legacy function", () => {
     assert.equal(legacyResult.isValidPlacement, fixture.expected);
   }
 });
+}

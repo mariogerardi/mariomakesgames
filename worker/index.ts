@@ -32,12 +32,20 @@ const worker = {
 
     if (url.pathname === "/_vinext/image") {
       const allowedWidths = [...DEFAULT_DEVICE_SIZES, ...DEFAULT_IMAGE_SIZES];
+      const assetFetch = env?.ASSETS?.fetch
+        ? (path: string) => env.ASSETS.fetch(new Request(new URL(path, request.url)))
+        : (path: string) => fetch(new URL(path, request.url));
+
+      const transformImage = env?.IMAGES
+        ? async (body: ReadableStream, { width, format, quality }: { width: number; format: string; quality: number }) => {
+            const result = await env.IMAGES.input(body).transform(width > 0 ? { width } : {}).output({ format, quality });
+            return result.response();
+          }
+        : async (body: ReadableStream) => new Response(body);
+
       return handleImageOptimization(request, {
-        fetchAsset: (path) => env.ASSETS.fetch(new Request(new URL(path, request.url))),
-        transformImage: async (body, { width, format, quality }) => {
-          const result = await env.IMAGES.input(body).transform(width > 0 ? { width } : {}).output({ format, quality });
-          return result.response();
-        },
+        fetchAsset: assetFetch,
+        transformImage,
       }, allowedWidths);
     }
 

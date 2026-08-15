@@ -1,4 +1,5 @@
 import assert from "node:assert/strict";
+import fs from "node:fs";
 import path from "node:path";
 import { pathToFileURL } from "node:url";
 import test from "node:test";
@@ -12,13 +13,17 @@ import { readFixture } from "../helpers/fixtures.mjs";
 import { loadLegacyFunction } from "../helpers/legacy-function.mjs";
 
 const rarityRoot = resolveDeveloperPath("games/rarity");
-const legacyScoring = await import(
-  pathToFileURL(path.join(rarityRoot, "backend/lib/wordScoring.mjs")).href
-);
-const legacyLocalRules = loadLegacyFunction(
-  path.join(rarityRoot, "js/core/daily/game-view.js"),
-  "validateLocalRules",
-);
+
+if (!fs.existsSync(rarityRoot)) {
+  test.skip("Rarity legacy parity checks require a sibling games/rarity repo", () => {});
+} else {
+  const legacyScoring = await import(
+    pathToFileURL(path.join(rarityRoot, "backend/lib/wordScoring.mjs")).href,
+  );
+  const legacyLocalRules = loadLegacyFunction(
+    path.join(rarityRoot, "js/core/daily/game-view.js"),
+    "validateLocalRules",
+  );
 
 test("Rarity score contract matches the backend oracle", () => {
   for (const fixture of readFixture("rarity/frequency-scores.json")) {
@@ -47,3 +52,4 @@ test("Rarity local acceptance matches the legacy validator", () => {
     );
   }
 });
+}

@@ -403,9 +403,9 @@ export function SyllablGame() {
 
           <main className="syllabl-play-stage">
             <section className="syllabl-play-primary" aria-label="Current challenge">
-              <div className="syllabl-token-block">
-                <span>your three letters</span>
-                <strong aria-label={`Puzzle letters ${token}`}>{token}</strong>
+              <div className="syllabl-token-row" aria-label={`Puzzle letters ${token}`}>
+                <span className="syllabl-token-label">letters</span>
+                <strong>{token}</strong>
               </div>
 
               {isComplete ? (
