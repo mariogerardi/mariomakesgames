@@ -77,14 +77,14 @@ const THEMES: Array<{ id: ThemeId; name: string; description: string }> = [
   { id: "terminal", name: "terminal", description: "glowing monochrome with bold neon greens." },
 ];
 
-const MENU_ITEMS: Array<{ view: View; title: string; subtitle: string; icon: string }> = [
-  { view: "daily", title: "daily", subtitle: "today’s sixty-second bridge", icon: "◫" },
-  { view: "packs", title: "puzzle packs", subtitle: "204 handcrafted connections", icon: "▦" },
-  { view: "custom", title: "create", subtitle: "make a bridge of your own", icon: "✎" },
-  { view: "archive", title: "archive", subtitle: "revisit the last thirty days", icon: "≡" },
-  { view: "stats", title: "statistics", subtitle: "your lifetime record", icon: "▥" },
-  { view: "themes", title: "themes", subtitle: "change the whole atmosphere", icon: "✦" },
-  { view: "settings", title: "settings", subtitle: "manage local progress", icon: "⚙" },
+const MENU_ITEMS: Array<{ view: View; title: string; subtitle: string }> = [
+  { view: "daily", title: "daily", subtitle: "today’s sixty-second bridge" },
+  { view: "packs", title: "puzzle packs", subtitle: "204 handcrafted connections" },
+  { view: "custom", title: "create", subtitle: "make a bridge of your own" },
+  { view: "archive", title: "archive", subtitle: "revisit the last thirty days" },
+  { view: "stats", title: "statistics", subtitle: "your lifetime record" },
+  { view: "themes", title: "themes", subtitle: "change the whole atmosphere" },
+  { view: "settings", title: "settings", subtitle: "manage local progress" },
 ];
 
 function readJson<T>(key: string, fallback: T): T {
@@ -371,8 +371,7 @@ export function BeforeAfterGame() {
     }
     if (!result.correct) {
       saveProgress({ ...progress, totalAttempts: progress.totalAttempts + 1 });
-      setAnswer("");
-      setFeedback("Not the bridge. Try another word.");
+      setFeedback("Try again.");
       setTone("error");
       return;
     }
@@ -522,7 +521,7 @@ export function BeforeAfterGame() {
         />
       ) : (
         <section className="ba-view">
-          <header className="ba-view-heading"><h2>{view === "stats" ? "statistics" : view}</h2></header>
+          <header className="ba-view-heading"><h2>{view === "stats" ? "statistics" : view === "custom" ? "create a puzzle" : view === "packs" ? "puzzle packs" : view}</h2></header>
           {view === "packs" && (
             <PacksView currentPack={currentPack} isOpen={isPackOpen} packId={packId} page={packPage} progress={progress} onBack={() => setIsPackOpen(false)} onPack={choosePack} onPage={setPackPage} onPuzzle={choosePackPuzzle} />
           )}
@@ -585,7 +584,7 @@ function MainMenu({ progress, onOpen }: { progress: BridgeProgress; onOpen: (vie
       <div className="ba-menu-grid">
         {MENU_ITEMS.map((item) => (
           <button className={`ba-menu-tile is-${item.view}`} data-core-view={CORE_VIEWS.includes(item.view as (typeof CORE_VIEWS)[number]) || undefined} key={item.view} onClick={() => onOpen(item.view)} type="button">
-            <span className="ba-menu-icon" aria-hidden="true">{item.icon}</span>
+            <span className="ba-menu-icon" data-icon={item.view} aria-hidden="true" />
             <span><strong>{item.title}</strong><small>{item.subtitle}</small></span>
             {item.view === "daily" && dailyDone ? <em>done</em> : <i>›</i>}
           </button>
@@ -679,16 +678,16 @@ function PlayView({
             value={answer}
           />
           <div className="ba-keyboard" aria-label="Letter keyboard">
-            {KEYBOARD.map((row) => (
+            {KEYBOARD.map((row, rowIndex) => (
               <div key={row}>
+                {rowIndex === KEYBOARD.length - 1 && <button className="is-delete" disabled={session.status !== "active"} onClick={() => onKey("⌫")} type="button">⌫</button>}
                 {row.split("").map((key) => (
                   <button disabled={session.status !== "active"} key={key} onClick={() => onKey(key)} type="button">{key}</button>
                 ))}
-                {row === "ZXCVBNM" && <button className="is-delete" disabled={session.status !== "active"} onClick={() => onKey("⌫")} type="button">⌫</button>}
+                {rowIndex === KEYBOARD.length - 1 && <button className="is-submit" disabled={session.status !== "active" || !answer.trim()} onClick={onSubmit} type="button">submit</button>}
               </div>
             ))}
           </div>
-          <button className="ba-submit" disabled={session.status !== "active" || !answer.trim()} onClick={onSubmit} type="button">submit</button>
           {session.status === "active" && <button className="ba-retry" onClick={onRetry} type="button">restart puzzle</button>}
         </aside>
       </div>
@@ -890,7 +889,7 @@ function ThemesView({ selected, onSelect }: { selected: ThemeId; onSelect: (them
       <div className="ba-theme-grid">
         {THEMES.map((theme) => (
           <button className={`ba-theme-card is-${theme.id}${selected === theme.id ? " is-current" : ""}`} key={theme.id} onClick={() => onSelect(theme.id)} type="button">
-            <span className="ba-theme-swatch"><i /><i /><i /></span>
+            <span className="ba-theme-swatch"><i /><i /><i /><i /><i /></span>
             <strong>{theme.name}</strong><small>{theme.description}</small><em>{selected === theme.id ? "selected" : "choose theme"}</em>
           </button>
         ))}
