@@ -2,6 +2,8 @@
 
 A collection of original browser games by Mario Gerardi.
 
+[![CI](https://github.com/mariogerardi/mariomakesgames/actions/workflows/ci.yml/badge.svg)](https://github.com/mariogerardi/mariomakesgames/actions/workflows/ci.yml)
+
 ![mariomakesgames! preview](public/og.png)
 
 The hub gives each game its own visual identity and rules while keeping them
