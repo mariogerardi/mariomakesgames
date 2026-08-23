@@ -42,7 +42,7 @@ test("the home page routes into the hub rather than legacy deployments", () => {
   assert.doesNotMatch(heroPreviewSource, /preview-rarity-keyboard/);
   assert.match(heroPreviewSource, /preview-card-before-after/);
   assert.match(heroPreviewSource, /preview-before-after-phrases/);
-  assert.match(heroPreviewSource, /preview-before-after-entry/);
+  assert.match(heroPreviewSource, /preview-before-after-keyboard/);
   assert.match(heroPreviewSource, /data-preview-game/);
   assert.match(heroPreviewSource, /data-preview-entry/);
   assert.match(heroPreviewSource, /IntersectionObserver/);

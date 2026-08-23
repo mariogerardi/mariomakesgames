@@ -18,9 +18,9 @@
 /* Reproducible 1200 × 630 source for the repository and link-preview artwork. */
 .social-card-render {
   display: grid;
-  width: 100vw;
+  width: 1200px;
   min-width: 1200px;
-  height: 100vh;
+  height: 630px;
   min-height: 630px;
   grid-template-rows: auto 1fr;
   gap: 24px;
@@ -18351,4 +18351,198 @@ body:has(.syllabl-game-card .syllabl-play) {
   }
 
   .before-after-game-card .ba-theme-card strong { font-size: 1.55rem; }
+}
+
+/* Hub representations of Before & After follow the restored game styling. */
+.site-frame:not([data-game]) .preview-card-before-after {
+  padding: clamp(18px, 2.1vw, 26px);
+  border-color: rgb(29 29 31 / 0.14);
+  color: #1d1d1f;
+  background: #f2f2f7;
+  box-shadow: 0 18px 42px rgb(29 29 31 / 0.12);
+}
+
+.site-frame:not([data-game]) .preview-before-after-wordmark {
+  font-size: clamp(.98rem, 1.65vw, 1.3rem);
+  letter-spacing: -.045em;
+}
+
+.site-frame:not([data-game]) .preview-before-after-wordmark span::before,
+.site-frame:not([data-game]) .preview-before-after-wordmark b::before {
+  bottom: .03em;
+  height: .31em;
+  border-radius: 999px;
+  transform: skewX(-18deg);
+}
+
+.preview-before-after-puzzle {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  min-height: 0;
+  margin-top: 15px;
+  padding: clamp(15px, 1.8vw, 21px);
+  border-radius: 20px;
+  background: #fff;
+  box-shadow: 0 10px 24px rgb(0 0 0 / .075);
+}
+
+.site-frame:not([data-game]) .preview-before-after-prompt {
+  margin: 0;
+  color: #1d1d1f;
+  font-size: clamp(.62rem, .95vw, .82rem);
+  font-weight: 450;
+  text-align: center;
+}
+
+.site-frame:not([data-game]) .preview-before-after-phrases {
+  gap: clamp(13px, 1.6vw, 19px);
+  margin: auto 0;
+}
+
+.site-frame:not([data-game]) .preview-before-after-phrases > span {
+  display: flex;
+  grid-template-columns: none;
+  gap: clamp(8px, 1.1vw, 13px);
+  justify-content: center;
+  font-size: clamp(1.12rem, 2vw, 1.72rem);
+}
+
+.site-frame:not([data-game]) .preview-before-after-phrases i {
+  color: #1d1d1f;
+  font-weight: 650;
+  white-space: nowrap;
+}
+
+.site-frame:not([data-game]) .preview-before-after-phrases b {
+  position: relative;
+  display: inline-grid;
+  width: min(42%, 120px);
+  min-width: 72px;
+  place-items: center;
+  border-bottom: 2px solid #1d1d1f;
+  color: #1d1d1f;
+}
+
+.site-frame:not([data-game]) .preview-before-after-phrases b::before { display: none; }
+
+.site-frame:not([data-game]) .preview-before-after-phrases b::after {
+  right: 0;
+  bottom: -2px;
+  left: 0;
+  height: 2px;
+  background: #1d1d1f;
+}
+
+.site-frame:not([data-game]) .preview-before-after-phrases em {
+  position: relative;
+  z-index: 0;
+  display: inline-block;
+  color: #1d1d1f;
+  font-style: normal;
+  line-height: 1;
+}
+
+.site-frame:not([data-game]) .preview-before-after-phrases em::before {
+  position: absolute;
+  z-index: -1;
+  right: -6px;
+  bottom: -.01em;
+  left: -6px;
+  height: .5em;
+  border-radius: 999px;
+  background: #f36373;
+  content: "";
+  opacity: 0;
+  transform: skewX(-18deg);
+  transition: opacity 180ms ease;
+}
+
+.site-frame:not([data-game]) .preview-before-after-phrases > span:last-child em::before { background: #64adf0; }
+
+.site-frame:not([data-game]) .preview-card-before-after.is-typing .preview-before-after-phrases em::before,
+.site-frame:not([data-game]) .preview-card-before-after.is-submitted .preview-before-after-phrases em::before,
+.site-frame:not([data-game]) .preview-card-before-after.is-feedback .preview-before-after-phrases em::before { opacity: .92; }
+
+.preview-before-after-keyboard {
+  display: grid;
+  gap: 3px;
+  margin-top: 9px;
+}
+
+.preview-before-after-keyboard > span {
+  display: flex;
+  gap: 3px;
+  justify-content: center;
+}
+
+.preview-before-after-keyboard i {
+  display: grid;
+  flex: 1 1 0;
+  max-width: 25px;
+  height: clamp(14px, 1.8vw, 20px);
+  place-items: center;
+  border-radius: 4px;
+  color: #1d1d1f;
+  background: #e2e2e8;
+  box-shadow: 0 1px 0 rgb(29 29 31 / .13);
+  font: 650 clamp(.28rem, .46vw, .39rem) "Sansita Swashed", Georgia, serif;
+  font-style: normal;
+}
+
+.preview-before-after-keyboard i.is-submit {
+  flex-grow: 2.2;
+  max-width: 46px;
+  color: #fff;
+  background: #1688f7;
+}
+
+.site-frame:not([data-game]) .preview-card-before-after > .preview-live-feedback {
+  margin-top: 5px;
+  color: #319b5d;
+  font-family: "Sansita Swashed", Georgia, serif;
+  letter-spacing: 0;
+  text-transform: lowercase;
+}
+
+.game-card[data-game="before-after"] {
+  --card-background: #f2f2f7;
+  --card-accent: #ef6676;
+  background:
+    radial-gradient(circle at 14% 92%, rgb(239 102 118 / .12), transparent 34%),
+    radial-gradient(circle at 88% 8%, rgb(91 159 229 / .13), transparent 32%),
+    var(--card-background);
+}
+
+.game-card[data-game="before-after"] > a::before {
+  right: -22%;
+  bottom: -34%;
+  width: 82%;
+  border-color: rgb(29 29 31 / .13);
+  border-radius: 32px;
+  background: rgb(255 255 255 / .48);
+  opacity: .9;
+  transform: rotate(-5deg);
+}
+
+.game-card[data-game="before-after"] > a:hover::before {
+  transform: translate(-7%, -9%) rotate(-3deg);
+}
+
+.game-mark[data-game="before-after"] {
+  border-color: rgb(29 29 31 / .14);
+  background: #fff;
+  box-shadow: 0 5px 13px rgb(0 0 0 / .07);
+}
+
+.before-after-collection-mark i::before,
+.before-after-collection-mark i:last-child::before,
+.before-after-card-wordmark span::before,
+.before-after-card-wordmark b::before {
+  border-radius: 999px;
+  transform: skewX(-18deg);
+}
+
+.before-after-card-wordmark {
+  letter-spacing: -.045em !important;
 }

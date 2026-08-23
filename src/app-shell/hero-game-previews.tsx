@@ -146,6 +146,7 @@ function RarityPreview() {
 
 function BeforeAfterPreview() {
   const { cardRef, phase, typedAnswer } = useCenteredDemo("body");
+  const shownAnswer = typedAnswer || "\u00a0";
 
   return (
     <div
@@ -157,24 +158,23 @@ function BeforeAfterPreview() {
       <div className="preview-before-after-wordmark">
         <span>before</span><i>&amp;</i><b>after</b>
       </div>
-      <p className="preview-before-after-prompt">
-        word before <b>double</b> or after <b>heavenly</b>.
-      </p>
-      <div className="preview-before-after-phrases">
-        <span><b>body</b><i>double</i></span>
-        <span><i>heavenly</i><b>body</b></span>
-      </div>
-      <div className="preview-entry-stack">
-        <div className="preview-before-after-entry">
-          <span className="preview-entry-value" data-preview-entry>
-            {typedAnswer || "your answer"}
-          </span>
-          <b>{phase === "feedback" ? "✓" : "→"}</b>
+      <div className="preview-before-after-puzzle">
+        <p className="preview-before-after-prompt">
+          word before <b>double</b> or after <b>heavenly</b>.
+        </p>
+        <div className="preview-before-after-phrases">
+          <span><b><em className="preview-entry-value" data-preview-entry>{shownAnswer}</em></b><i>double</i></span>
+          <span><i>heavenly</i><b><em className="preview-entry-value">{shownAnswer}</em></b></span>
         </div>
-        <small className="preview-live-feedback">
-          {phase === "submitted" ? "checking both phrases…" : phase === "feedback" ? "bridge found" : "\u00a0"}
-        </small>
       </div>
+      <div className="preview-before-after-keyboard" aria-hidden="true">
+        <span>{"qwertyuiop".split("").map((letter) => <i key={letter}>{letter}</i>)}</span>
+        <span>{"asdfghjkl".split("").map((letter) => <i key={letter}>{letter}</i>)}</span>
+        <span><i>⌫</i>{"zxcvbnm".split("").map((letter) => <i key={letter}>{letter}</i>)}<i className="is-submit">submit</i></span>
+      </div>
+      <small className="preview-live-feedback">
+        {phase === "submitted" ? "checking both phrases…" : phase === "feedback" ? "bridge found" : "\u00a0"}
+      </small>
     </div>
   );
 }
