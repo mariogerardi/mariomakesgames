@@ -14,10 +14,10 @@ test("launch catalog is ordered and stable", () => {
     [
       { priority: 1, id: "syllabl" },
       { priority: 2, id: "rarity" },
-      { priority: 3, id: "gridl" },
+      { priority: 3, id: "before-after" },
       { priority: 4, id: "expl41n" },
-      { priority: 5, id: "before-after" },
-      { priority: 6, id: "decode" },
+      { priority: 5, id: "decode" },
+      { priority: 6, id: "gridl" },
     ],
   );
 });

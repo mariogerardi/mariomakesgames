@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { headers } from "next/headers";
+import { siteBrand } from "../src/app-shell/site-brand";
 import "./globals.css";
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -13,26 +14,25 @@ export async function generateMetadata(): Promise<Metadata> {
     (host.startsWith("localhost") ? "http" : "https");
   const origin = `${protocol}://${host}`;
   const socialImage = `${origin}/og.png`;
-  const description =
-    "A growing collection of original word games, all under one roof.";
+  const description = siteBrand.description;
 
   return {
     metadataBase: new URL(origin),
     title: {
-      default: "Games by Mario Gerardi",
-      template: "%s · Games by Mario Gerardi",
+      default: siteBrand.name,
+      template: `%s · ${siteBrand.name}`,
     },
     description,
     openGraph: {
       type: "website",
-      siteName: "Games by Mario Gerardi",
-      title: "Six games. One place to play.",
+      siteName: siteBrand.name,
+      title: siteBrand.name,
       description,
-      images: [{ url: socialImage, width: 1731, height: 909 }],
+      images: [{ url: socialImage, width: 1200, height: 630 }],
     },
     twitter: {
       card: "summary_large_image",
-      title: "Six games. One place to play.",
+      title: siteBrand.name,
       description,
       images: [socialImage],
     },

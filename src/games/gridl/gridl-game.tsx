@@ -47,7 +47,7 @@ const gridlThemes = [
   {
     id: "light",
     name: "Light",
-    description: "Airy blues, crisp white tiles, and the classic Gridl look.",
+    description: "Warm map paper, crisp tiles, and classic cobalt routes.",
   },
   {
     id: "dark",

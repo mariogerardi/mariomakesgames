@@ -1,3 +1,4 @@
+import Image from "next/image";
 import type { HubGame } from "../games/registry";
 
 type GameMarkProps = {
@@ -12,7 +13,38 @@ export function GameMark({ game, size = "small" }: GameMarkProps) {
       className={`game-mark game-mark-${size}`}
       data-game={game.id}
     >
-      {game.symbol}
+      {game.id === "syllabl" ? (
+        <span className="syllabl-collection-monogram">
+          <span>sy</span><i>·</i>
+        </span>
+      ) : game.id === "rarity" ? (
+        <Image
+          className="rarity-collection-gem"
+          alt=""
+          height={600}
+          src="/rarity/logo.png"
+          width={600}
+        />
+      ) : game.id === "gridl" ? (
+        <span className="gridl-collection-grid">
+          <i className="is-fragment">gr</i>
+          <i />
+          <i className="is-blocked" />
+          <i className="is-goal">★</i>
+        </span>
+      ) : game.id === "expl41n" ? (
+        <Image
+          alt=""
+          className="expl41n-collection-mascot"
+          height={512}
+          src="/expl41n/mascot/idle.png"
+          width={512}
+        />
+      ) : game.id === "before-after" ? (
+        <span className="before-after-collection-mark">
+          <i>b</i><b>&amp;</b><i>a</i>
+        </span>
+      ) : game.symbol}
     </div>
   );
 }

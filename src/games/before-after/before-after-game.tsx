@@ -31,6 +31,7 @@ const CUSTOM_KEY = gameStorageKey("before-after", "custom");
 const THEME_KEY = gameStorageKey("before-after", "theme");
 const KEYBOARD = ["QWERTYUIOP", "ASDFGHJKL", "ZXCVBNM"];
 const CORE_VIEWS = ["daily", "packs", "archive", "custom", "stats"] as const;
+const ROUTED_VIEWS = ["daily", "packs", "archive", "custom", "stats", "themes", "settings", "insights"] as const;
 
 type View =
   | "menu"
@@ -47,6 +48,21 @@ type BridgeProgress = {
   totalAttempts: number;
   dailyDates: string[];
 };
+
+function beforeAfterViewFromUrl(): View {
+  if (typeof window === "undefined") return "menu";
+  const requested = new URL(window.location.href).searchParams.get("view");
+  return ROUTED_VIEWS.includes(requested as (typeof ROUTED_VIEWS)[number])
+    ? requested as View
+    : "menu";
+}
+
+function writeBeforeAfterViewUrl(view: View, mode: "push" | "replace" = "push") {
+  const url = new URL(window.location.href);
+  if (view === "menu") url.searchParams.delete("view");
+  else url.searchParams.set("view", view);
+  window.history[mode === "push" ? "pushState" : "replaceState"]({}, "", url);
+}
 
 const EMPTY_PROGRESS: BridgeProgress = {
   solved: {},
@@ -170,12 +186,16 @@ export function BeforeAfterGame() {
   const [view, setView] = useState<View>("menu");
   const [theme, setTheme] = useState<ThemeId>("signature");
   const [packId, setPackId] = useState(bridgePacks[0].id);
+  const [isPackOpen, setIsPackOpen] = useState(false);
+  const [packPage, setPackPage] = useState(0);
   const [puzzleIndex, setPuzzleIndex] = useState(0);
   const [isPlaying, setIsPlaying] = useState(false);
   const [session, setSession] = useState<BridgeSession | null>(null);
   const [answer, setAnswer] = useState("");
   const [feedback, setFeedback] = useState("Find the word that completes both phrases.");
   const [tone, setTone] = useState<"neutral" | "error" | "success">("neutral");
+  const [customFeedback, setCustomFeedback] = useState("");
+  const [customTone, setCustomTone] = useState<"neutral" | "error" | "success">("neutral");
   const [remaining, setRemaining] = useState(60);
   const [progress, setProgress] = useState<BridgeProgress>(EMPTY_PROGRESS);
   const [customPuzzles, setCustomPuzzles] = useState<BridgePuzzle[]>([]);
@@ -219,6 +239,33 @@ export function BeforeAfterGame() {
   }, [dailyPuzzle]);
 
   useEffect(() => {
+    const syncView = () => {
+      const next = beforeAfterViewFromUrl();
+      setView(next);
+      setIsPlaying(next === "daily");
+      setShowCelebration(false);
+      setConfirmReset(false);
+      setIsPackOpen(false);
+      if (next === "daily") {
+        const restored = hydrateBridgeSession({
+          payload: readJson<Record<string, unknown> | null>(DAILY_KEY, null),
+          puzzle: dailyPuzzle,
+          mode: "daily",
+        });
+        setSession(restored);
+        setAnswer(restored.answerText);
+        setRemaining(remainingBridgeSeconds(restored));
+        setFeedback(restored.status === "solved" ? "Today’s bridge is complete." : restored.status === "expired" ? `Time. The bridge was ${restored.puzzle.answer}.` : "You have 60 seconds and unlimited guesses.");
+        setTone(restored.status === "solved" ? "success" : restored.status === "expired" ? "error" : "neutral");
+      }
+      window.scrollTo({ top: 0, behavior: "instant" });
+    };
+    syncView();
+    window.addEventListener("popstate", syncView);
+    return () => window.removeEventListener("popstate", syncView);
+  }, [dailyPuzzle]);
+
+  useEffect(() => {
     if (!session || session.mode !== "daily" || session.status !== "active") return;
     const timer = window.setInterval(() => {
       const seconds = remainingBridgeSeconds(session, Date.now());
@@ -251,9 +298,18 @@ export function BeforeAfterGame() {
   }
 
   function openView(next: View) {
+    writeBeforeAfterViewUrl(next);
     setView(next);
     setShowCelebration(false);
     setConfirmReset(false);
+    if (next === "packs") {
+      setIsPackOpen(false);
+      setPackPage(0);
+    }
+    if (next === "custom") {
+      setCustomFeedback("");
+      setCustomTone("neutral");
+    }
     if (next === "daily") {
       const restored = hydrateBridgeSession({
         payload: readJson<Record<string, unknown> | null>(DAILY_KEY, null),
@@ -268,18 +324,27 @@ export function BeforeAfterGame() {
       setIsPlaying(true);
     } else {
       setIsPlaying(false);
+      setFeedback("Find the word that completes both phrases.");
+      setTone("neutral");
     }
   }
 
   function returnFromPlay() {
     setIsPlaying(false);
     setShowCelebration(false);
-    if (view === "daily") setView("menu");
+    if (view === "daily") {
+      setView("menu");
+      writeBeforeAfterViewUrl("menu");
+    } else {
+      writeBeforeAfterViewUrl(view, "replace");
+    }
   }
 
   function choosePack(nextPackId: string) {
     setPackId(nextPackId);
     setPuzzleIndex(0);
+    setPackPage(0);
+    setIsPackOpen(true);
   }
 
   function choosePackPuzzle(index: number) {
@@ -371,13 +436,15 @@ export function BeforeAfterGame() {
         "clues-unique": "Use two different clues.",
         "position-invalid": "Choose a bridge direction.",
       };
-      setFeedback(messages[result.reason] || "Check your puzzle.");
-      setTone("error");
+      setCustomFeedback(messages[result.reason] || "Check your puzzle.");
+      setCustomTone("error");
       return;
     }
     const nextCustom = [result.puzzle, ...customPuzzles];
     setCustomPuzzles(nextCustom);
     localStorage.setItem(CUSTOM_KEY, JSON.stringify(nextCustom));
+    setCustomFeedback("");
+    setCustomTone("neutral");
     startPuzzle(result.puzzle, "custom");
   }
 
@@ -413,7 +480,7 @@ export function BeforeAfterGame() {
   };
 
   return (
-    <div className="before-after-game-card" data-theme={theme}>
+    <div className="before-after-game-card" data-theme={theme} data-view={isPlaying ? "play" : view}>
       <GameLocalBar
         ariaLabel="Before and After"
         brand={<Wordmark compact />}
@@ -442,8 +509,7 @@ export function BeforeAfterGame() {
           onClear={() => setAnswer("")}
           onKey={keyboardKey}
           onInsights={session.mode === "daily" ? () => {
-            setIsPlaying(false);
-            setView("insights");
+            openView("insights");
           } : undefined}
           onNext={() => choosePackPuzzle((puzzleIndex + 1) % currentPack.puzzles.length)}
           onPrevious={() => choosePackPuzzle((puzzleIndex - 1 + currentPack.puzzles.length) % currentPack.puzzles.length)}
@@ -458,7 +524,7 @@ export function BeforeAfterGame() {
         <section className="ba-view">
           <header className="ba-view-heading"><h2>{view === "stats" ? "statistics" : view}</h2></header>
           {view === "packs" && (
-            <PacksView currentPack={currentPack} packId={packId} progress={progress} onPack={choosePack} onPuzzle={choosePackPuzzle} />
+            <PacksView currentPack={currentPack} isOpen={isPackOpen} packId={packId} page={packPage} progress={progress} onBack={() => setIsPackOpen(false)} onPack={choosePack} onPage={setPackPage} onPuzzle={choosePackPuzzle} />
           )}
           {view === "archive" && (
             <ArchiveView archive={archive} progress={progress} onPuzzle={(puzzle) => startPuzzle(puzzle, "archive")} />
@@ -469,7 +535,7 @@ export function BeforeAfterGame() {
               clueOne={customClueOne}
               clueTwo={customClueTwo}
               customPuzzles={customPuzzles}
-              feedback={feedback}
+              feedback={customFeedback}
               onAnswer={setCustomAnswer}
               onClueOne={setCustomClueOne}
               onClueTwo={setCustomClueTwo}
@@ -478,7 +544,7 @@ export function BeforeAfterGame() {
               onPosition={setCustomPosition}
               position={customPosition}
               previewPuzzle={previewPuzzle}
-              tone={tone}
+              tone={customTone}
             />
           )}
           {view === "stats" && <StatsView progress={progress} customCount={customPuzzles.length} />}
@@ -499,8 +565,7 @@ export function BeforeAfterGame() {
           } : undefined}
           onInsights={session.mode === "daily" ? () => {
             setShowCelebration(false);
-            setIsPlaying(false);
-            setView("insights");
+            openView("insights");
           } : undefined}
           session={session}
         />
@@ -638,13 +703,51 @@ function PlayView({
   );
 }
 
-function PacksView({ currentPack, packId, progress, onPack, onPuzzle }: {
+function PacksView({ currentPack, isOpen, packId, page, progress, onBack, onPack, onPage, onPuzzle }: {
   currentPack: (typeof bridgePacks)[number];
+  isOpen: boolean;
   packId: string;
+  page: number;
   progress: BridgeProgress;
+  onBack: () => void;
   onPack: (id: string) => void;
+  onPage: (page: number) => void;
   onPuzzle: (index: number) => void;
 }) {
+  if (isOpen) {
+    const pageSize = 12;
+    const pageCount = Math.max(1, Math.ceil(currentPack.puzzles.length / pageSize));
+    const safePage = Math.min(page, pageCount - 1);
+    const firstPuzzle = safePage * pageSize;
+    const visiblePuzzles = currentPack.puzzles.slice(firstPuzzle, firstPuzzle + pageSize);
+    const solved = currentPack.puzzles.filter((puzzle) => progress.solved[puzzle.id]).length;
+    return (
+      <div className="ba-library ba-pack-detail">
+        <div className="ba-pack-detail-heading">
+          <button onClick={onBack} type="button">← all packs</button>
+          <div><p>{currentPack.name.toLowerCase()}</p><span>{currentPack.description}</span></div>
+          <strong>{solved}/{currentPack.puzzles.length}</strong>
+          <nav className="ba-pack-pagination" aria-label="Puzzle pages">
+            <button disabled={safePage === 0} onClick={() => onPage(safePage - 1)} type="button">←</button>
+            <span>{safePage + 1}/{pageCount}</span>
+            <button disabled={safePage === pageCount - 1} onClick={() => onPage(safePage + 1)} type="button">→</button>
+          </nav>
+        </div>
+        <div className="ba-puzzle-browser">
+          <div className="ba-puzzle-grid">
+            {visiblePuzzles.map((puzzle, index) => (
+              <button className={progress.solved[puzzle.id] ? "is-solved" : ""} key={puzzle.id} onClick={() => onPuzzle(firstPuzzle + index)} type="button">
+                <span>{String(firstPuzzle + index + 1).padStart(2, "0")}</span>
+                <strong>{puzzle.clueWords.join(" · ")}</strong>
+                <small>{progress.solved[puzzle.id] ? puzzle.answer : "play"}</small>
+              </button>
+            ))}
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="ba-library">
       <div className="ba-section-intro"><p>choose a collection</p><span>Every pack is ready to play—no ranks or filler.</span></div>
@@ -660,18 +763,6 @@ function PacksView({ currentPack, packId, progress, onPack, onPuzzle }: {
           );
         })}
       </div>
-      <div className="ba-puzzle-browser">
-        <div><h3>{currentPack.name.toLowerCase()}</h3><p>{currentPack.description}</p></div>
-        <div className="ba-puzzle-grid">
-          {currentPack.puzzles.map((puzzle, index) => (
-            <button className={progress.solved[puzzle.id] ? "is-solved" : ""} key={puzzle.id} onClick={() => onPuzzle(index)} type="button">
-              <span>{String(index + 1).padStart(2, "0")}</span>
-              <strong>{puzzle.clueWords.join(" · ")}</strong>
-              <small>{progress.solved[puzzle.id] ? puzzle.answer : "play"}</small>
-            </button>
-          ))}
-        </div>
-      </div>
     </div>
   );
 }
@@ -681,20 +772,31 @@ function ArchiveView({ archive, progress, onPuzzle }: {
   progress: BridgeProgress;
   onPuzzle: (puzzle: BridgePuzzle) => void;
 }) {
+  const chronological = [...archive].reverse();
+  const firstDate = chronological[0]?.date ? new Date(`${chronological[0].date}T12:00:00`) : new Date();
+  const leadingDays = firstDate.getDay();
+  const weekdays = ["sun", "mon", "tue", "wed", "thu", "fri", "sat"];
   return (
     <div className="ba-library">
       <div className="ba-section-intro"><p>the last thirty days</p><span>Old bridges remain fully playable on this device.</span></div>
-      <div className="ba-archive-grid">
-        {archive.map((entry, index) => {
-          const solved = progress.solved[entry.puzzle.id];
-          return (
-            <button className={solved ? "is-solved" : ""} key={entry.date} onClick={() => onPuzzle(entry.puzzle)} type="button">
-              <span>{index === 0 ? "today" : entry.label}</span>
-              <strong>{entry.puzzle.clueWords.join(" + ")}</strong>
-              <small>{solved ? entry.puzzle.answer : "find the bridge"}</small>
-            </button>
-          );
-        })}
+      <div className="ba-calendar-shell">
+        <div className="ba-calendar-weekdays">{weekdays.map((day) => <span key={day}>{day}</span>)}</div>
+        <div className="ba-calendar-grid">
+          {Array.from({ length: leadingDays }, (_, index) => <span className="ba-calendar-blank" key={`blank-${index}`} />)}
+          {chronological.map((entry, index) => {
+            const solved = progress.solved[entry.puzzle.id];
+            const date = new Date(`${entry.date}T12:00:00`);
+            const isToday = index === chronological.length - 1;
+            return (
+              <button className={`${solved ? "is-solved " : ""}${isToday ? "is-today" : ""}`} data-variant={index % 4} key={entry.date} onClick={() => onPuzzle(entry.puzzle)} type="button">
+                <time dateTime={entry.date}><b>{date.getDate()}</b><span>{date.toLocaleDateString(undefined, { month: "short" }).toLowerCase()}</span></time>
+                <strong>{entry.puzzle.clueWords.join(" + ")}</strong>
+                <small>{solved ? entry.puzzle.answer : isToday ? "today" : "open"}</small>
+                <i aria-hidden="true" />
+              </button>
+            );
+          })}
+        </div>
       </div>
     </div>
   );

@@ -5,7 +5,7 @@
     {
       "priority": 1,
       "id": "syllabl",
-      "name": "Syllabl",
+      "name": "syllabl",
       "repository": "mariogerardi/playsyllabl",
       "sourceStatus": "audited",
       "migrationStatus": "migrated",
@@ -24,13 +24,13 @@
     },
     {
       "priority": 3,
-      "id": "gridl",
-      "name": "Gridl",
-      "repository": "mariogerardi/wordgrid",
-      "sourceStatus": "audited",
-      "migrationStatus": "contracting",
-      "role": "campaign",
-      "session": "handcrafted spatial word-routing levels"
+      "id": "before-after",
+      "name": "Before&After",
+      "repository": "mariogerardi/before-after",
+      "sourceStatus": "audit-required",
+      "migrationStatus": "not-started",
+      "role": "association",
+      "session": "bridge two clues with a shared word"
     },
     {
       "priority": 4,
@@ -44,16 +44,6 @@
     },
     {
       "priority": 5,
-      "id": "before-after",
-      "name": "Before&After",
-      "repository": "mariogerardi/before-after",
-      "sourceStatus": "audit-required",
-      "migrationStatus": "not-started",
-      "role": "association",
-      "session": "bridge two clues with a shared word"
-    },
-    {
-      "priority": 6,
       "id": "decode",
       "name": "DECODE",
       "repository": "mariogerardi/mariogerardi.github.io",
@@ -62,6 +52,16 @@
       "migrationStatus": "contracting",
       "role": "clue-decoder",
       "session": "decode a transformed word using positional colors and a definition"
+    },
+    {
+      "priority": 6,
+      "id": "gridl",
+      "name": "Gridl",
+      "repository": "mariogerardi/wordgrid",
+      "sourceStatus": "audited",
+      "migrationStatus": "contracting",
+      "role": "campaign",
+      "session": "handcrafted spatial word-routing levels"
     }
   ],
   "futureCandidates": [

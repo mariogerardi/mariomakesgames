@@ -3,9 +3,9 @@ import type { GameManifest } from "../types";
 export const rarityManifest = {
   id: "rarity",
   symbol: "RA",
-  eyebrow: "One word. Make it count.",
+  eyebrow: "one word. make it count.",
   description:
-    "Find the rarest valid word containing the daily string. You only get one.",
+    "find the rarest valid word containing the daily string. you only get one.",
   mechanics: ["One submission", "Daily string", "Continuous score"],
   stage: "playable",
 } as const satisfies GameManifest;

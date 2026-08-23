@@ -28,10 +28,28 @@ test("every launch game has an isolated module and an internal route", () => {
 
 test("the home page routes into the hub rather than legacy deployments", () => {
   const homeSource = read("app/page.tsx");
+  const heroPreviewSource = read("src/app-shell/hero-game-previews.tsx");
   const cardSource = read("src/app-shell/game-card.tsx");
   assert.match(cardSource, /href=\{`\/games\/\$\{game\.id\}`\}/);
   assert.doesNotMatch(homeSource, /mariogerardi\.github\.io/);
   assert.doesNotMatch(cardSource, /https?:\/\//);
+  assert.doesNotMatch(homeSource, /hero-shape-blue/);
+  assert.match(homeSource, /hero-marquee/);
+  assert.match(homeSource, /HeroGamePreviews/);
+  assert.match(heroPreviewSource, /preview-syllabl-panel/);
+  assert.match(heroPreviewSource, /preview-rarity-brand/);
+  assert.match(heroPreviewSource, /preview-rarity-entry/);
+  assert.doesNotMatch(heroPreviewSource, /preview-rarity-keyboard/);
+  assert.match(heroPreviewSource, /preview-card-before-after/);
+  assert.match(heroPreviewSource, /preview-before-after-phrases/);
+  assert.match(heroPreviewSource, /preview-before-after-entry/);
+  assert.match(heroPreviewSource, /data-preview-game/);
+  assert.match(heroPreviewSource, /data-preview-entry/);
+  assert.match(heroPreviewSource, /IntersectionObserver/);
+  assert.doesNotMatch(homeSource, /preview-card-gridl/);
+  assert.match(cardSource, /game\.id === "expl41n" \|\| game\.id === "decode" \|\| game\.id === "gridl"/);
+  assert.match(cardSource, /coming soon!/);
+  assert.match(cardSource, /aria-disabled="true"/);
 });
 
 test("the shared shell exposes accessible navigation and page landmarks", () => {
@@ -65,21 +83,60 @@ test("the Syllabl route exposes the complete playable migration", () => {
   assert.match(gameSource, /createSyllablWordValidator/);
   assert.match(gameSource, /syllablDailyStorageKey/);
   assert.match(gameSource, /handleShare/);
-  assert.match(gameSource, /Six for six/);
+  assert.match(gameSource, /six for six/);
   assert.match(gameSource, /data-syllabl-theme/);
   assert.match(gameSource, /syllabl-play-primary/);
-  assert.match(gameSource, /syllabl-play-sidebar/);
-  assert.match(gameSource, /"light", name: "Light"/);
-  assert.match(gameSource, /"peachy", name: "Peachy"/);
+  assert.match(gameSource, /syllabl-current-level-summary/);
+  assert.doesNotMatch(gameSource, /syllabl-play-sidebar/);
+  assert.match(gameSource, /"light", name: "light"/);
+  assert.match(gameSource, /"peachy", name: "peachy"/);
   assert.match(gameSource, /"menu" \| "daily" \| "how-to" \| "themes" \| "about"/);
   assert.doesNotMatch(gameSource, /syllabl-menu-stats|view === "stats"/);
   assert.doesNotMatch(gameSource, /shuffle|all-puzzles|create-puzzle/i);
   assert.doesNotMatch(gameSource, /frequency|Rarity score/);
 });
 
+test("the Syllabl facelift keeps its core flow responsive and addressable", () => {
+  const gameSource = read("src/games/syllabl/syllabl-game.tsx");
+  const localBarSource = read("src/app-shell/game-local-bar.tsx");
+  const styles = read("app/globals.css");
+
+  for (const landmark of [
+    "syllabl-menu-daily",
+    "syllabl-menu-secondary",
+    "syllabl-step-progress",
+    "syllabl-play-card",
+    "syllabl-complete-answers",
+    "syllabl-how-grid",
+    "syllabl-theme-preview",
+    "syllabl-about-grid",
+    "syllabl-view-frame",
+  ]) {
+    assert.match(gameSource, new RegExp(landmark), `missing Syllabl facelift landmark: ${landmark}`);
+  }
+
+  assert.match(gameSource, /searchParams\.set\("view", nextView\)/);
+  assert.match(gameSource, /addEventListener\("popstate", syncView\)/);
+  assert.match(gameSource, /press enter or submit/);
+  assert.match(styles, /Syllabl facelift/);
+  assert.match(styles, /@media \(max-width: 390px\)/);
+  assert.match(styles, /@media \(min-width: 861px\) and \(max-height: 800px\)/);
+  assert.match(styles, /\.syllabl-game-card \.syllabl-entry button \{[\s\S]*?display: inline-flex/);
+  assert.match(styles, /@keyframes syllabl-screen-out/);
+  assert.match(styles, /@keyframes syllabl-word-bounce/);
+  assert.match(styles, /@keyframes syllabl-token-flip/);
+  assert.match(styles, /@keyframes syllabl-answer-pop/);
+  assert.match(styles, /prefers-reduced-motion: reduce/);
+  assert.match(gameSource, /behavior: "instant"/);
+  assert.match(localBarSource, /nav\.scrollTo/);
+  assert.doesNotMatch(localBarSource, /scrollIntoView/);
+  assert.match(styles, /@keyframes syllabl-token-flip \{\s*from[\s\S]*?to[\s\S]*?\}/);
+});
+
 test("the Rarity route exposes the complete playable migration", () => {
   const routeSource = read("app/games/[gameId]/page.tsx");
   const gameSource = read("src/games/rarity/rarity-game.tsx");
+  const rarityStyles = read("src/games/rarity/rarity.module.css");
   assert.match(routeSource, /RarityGame/);
   assert.match(gameSource, /handleSubmit/);
   assert.match(gameSource, /validateRarityLocalRules/);
@@ -92,6 +149,18 @@ test("the Rarity route exposes the complete playable migration", () => {
   assert.match(gameSource, /daily insights/i);
   assert.match(gameSource, /rarity-insight-panel/);
   assert.match(gameSource, /rarity-keyboard/);
+  assert.match(gameSource, /name: "alloy"/);
+  assert.match(gameSource, /name: "oasis"/);
+  assert.match(rarityStyles, /rarity-theme-picker/);
+  assert.match(gameSource, /isRevealing/);
+  assert.match(gameSource, /rarityViewFromUrl/);
+  assert.match(gameSource, /searchParams\.set\("view", nextView\)/);
+  assert.match(gameSource, /addEventListener\("popstate"/);
+  assert.match(gameSource, /history\.replaceState/);
+  assert.doesNotMatch(gameSource, /rarity-side-panel/);
+  assert.match(rarityStyles, /--rarity-score-fill/);
+  assert.match(rarityStyles, /@keyframes rarity-word-type/);
+  assert.match(rarityStyles, /prefers-reduced-motion: reduce/);
   assert.match(gameSource, /\/rarity\/logo\.png/);
   assert.ok(fs.existsSync(path.join(repositoryRoot, "public", "rarity", "logo.png")));
   assert.doesNotMatch(gameSource, /rarity-off|vault|friends|badges/i);
@@ -233,9 +302,14 @@ test("every non-Expl41n game adopts the persistent local navigation bar", () => 
 
 test("the starter preview is gone and social metadata is project-specific", () => {
   const layoutSource = read("app/layout.tsx");
+  const gameRouteSource = read("app/games/[gameId]/page.tsx");
+  const brandSource = read("src/app-shell/site-brand.ts");
   assert.doesNotMatch(layoutSource, /codex-preview|Starter Project/);
-  assert.match(layoutSource, /Games by Mario Gerardi/);
+  assert.match(brandSource, /mariomakesgames!/);
+  assert.match(layoutSource, /siteBrand\.name/);
   assert.match(layoutSource, /summary_large_image/);
+  assert.match(gameRouteSource, /openGraph:/);
+  assert.match(gameRouteSource, /images: \[\]/);
   assert.ok(fs.existsSync(path.join(repositoryRoot, "public", "og.png")));
   assert.equal(
     fs.existsSync(path.join(repositoryRoot, "app", "_sites-preview")),

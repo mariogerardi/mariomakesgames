@@ -1,4 +1,6 @@
-import type { ReactNode } from "react";
+"use client";
+
+import { useEffect, useRef, type ReactNode } from "react";
 
 export type GameLocalBarItem = {
   current?: boolean;
@@ -20,6 +22,21 @@ export function GameLocalBar({
   items: GameLocalBarItem[];
   onHome: () => void;
 }) {
+  const navRef = useRef<HTMLElement>(null);
+  const currentLabel = items.find((item) => item.current)?.label;
+
+  useEffect(() => {
+    const currentItem = navRef.current?.querySelector<HTMLElement>("[aria-current='page']");
+    const nav = navRef.current;
+    if (!currentItem || !nav) return;
+
+    const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    nav.scrollTo({
+      behavior: prefersReducedMotion ? "auto" : "smooth",
+      left: currentItem.offsetLeft - (nav.clientWidth - currentItem.offsetWidth) / 2,
+    });
+  }, [currentLabel]);
+
   return (
     <header className={`game-local-bar ${className}`}>
       <button
@@ -30,7 +47,7 @@ export function GameLocalBar({
       >
         {brand}
       </button>
-      <nav aria-label={`${ariaLabel} navigation`}>
+      <nav aria-label={`${ariaLabel} navigation`} ref={navRef}>
         {items.map((item) => (
           <button
             aria-current={item.current ? "page" : undefined}

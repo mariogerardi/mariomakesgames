@@ -1,183 +1,67 @@
-# Games Hub
+# mariomakesgames!
 
-This repository is the mechanics-preserving home for a unified web hub containing:
+A collection of original browser games by Mario Gerardi.
 
-1. Syllabl
-2. Rarity
-3. Gridl
-4. Expl41n
-5. Before&After
-6. DECODE
+![mariomakesgames! preview](public/og.png)
 
-H0–H1 established:
+The hub gives each game its own visual identity and rules while keeping them
+under one shared, responsive home. Syllabl, Rarity, and Before&After are
+available from the hub now; Expl41n, DECODE, and Gridl are included in the
+collection and currently presented as coming soon.
 
-- lock the catalog and canonical source revisions;
-- document the behavioral source of truth;
-- build executable preservation contracts;
-- compare those contracts with the legacy implementations;
-- avoid changing any legacy game repository.
+## Games
 
-H2 adds the shared hub application:
+| Game | The idea |
+| --- | --- |
+| **Syllabl** | Find six words that satisfy changing letter-placement and syllable rules. |
+| **Rarity** | Submit one valid word containing the daily string and make it count. |
+| **Before&After** | Find the word that belongs before, after, or between two clues. |
+| **Expl41n** | Give an AI just enough of a clue to guess the secret word. |
+| **DECODE** | Transform one word into another using color, position, and a crossword-style hint. |
+| **Gridl** | Route word fragments across a map of crossings, blockers, recalls, and portals. |
 
-- a catalog-driven home page;
-- internal routes for all six launch games;
-- isolated game modules;
-- shared daily-date, storage, analytics, result, and sharing boundaries;
-- a responsive, accessible visual shell.
+## Run it locally
 
-H3 completes the playable Syllabl migration:
-
-- the canonical 125-puzzle daily catalog;
-- the exact six placement and syllable constraints;
-- ordered, immutable attempt validation;
-- versioned session persistence and migration;
-- completion as the sole result, with legacy rarity scoring intentionally
-  retired;
-- a responsive daily game interface with live dictionary validation, accepted
-  word history, completion, and result sharing.
-
-H4 completes the playable classic Rarity migration:
-
-- one valid submission per daily puzzle;
-- the locked continuous rarity-score curve and six tiers;
-- live word validation and dictionary context;
-- device-local result restoration;
-- result sharing and a lightweight daily field comparison;
-- a deterministic rotation over the locked classic archive when the legacy
-  service has no authored puzzle for a date.
-
-H5–H6 complete the Gridl migration:
-
-- the 31 authored boards from Tutorial, Basics, Building Blocks, Singles, and
-  Portals, with 179 explicit placeholders excluded;
-- fragment-per-cell placement with straight-line multi-placement turns;
-- whole-board word validation, crossings, seed connectivity, blockers, and
-  portal projections;
-- committed-fragment recall into a two-slot reserve;
-- turns, par, best scores, campaign completion, and device-local restoration;
-- a production fix for the legacy defect that erased a portal cell's special
-  state when moving or clearing a staged fragment.
-
-H7–H8 complete the Expl41n audit and playable migration:
-
-- Daily, Shuffle, Archive, and Custom modes;
-- 25-character clues and the five-attempt Daily lock;
-- AI guesses with confidence, search-space, reasoning, and preserved emotion
-  thresholds;
-- shortest-successful-clue scoring, result sharing, local restoration, and
-  the legacy leaderboard boundary;
-- all 380 authored puzzles from February 1, 2025 through February 15, 2026;
-- a deterministic locked-corpus Daily fallback after the authored dates end;
-- a hardening rule that AI service failures do not consume limited attempts.
-
-H9–H10 complete the Before&After audit and playable web migration:
-
-- the three Before, After, and Before & After bridge positions;
-- unlimited pack attempts and a 15-character answer boundary;
-- a 60-second Daily with unlimited guesses until completion or expiry;
-- a prior-30-day Archive, custom puzzle creation, and device-local progress;
-- 168 Before, 15 After, 11 Before & After, and 10 Minecraft puzzles;
-- explicit `???` and coming-soon placeholders excluded from play.
-
-H11–H12 complete the DECODE audit and playable migration:
-
-- all 118 unique authored puzzles from the locked release;
-- duplicate-aware green, blue, and gray positional feedback;
-- Timed mode with a 20-second reset and 4/5/6/7-letter escalation;
-- the original fixed Sea Creatures Daily 5 and its upward elapsed clock;
-- device-local Timed and Daily personal bests;
-- two incorrect authored color arrays derived correctly, one exact duplicate
-  removed, and the nonfunctional ZEN control excluded.
-
-All six launch games are now playable. Shared identity and cross-game progress
-begin in H13.
-
-Before H13, the game routes were consolidated into a full-viewport play shell:
-
-- one compact global hub header and a floating in-game back control;
-- one persistent, game-branded local navigation bar across all six games,
-  aligned around the floating Games control and responsive on narrow screens;
-- the complete game surface filling the remaining screen;
-- flat, vibrant game-specific canvases instead of card-like previews;
-- centered readable controls on wide screens and the same hierarchy on mobile.
-
-Syllabl is the first game to receive its source-faithful visual restoration:
-
-- its Fredoka wordmark, rounded gradient controls, puzzle panel, progress bar,
-  accepted-word chips, and original eight-theme family;
-- a working in-game menu for Daily, How to Play, Themes, Statistics, and About;
-- completion-only play and the H3 mechanics preserved without modification;
-- unavailable legacy modes omitted instead of represented by dead controls.
-
-Rarity now has its source-faithful classic presentation as well:
-
-- IBM Plex Sans, a faceted gem identity, the original blue/gray default, its
-  six-tier color spectrum, and all eight scoped themes;
-- a working Rarity landing menu and keyboard-centered Daily interface;
-- a responsive two-column play/result room;
-- five post-game Daily Insights panels driven by the live leaderboard field;
-- classic one-shot mechanics preserved, with the separate board-mode spec and
-  unmigrated platform features intentionally excluded.
-
-Gridl now restores the source game's complete player-facing identity around
-the locked migrated engine:
-
-- Jost typography, the powder-blue and royal-blue default, compact white
-  surfaces, the animated par meter, and distinct seed, goal, blocker,
-  projection, selection, and portal treatments;
-- a Daily-first home, five authored Puzzle Packs, pack-level browsing, a full
-  How to Play reference, four functional themes, and the real First Puzzle
-  milestone;
-- a wide board-and-tray play room with click, keyboard-friendly controls, and
-  desktop drag-and-drop, collapsing cleanly for touch-sized screens;
-- the deterministic original daily hash limited to the 31 authored boards;
-- placeholder levels, unfinished themes, `???` achievements, Settings, and
-  the experimental level editor excluded from the player product.
-
-Expl41n now has a complete source-informed visual restoration around its locked
-gameplay engine:
-
-- a refined Galaxy identity, mode-first landing, and responsive two-column
-  connection room with live circular metrics, attempt history, and leaderboard;
-- dedicated Archive, Custom, and How-to experiences for all four preserved
-  modes and the complete 380-puzzle authored corpus;
-- the original mode, win, and loss dialogue personality restored with stale
-  references to unavailable legacy features filtered out;
-- a new eleven-state connection-core mascot with idle, thinking, confidence,
-  terminal, and 30-second sleepy behavior;
-- the five-attempt Daily, 25-character clue boundary, shortest-clue scoring,
-  service-failure protection, persistence, and sharing mechanics unchanged;
-- legacy themes, achievements, and Settings kept out until their behavior is
-  intentionally migrated.
-
-## Checks
+The project requires Node.js 22.13 or newer.
 
 ```bash
+npm ci
 npm run dev
-npm run build
-npm test
-npm run check:catalog
+```
+
+Open [http://localhost:3000](http://localhost:3000).
+
+Some games use externally hosted word-validation, scoring, or guessing
+services. Those integrations are isolated behind service modules so the game
+engines and most automated tests remain deterministic.
+
+## Quality checks
+
+```bash
 npm run check
 ```
 
-The legacy parity suite expects the existing repositories under:
+The check runs catalog validation, type checking, linting, the complete test
+suite, and a production build. Historical parity tests use locked source
+revisions when matching sibling repositories are available and skip those
+comparisons in a standalone checkout.
 
-```text
-/Users/mg/Developer/games/
-```
+## Project map
 
-Set `GAMES_DEVELOPER_ROOT` to a different Developer directory when needed.
+- `app/` — shared hub routes, metadata, and global presentation
+- `src/app-shell/` — shared navigation, cards, branding, and hero previews
+- `src/games/` — isolated game UIs, engines, services, and authored catalogs
+- `src/platform/` — shared daily, storage, sharing, analytics, and result boundaries
+- `test/` — application, domain, contract, and historical parity coverage
+- `docs/` — architecture decisions and migration records
+- `contracts/` — preserved gameplay behavior for each migrated game
 
-## Repository principles
+## Ownership
 
-- Existing games are behavioral references, not packages to merge blindly.
-- Mechanics receive executable contracts before UI rewrites.
-- Rejected actions must not mutate game state.
-- Each game keeps its own domain-specific result schema.
-- Gemboard is retired and is not part of the launch catalog.
-- Plotter is a separate portfolio product.
+This is a public portfolio repository, not an open-source distribution. The
+original game code, puzzle data, artwork, writing, and identities remain the
+property of Mario Gerardi. See [LICENSE.md](LICENSE.md) and
+[THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md).
 
-See [docs/catalog.md](docs/catalog.md) and
-[docs/decisions/0001-launch-catalog.md](docs/decisions/0001-launch-catalog.md).
-The executable H1 coverage matrix and known legacy defect are recorded in
-[docs/h1-preservation-harness.md](docs/h1-preservation-harness.md).
+Security concerns should follow the private-reporting guidance in
+[SECURITY.md](SECURITY.md).

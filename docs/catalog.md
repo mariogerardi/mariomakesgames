@@ -6,13 +6,13 @@
 |---:|---|---|---|
 | 1 | Syllabl | `mariogerardi/playsyllabl` | Migrated and playable |
 | 2 | Rarity | `mariogerardi/rarity` | Migrated and playable |
-| 3 | Gridl | `mariogerardi/wordgrid` | Audited; preservation harness and content curation |
-| 4 | Expl41n | `mariogerardi/explain-game` | Deep audit required |
-| 5 | Before&After | `mariogerardi/before-after` | Deep audit and web port required |
-| 6 | DECODE | `mariogerardi/mariogerardi.github.io` | Playable migration complete |
+| 3 | Expl41n | `mariogerardi/explain-game` | Deep audit required |
+| 4 | Before&After | `mariogerardi/before-after` | Deep audit and web port required |
+| 5 | DECODE | `mariogerardi/mariogerardi.github.io` | Playable migration complete |
+| 6 | Gridl | `mariogerardi/wordgrid` | Audited; preservation harness and content curation |
 
-The order is a migration priority, not a statement that one game is permanently
-more valuable than another.
+The order is the current hub presentation order, not a statement that one game
+is permanently more valuable than another.
 
 ## Product roles
 

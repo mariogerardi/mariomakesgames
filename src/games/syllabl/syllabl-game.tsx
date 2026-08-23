@@ -23,34 +23,45 @@ import { GameLocalBar } from "../../app-shell/game-local-bar";
 const WORD_INFO_ENDPOINT =
   "https://fr9m4nzsu1.execute-api.us-east-1.amazonaws.com/wordinfo";
 const THEME_KEY = gameStorageKey("syllabl", "theme");
+const INITIAL_FEEDBACK = "let the puzzle com·mence.";
 
 const syllablThemes = [
-  { id: "light", name: "Light", color: "#3490dc", background: "#e6e6e6" },
-  { id: "dark", name: "Dark", color: "#4a90e2", background: "#121212" },
-  { id: "forest", name: "Forest", color: "#2f855a", background: "#edf7ef" },
-  { id: "lilac", name: "Lilac", color: "#b497bd", background: "#f7f2fa" },
-  { id: "banana", name: "Banana", color: "#f7d354", background: "#4a3a1f" },
-  { id: "garnet", name: "Garnet", color: "#b22222", background: "#1a0a0a" },
-  { id: "fuchsia", name: "Fuchsia", color: "#ff2d95", background: "#fff0f7" },
-  { id: "peachy", name: "Peachy", color: "#ff7e5f", background: "#fff7f0" },
+  { id: "light", name: "light", color: "#3490dc", background: "#e6e6e6", surface: "#fff", text: "#333" },
+  { id: "dark", name: "dark", color: "#4a90e2", background: "#121212", surface: "#1e1e1e", text: "#eee" },
+  { id: "forest", name: "forest", color: "#2f855a", background: "#edf7ef", surface: "#d7f0da", text: "#1c3b29" },
+  { id: "lilac", name: "lilac", color: "#b497bd", background: "#f7f2fa", surface: "#f2e7f5", text: "#3f2a47" },
+  { id: "banana", name: "banana", color: "#f7d354", background: "#4a3a1f", surface: "#3a2c1a", text: "#fff" },
+  { id: "garnet", name: "garnet", color: "#b22222", background: "#1a0a0a", surface: "#2a0f0f", text: "#f8e6c1" },
+  { id: "fuchsia", name: "fuchsia", color: "#ff2d95", background: "#fff0f7", surface: "#ffe2ef", text: "#3d1a2f" },
+  { id: "peachy", name: "peachy", color: "#ff7e5f", background: "#fff7f0", surface: "#ffeedd", text: "#4d2e1f" },
 ] as const;
 
 type SyllablTheme = (typeof syllablThemes)[number]["id"];
 type SyllablView = "menu" | "daily" | "how-to" | "themes" | "about";
 
+const syllablViews: SyllablView[] = ["menu", "daily", "how-to", "themes", "about"];
+
+function viewFromUrl() {
+  if (typeof window === "undefined") return "menu";
+  const candidate = new URL(window.location.href).searchParams.get("view");
+  return syllablViews.includes(candidate as SyllablView)
+    ? (candidate as SyllablView)
+    : "menu";
+}
+
 function SyllablWordmark({ compact = false }: { compact?: boolean }) {
   return (
-    <span className={`syllabl-wordmark${compact ? " is-compact" : ""}`} aria-label="Syllabl">
+    <span className={`syllabl-wordmark${compact ? " is-compact" : ""}`} aria-label="syllabl">
       <span>sy</span><i aria-hidden="true">·</i><b>lla</b><i aria-hidden="true">·</i><span>bl</span>
     </span>
   );
 }
 
 const placementCopy = {
-  1: { verb: "end with", short: "Ends with" },
-  2: { verb: "begin with", short: "Begins with" },
-  3: { verb: "fully contain", short: "Contains" },
-  4: { verb: "begin and end with", short: "Begins & ends" },
+  1: { clause: "ends with", short: "ends with" },
+  2: { clause: "begins with", short: "begins with" },
+  3: { clause: "contains", short: "contains" },
+  4: { clause: "begins and ends with", short: "begins & ends" },
 } as const;
 
 type DailySetup = {
@@ -86,32 +97,34 @@ function rejectionMessage(
   requiredSyllables: number,
 ) {
   if (reason === "too-short") {
-    return `${word || "That"} is too short. Words must be at least four letters.`;
+    return `${word || "that"} is too short. words must be at least four letters.`;
   }
   if (reason === "placement") {
-    return "That word does not place the puzzle string where this stage requires.";
+    return "that word does not place the puzzle string where this stage requires.";
   }
   if (reason === "word-invalid") {
     return info?.error === "word-service-unavailable"
-      ? "The dictionary is taking a breather. Please try again."
+      ? "the dictionary is taking a breather. please try again."
       : `${word} could not be found in the dictionary.`;
   }
   if (reason === "syllable-count") {
-    const heard = info?.syllableList?.length
-      ? ` We read it as ${info.syllableList.join("·")}.`
-      : "";
-    return `That word needs ${requiredSyllables} ${
+    const requiredLabel = `${requiredSyllables} ${
       requiredSyllables === 1 ? "syllable" : "syllables"
-    }.${heard}`;
+    }`;
+    const countedSyllables = info?.syllableList?.length ?? info?.syllables;
+    const countedLabel = countedSyllables
+      ? `${countedSyllables}${info?.syllableList?.length ? ` (${info.syllableList.join("·")})` : ""}`
+      : "a different number";
+    return `your word must contain ${requiredLabel}. we asked for ${requiredSyllables}, and you gave a word with ${countedLabel}.`;
   }
-  return "That guess could not be accepted. Please try another word.";
+  return "that guess could not be accepted. please try another word.";
 }
 
 function shareText(session: SyllablSession, dayNumber: number) {
   const dots = session.guesses.map(() => "●").join("");
   return [
-    `Syllabl #${dayNumber}`,
-    `Completed ${session.currentStage}/6`,
+    `syllabl #${dayNumber}`,
+    `completed ${session.currentStage}/6`,
     dots,
     window.location.href,
   ].join("\n");
@@ -130,16 +143,18 @@ export function SyllablGame() {
   const [setup, setSetup] = useState<DailySetup | null>(null);
   const [session, setSession] = useState<SyllablSession | null>(null);
   const [guess, setGuess] = useState("");
-  const [feedback, setFeedback] = useState(
-    "Find a word for each of today’s six constraints.",
-  );
+  const [feedback, setFeedback] = useState(INITIAL_FEEDBACK);
   const [feedbackTone, setFeedbackTone] = useState<
     "neutral" | "error" | "success"
   >("neutral");
   const [isChecking, setIsChecking] = useState(false);
   const [shareStatus, setShareStatus] = useState("");
   const [view, setView] = useState<SyllablView>("menu");
+  const [isViewLeaving, setIsViewLeaving] = useState(false);
   const [theme, setTheme] = useState<SyllablTheme>("light");
+  const [animatedTheme, setAnimatedTheme] = useState<SyllablTheme | null>(null);
+  const viewTransitionRef = useRef<number | null>(null);
+  const themeAnimationRef = useRef<number | null>(null);
 
   useEffect(() => {
     let cancelled = false;
@@ -174,13 +189,7 @@ export function SyllablGame() {
 
       setSetup(nextSetup);
       setSession(nextSession);
-      setFeedback(
-        nextSession.status === "complete"
-          ? "Today’s Syllabl is complete."
-          : nextSession.currentStage > 0
-            ? `Welcome back. Stage ${nextSession.currentStage + 1} is ready.`
-            : "Find a word for each of today’s six constraints.",
-      );
+      setFeedback(INITIAL_FEEDBACK);
     });
 
     return () => {
@@ -188,11 +197,46 @@ export function SyllablGame() {
     };
   }, []);
 
+  useEffect(() => {
+    return () => {
+      if (viewTransitionRef.current !== null) {
+        window.clearTimeout(viewTransitionRef.current);
+      }
+      if (themeAnimationRef.current !== null) {
+        window.clearTimeout(themeAnimationRef.current);
+      }
+    };
+  }, []);
+
+  useEffect(() => {
+    const syncView = () => {
+      setView(viewFromUrl());
+      window.scrollTo({ top: 0, behavior: "instant" });
+    };
+    syncView();
+    window.addEventListener("popstate", syncView);
+    return () => window.removeEventListener("popstate", syncView);
+  }, []);
+
+  useEffect(() => {
+    if (view === "daily") {
+      requestAnimationFrame(() => inputRef.current?.focus());
+    }
+  }, [view]);
+
   const constraint = session ? getSyllablConstraint(session) : null;
   const isComplete = session?.status === "complete";
 
   function chooseTheme(nextTheme: SyllablTheme) {
     setTheme(nextTheme);
+    setAnimatedTheme(nextTheme);
+    if (themeAnimationRef.current !== null) {
+      window.clearTimeout(themeAnimationRef.current);
+    }
+    themeAnimationRef.current = window.setTimeout(() => {
+      setAnimatedTheme(null);
+      themeAnimationRef.current = null;
+    }, 420);
     try {
       localStorage.setItem(THEME_KEY, nextTheme);
     } catch {
@@ -201,11 +245,23 @@ export function SyllablGame() {
   }
 
   function openView(nextView: SyllablView) {
-    setView(nextView);
+    if (nextView === view || isViewLeaving) return;
+
     setShareStatus("");
-    if (nextView === "daily") {
-      requestAnimationFrame(() => inputRef.current?.focus());
-    }
+    const url = new URL(window.location.href);
+    if (nextView === "menu") url.searchParams.delete("view");
+    else url.searchParams.set("view", nextView);
+    window.history.pushState({}, "", url);
+    setIsViewLeaving(true);
+    const transitionDuration = window.matchMedia("(prefers-reduced-motion: reduce)").matches
+      ? 0
+      : 280;
+    viewTransitionRef.current = window.setTimeout(() => {
+      setView(nextView);
+      setIsViewLeaving(false);
+      viewTransitionRef.current = null;
+      window.scrollTo({ top: 0, behavior: "instant" });
+    }, transitionDuration);
   }
 
   async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
@@ -229,19 +285,14 @@ export function SyllablGame() {
       )
     ) {
       setFeedback(
-        rejectionMessage(
-          "placement",
-          candidate,
-          null,
-          constraint.syllablesRequired,
-        ),
+        `your word must ${placementCopy[constraint.placementCode as keyof typeof placementCopy].clause} ${session.puzzle.puzzleLetters.toLowerCase()}.`,
       );
       setFeedbackTone("error");
       return;
     }
 
     setIsChecking(true);
-    setFeedback(`Checking ${candidate}…`);
+    setFeedback(`checking ${candidate}…`);
 
     let wordInfo: SyllablWordInfo;
     try {
@@ -290,10 +341,10 @@ export function SyllablGame() {
     setFeedbackTone("success");
     setFeedback(
       result.session.status === "complete"
-        ? "Six for six. Today’s Syllabl is complete."
-        : `${result.guess.syllableList.join("·")} works. On to stage ${
+        ? "six for six. today’s syllabl is complete."
+        : `${result.guess.syllableList.join("·")} works — level ${
             result.session.currentStage + 1
-          }.`,
+          } is ready.`,
     );
     requestAnimationFrame(() => inputRef.current?.focus());
   }
@@ -304,18 +355,18 @@ export function SyllablGame() {
     try {
       if (navigator.share) {
         await navigator.share({ text });
-        setShareStatus("Shared.");
+        setShareStatus("shared.");
       } else {
         await navigator.clipboard.writeText(text);
-        setShareStatus("Result copied.");
+        setShareStatus("result copied.");
       }
     } catch (error) {
       if (error instanceof DOMException && error.name === "AbortError") return;
       try {
         await navigator.clipboard.writeText(text);
-        setShareStatus("Result copied.");
+        setShareStatus("result copied.");
       } catch {
-        setShareStatus("Couldn’t share this time.");
+        setShareStatus("couldn’t share this time.");
       }
     }
   }
@@ -323,7 +374,7 @@ export function SyllablGame() {
   if (!session || !setup) {
     return (
       <div className="syllabl-game-card syllabl-game-loading" aria-busy="true">
-        Preparing today’s puzzle…
+        preparing today’s puzzle…
       </div>
     );
   }
@@ -331,197 +382,256 @@ export function SyllablGame() {
   if (!isComplete && !constraint) {
     return (
       <div className="syllabl-game-card syllabl-game-loading" role="alert">
-        Today’s puzzle could not be prepared. Please refresh and try again.
+        today’s puzzle could not be prepared. please refresh and try again.
       </div>
     );
   }
 
-  const token = session.puzzle.puzzleLetters.toUpperCase();
+  const token = session.puzzle.puzzleLetters.toLowerCase();
   const activeConstraint = constraint!;
-  const pageTitle = {
-    "how-to": "how to play",
-    themes: "themes",
-    about: "about",
-  } as const;
+  const completedStages = session.currentStage;
+  const dailyAction = isComplete
+    ? "review today’s result"
+    : completedStages > 0
+      ? `continue at level ${completedStages + 1}`
+      : "start today’s puzzle";
 
   return (
     <section
       className="syllabl-game-card"
       data-syllabl-theme={theme}
-      aria-label={view === "daily" ? "Daily Syllabl" : "Syllabl menu"}
+      aria-label={
+        view === "daily"
+          ? "daily syllabl"
+          : view === "menu"
+            ? "syllabl menu"
+            : `syllabl ${view.replace("-", " ")}`
+      }
     >
       <GameLocalBar
-        ariaLabel="Syllabl"
+        ariaLabel="syllabl"
         brand={<SyllablWordmark compact />}
         className="game-local-bar--syllabl"
         items={[
-          { label: "Menu", current: view === "menu", onSelect: () => openView("menu") },
-          { label: "Daily", current: view === "daily", onSelect: () => openView("daily") },
-          { label: "How to play", current: view === "how-to", onSelect: () => openView("how-to") },
-          { label: "Themes", current: view === "themes", onSelect: () => openView("themes") },
-          { label: "About", current: view === "about", onSelect: () => openView("about") },
+          { label: "menu", current: view === "menu", onSelect: () => openView("menu") },
+          { label: "daily", current: view === "daily", onSelect: () => openView("daily") },
+          { label: "how to play", current: view === "how-to", onSelect: () => openView("how-to") },
+          { label: "themes", current: view === "themes", onSelect: () => openView("themes") },
+          { label: "about", current: view === "about", onSelect: () => openView("about") },
         ]}
         onHome={() => openView("menu")}
       />
+      <div
+        className={`syllabl-view-frame${isViewLeaving ? " is-leaving" : ""}`}
+        data-syllabl-view={view}
+        key={view}
+      >
       {view === "menu" ? (
         <div className="syllabl-home">
           <div className="syllabl-home-inner">
-            <h2 className="syllabl-home-wordmark"><SyllablWordmark /></h2>
-            <div className="syllabl-menu-grid" aria-label="Syllabl menu">
-              <button className="syllabl-menu-daily" onClick={() => openView("daily")}>
-                <span>dai<i>·</i>ly mode</span>
-                <small>today’s six-stage puzzle</small>
+            <header className="syllabl-home-heading">
+              <p>one string · six words</p>
+              <h2 className="syllabl-home-wordmark"><SyllablWordmark /></h2>
+              <span>a daily word puzzle about the sounds hiding inside words.</span>
+            </header>
+            <div className="syllabl-menu-grid" aria-label="syllabl menu">
+              <button className="syllabl-menu-daily" onClick={() => openView("daily")} type="button">
+                <span className="syllabl-menu-eyebrow">daily #{setup.dayNumber}</span>
+                <strong>dai<i>·</i>ly puzzle</strong>
+                <small>{setup.displayDate} · six levels</small>
+                <span className="syllabl-menu-progress" aria-label={`${completedStages} of 6 levels complete`}>
+                  {Array.from({ length: 6 }, (_, index) => (
+                    <i className={index < completedStages ? "is-done" : index === completedStages && !isComplete ? "is-current" : ""} key={index} />
+                  ))}
+                </span>
+                <span className="syllabl-menu-action">{dailyAction}<b aria-hidden="true">→</b></span>
               </button>
-              <button className="syllabl-menu-how" onClick={() => openView("how-to")}>
-                <span>how to play</span>
-                <small>learn the rules</small>
-              </button>
-              <button className="syllabl-menu-themes" onClick={() => openView("themes")}>
-                <span>themes</span>
-                <small>choose your colors</small>
-              </button>
-              <button className="syllabl-menu-about" onClick={() => openView("about")}>
-                <span>a<i>·</i>bout</span>
-                <small>the story of the game</small>
-              </button>
+              <div className="syllabl-menu-secondary">
+                <button className="syllabl-menu-how" onClick={() => openView("how-to")} type="button">
+                  <span>how to play</span><small>learn the three rules</small><b aria-hidden="true">→</b>
+                </button>
+                <button className="syllabl-menu-themes" onClick={() => openView("themes")} type="button">
+                  <span>themes</span><small>eight ways to play</small><b aria-hidden="true">→</b>
+                </button>
+                <button className="syllabl-menu-about" onClick={() => openView("about")} type="button">
+                  <span>a<i>·</i>bout</span><small>the story of syllabl</small><b aria-hidden="true">→</b>
+                </button>
+              </div>
             </div>
-            <p className="syllabl-home-date">Daily #{setup.dayNumber} · {setup.displayDate}</p>
           </div>
         </div>
       ) : view === "daily" ? (
         <div className="syllabl-play">
           <div
-            className="syllabl-progress"
+            className="syllabl-step-progress"
             role="progressbar"
-            aria-label="Puzzle progress"
+            aria-label="puzzle progress"
             aria-valuemin={0}
             aria-valuemax={6}
             aria-valuenow={session.currentStage}
           >
-            <span style={{ width: `${(session.currentStage / 6) * 100}%` }} />
+            <div className="syllabl-step-progress-track" aria-hidden="true">
+              <span style={{ width: `${(completedStages / 6) * 100}%` }} />
+            </div>
+            {isComplete ? (
+              <div className="syllabl-current-level-summary is-complete">
+                <span>daily complete</span>
+                <strong>6 of 6</strong>
+              </div>
+            ) : (
+              <div className="syllabl-current-level-summary">
+                <span>level {session.currentStage + 1} of 6</span>
+                <strong>{placementCopy[activeConstraint.placementCode as keyof typeof placementCopy].short} {token}</strong>
+                <small>{activeConstraint.syllablesRequired} {activeConstraint.syllablesRequired === 1 ? "syllable" : "syllables"}</small>
+              </div>
+            )}
           </div>
 
           <main className="syllabl-play-stage">
-            <section className="syllabl-play-primary" aria-label="Current challenge">
-              <div className="syllabl-token-row" aria-label={`Puzzle letters ${token}`}>
-                <span className="syllabl-token-label">letters</span>
-                <strong>{token}</strong>
-              </div>
-
-              {isComplete ? (
-                <div className="syllabl-complete">
-                  <p className="syllabl-complete-kicker">complete</p>
-                  <h2>Six for six.</h2>
-                  <p>You met every placement and syllable constraint in today’s puzzle.</p>
-                  <button className="syllabl-share-button" onClick={handleShare}>
-                    share result <span aria-hidden="true">↗</span>
-                  </button>
-                  <span className="syllabl-share-status" role="status">{shareStatus}</span>
+            <section className="syllabl-play-primary" aria-label="current challenge">
+              <div className="syllabl-play-card">
+                {!isComplete ? (
+                  <header className="syllabl-round-meta">
+                    <span>daily #{setup.dayNumber}</span>
+                    <time dateTime={setup.dateKey}>{setup.displayDate}</time>
+                  </header>
+                ) : null}
+                <div className="syllabl-token-row" aria-label={`puzzle letters ${token}`}>
+                  <span className="syllabl-token-label">today’s letters</span>
+                  <strong><span>{token}</span></strong>
                 </div>
-              ) : (
-                <>
-                  <div className="syllabl-current-rule" key={session.currentStage}>
-                    <span>level {session.currentStage + 1} of 6</span>
-                    <p>
-                      enter a word that <strong>{placementCopy[activeConstraint.placementCode as keyof typeof placementCopy].verb} {token}</strong>
-                      {" "}and has <strong>{activeConstraint.syllablesRequired} {activeConstraint.syllablesRequired === 1 ? "syllable" : "syllables"}</strong>
-                    </p>
+
+                {isComplete ? (
+                  <div className="syllabl-complete">
+                    <p className="syllabl-complete-kicker">today’s words</p>
+                    <h2>six for six.</h2>
+                    <p>you met every placement and syllable constraint.</p>
+                    <ol className="syllabl-complete-answers" aria-label="accepted answers">
+                      {session.guesses.map((acceptedGuess, index) => (
+                        <li key={acceptedGuess.word}><span>{index + 1}</span><b>{acceptedGuess.syllableList.join("·")}</b></li>
+                      ))}
+                    </ol>
+                    <button className="syllabl-share-button" onClick={handleShare} type="button">
+                      share result <span aria-hidden="true">↗</span>
+                    </button>
+                    <span className="syllabl-share-status" role="status">{shareStatus}</span>
                   </div>
-
-                  <form className="syllabl-entry" onSubmit={handleSubmit}>
-                    <label htmlFor="syllabl-guess">enter your word</label>
-                    <div>
-                      <input
-                        ref={inputRef}
-                        id="syllabl-guess"
-                        value={guess}
-                        onChange={(event) => setGuess(event.target.value.replace(/[^a-z]/gi, ""))}
-                        minLength={4}
-                        autoComplete="off"
-                        autoCapitalize="none"
-                        spellCheck={false}
-                        placeholder="enter your word..."
-                        disabled={isChecking}
-                      />
-                      <button disabled={isChecking || guess.length < 4} type="submit">
-                        {isChecking ? "checking…" : "submit"}
-                      </button>
+                ) : (
+                  <>
+                    <div className="syllabl-current-rule" key={session.currentStage}>
+                      <p>
+                        find a word that <strong>{placementCopy[activeConstraint.placementCode as keyof typeof placementCopy].clause} {token}</strong>
+                        {" "}and has <strong>{activeConstraint.syllablesRequired} {activeConstraint.syllablesRequired === 1 ? "syllable" : "syllables"}</strong>.
+                      </p>
                     </div>
-                  </form>
-                </>
-              )}
 
-              <p className={`syllabl-feedback is-${feedbackTone}`} aria-live="polite" role="status">{feedback}</p>
+                    <form className="syllabl-entry" onSubmit={handleSubmit}>
+                      <label htmlFor="syllabl-guess">enter your word</label>
+                      <div>
+                        <input
+                          ref={inputRef}
+                          id="syllabl-guess"
+                          value={guess}
+                          onChange={(event) => {
+                            setGuess(event.target.value.replace(/[^a-z]/gi, ""));
+                          }}
+                          minLength={4}
+                          autoComplete="off"
+                          autoCapitalize="none"
+                          spellCheck={false}
+                          placeholder="enter your word…"
+                          disabled={isChecking}
+                        />
+                        <button disabled={isChecking || guess.length < 4} type="submit">
+                          {isChecking ? <><i className="syllabl-spinner" aria-hidden="true" />checking</> : "submit"}
+                        </button>
+                      </div>
+                      <p className="syllabl-entry-help"><span>4+ letters</span><span>press enter or submit</span></p>
+                    </form>
+                  </>
+                )}
+
+                {!isComplete ? (
+                  <p className={`syllabl-feedback is-${feedbackTone}`} aria-live="polite" role="status">
+                    <span>{feedback}</span>
+                    {feedbackTone === "error" ? <button onClick={() => inputRef.current?.focus()} type="button">try again</button> : null}
+                  </p>
+                ) : null}
+              </div>
             </section>
 
-            <aside className="syllabl-play-sidebar" aria-label="Today’s six levels">
-              <header>
-                <div>
-                  <span>today’s puzzle</span>
-                  <strong>{isComplete ? "complete" : `${6 - session.currentStage} to go`}</strong>
-                </div>
-                <b>{session.currentStage}<small>/6</small></b>
-              </header>
-              <ol className="syllabl-stage-list">
-                {session.puzzle.inputsEnabled.map((placement, index) => {
-                  const acceptedGuess = session.guesses[index];
-                  const isCurrent = index === session.currentStage && !isComplete;
-                  return (
-                    <li className={acceptedGuess ? "is-done" : isCurrent ? "is-current" : ""} key={`${placement}-${index}`}>
-                      <span className="syllabl-stage-index">{acceptedGuess ? "✓" : index + 1}</span>
-                      <span className="syllabl-stage-rule">
-                        <b>{placementCopy[placement as keyof typeof placementCopy].short}</b>
-                        <small>{session.puzzle.syllablesRequired[index]} {session.puzzle.syllablesRequired[index] === 1 ? "syllable" : "syllables"}</small>
-                      </span>
-                      <em>{acceptedGuess ? acceptedGuess.syllableList.join("·") : isCurrent ? "now" : "—"}</em>
-                    </li>
-                  );
-                })}
-              </ol>
-            </aside>
           </main>
         </div>
       ) : (
         <div className="syllabl-info-view">
           <article className="syllabl-info-card">
-            <p className="syllabl-info-kicker">sy·lla·bl</p>
-            <h2>{pageTitle[view]}</h2>
-
             {view === "how-to" ? (
-              <div className="syllabl-prose">
-                <p>Every puzzle is built around a fixed three-letter string that must appear in all six answers.</p>
-                <div className="syllabl-rule-example"><strong>DRA</strong><span>dragon · hydra · bedraggled</span></div>
-                <p>Each level tells you where the string belongs—at the beginning, at the end, anywhere inside, or at both ends—and exactly how many syllables the word needs.</p>
-                <p>You have unlimited guesses, no timer, and no penalties. Complete all six levels to finish the daily puzzle.</p>
-                <button className="syllabl-primary-action" onClick={() => openView("daily")}>play today’s puzzle</button>
-              </div>
+              <>
+                <header className="syllabl-info-hero">
+                  <p className="syllabl-info-kicker">three rules are all you need</p>
+                  <h2>how to play</h2>
+                  <span>build six valid words around the same three-letter string.</span>
+                </header>
+                <div className="syllabl-how-grid">
+                  <section><b>1</b><h3>spot the letters</h3><p>every answer must include today’s three-letter string.</p></section>
+                  <section><b>2</b><h3>place them right</h3><p>begin with it, end with it, contain it, or use it at both ends.</p></section>
+                  <section><b>3</b><h3>match the sound</h3><p>your word must have exactly the number of syllables shown.</p></section>
+                </div>
+                <div className="syllabl-rule-example">
+                  <strong>dra</strong>
+                  <span><b><i>dra</i>gon</b><b>hy<i>dra</i></b><b>be<i>dra</i>ggled</b></span>
+                </div>
+                <footer className="syllabl-info-footer">
+                  <p><b>unlimited guesses</b><b>no timer</b><b>no penalties</b></p>
+                  <button className="syllabl-primary-action" onClick={() => openView("daily")} type="button">play today’s puzzle <span aria-hidden="true">→</span></button>
+                </footer>
+              </>
             ) : view === "themes" ? (
-              <div className="syllabl-theme-grid" role="radiogroup" aria-label="Choose a Syllabl theme">
-                {syllablThemes.map((choice) => (
-                  <button
-                    key={choice.id}
-                    className={theme === choice.id ? "is-selected" : ""}
-                    onClick={() => chooseTheme(choice.id)}
-                    role="radio"
-                    aria-checked={theme === choice.id}
-                  >
-                    <span style={{ background: choice.background }}><i style={{ background: choice.color }} /></span>
-                    <b>{choice.name}</b>
-                    <small>{theme === choice.id ? "selected" : "select"}</small>
-                  </button>
-                ))}
-              </div>
+              <>
+                <header className="syllabl-info-hero">
+                  <p className="syllabl-info-kicker">make it yours</p>
+                  <h2>themes</h2>
+                  <span>choose a palette. your preference stays on this device.</span>
+                </header>
+                <div className="syllabl-theme-grid" role="radiogroup" aria-label="choose a syllabl theme">
+                  {syllablThemes.map((choice) => (
+                    <button
+                      key={choice.id}
+                      className={`${theme === choice.id ? "is-selected" : ""}${animatedTheme === choice.id ? " is-just-selected" : ""}`.trim()}
+                      onClick={() => chooseTheme(choice.id)}
+                      role="radio"
+                      aria-checked={theme === choice.id}
+                      type="button"
+                    >
+                      <span className="syllabl-theme-preview" style={{ background: choice.background, color: choice.text }}>
+                        <i style={{ background: choice.surface }}><b style={{ background: choice.color }} /><em style={{ background: choice.text }} /></i>
+                      </span>
+                      <span className="syllabl-theme-name"><b>{choice.name}</b><small>{theme === choice.id ? "✓ current" : "choose"}</small></span>
+                    </button>
+                  ))}
+                </div>
+              </>
             ) : (
-              <div className="syllabl-prose">
-                <p>Syllabl is a daily word puzzle by Mario Gerardi about the small sounds hiding inside larger words.</p>
-                <p>Find six words that satisfy changing placement and pronunciation constraints. Creativity matters, but completion is the only goal.</p>
-                <p>This edition preserves the original game’s puzzle logic and playful visual identity inside the Games hub.</p>
-                <button className="syllabl-primary-action" onClick={() => openView("daily")}>play Syllabl</button>
-              </div>
+              <>
+                <header className="syllabl-info-hero syllabl-about-hero">
+                  <p className="syllabl-info-kicker">small sounds · big possibilities</p>
+                  <h2>about</h2>
+                  <p>syllabl is mario gerardi’s daily word puzzle about the small sounds hiding inside larger words.</p>
+                </header>
+                <div className="syllabl-about-grid">
+                  <section><span>the idea</span><p>one three-letter string can unlock a surprising number of words. syllabl turns that discovery into six focused challenges.</p></section>
+                  <section><span>the goal</span><p>there are no points to chase. creativity matters, but completing all six levels is the only win condition.</p></section>
+                  <aside><b>1</b><span>new puzzle daily</span><b>6</b><span>words to find</span><b>∞</b><span>guesses allowed</span></aside>
+                </div>
+                <footer className="syllabl-info-footer">
+                  <button className="syllabl-primary-action" onClick={() => openView("daily")} type="button">play syllabl <span aria-hidden="true">→</span></button>
+                </footer>
+              </>
             )}
           </article>
         </div>
       )}
+      </div>
     </section>
   );
 }

@@ -27,11 +27,7 @@ The v1 launch catalog is:
 
 Migration follows that order unless Mario explicitly changes it.
 
-The hub will be a new standalone repository at:
-
-```text
-/Users/mg/Developer/games-hub
-```
+The hub will live in this standalone repository.
 
 The existing game repositories remain behavioral references during H0–H1.
 

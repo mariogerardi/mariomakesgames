@@ -18,10 +18,10 @@ assert.equal(new Set(launchIds).size, launchIds.length);
 assert.deepEqual(launchIds, [
   "syllabl",
   "rarity",
-  "gridl",
-  "expl41n",
   "before-after",
+  "expl41n",
   "decode",
+  "gridl",
 ]);
 
 for (const game of catalog.launch) {

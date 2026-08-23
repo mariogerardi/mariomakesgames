@@ -27,6 +27,16 @@ export async function generateMetadata({
   return {
     title: game.name,
     description: game.description,
+    openGraph: {
+      title: game.name,
+      description: game.description,
+      images: [],
+    },
+    twitter: {
+      title: game.name,
+      description: game.description,
+      images: [],
+    },
   };
 }
 

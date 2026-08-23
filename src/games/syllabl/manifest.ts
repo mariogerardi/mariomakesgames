@@ -2,10 +2,10 @@ import type { GameManifest } from "../types";
 
 export const syllablManifest = {
   id: "syllabl",
-  symbol: "SY",
-  eyebrow: "The flagship daily",
+  symbol: "sy",
+  eyebrow: "one string · six words",
   description:
-    "Build a word through six increasingly specific clues—placement, syllables, and all.",
-  mechanics: ["Six stages", "Daily puzzle", "Completion only"],
+    "find six words that match changing placement and syllable rules.",
+  mechanics: ["six stages", "daily puzzle", "completion only"],
   stage: "playable",
 } as const satisfies GameManifest;
