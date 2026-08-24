@@ -1,40 +1,73 @@
 "use client";
 
 import Image from "next/image";
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 
 type PreviewPhase = "idle" | "typing" | "submitted" | "feedback";
 
 function useCenteredDemo(answer: string) {
   const cardRef = useRef<HTMLDivElement>(null);
+  const phaseRef = useRef<PreviewPhase>("idle");
+  const resetTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const centeredRef = useRef(false);
   const [isCentered, setIsCentered] = useState(false);
   const [phase, setPhase] = useState<PreviewPhase>("idle");
   const [typedAnswer, setTypedAnswer] = useState("");
+
+  const updatePhase = useCallback((nextPhase: PreviewPhase) => {
+    phaseRef.current = nextPhase;
+    setPhase(nextPhase);
+  }, []);
+
+  const resetDemo = useCallback(() => {
+    updatePhase("idle");
+    setTypedAnswer("");
+    resetTimerRef.current = null;
+  }, [updatePhase]);
 
   useEffect(() => {
     const card = cardRef.current;
     const gallery = card?.closest(".hero-gallery");
     const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    if (!card || !gallery || prefersReducedMotion || typeof IntersectionObserver === "undefined") return;
+    if (!card || !gallery || prefersReducedMotion) return;
 
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        setIsCentered(entry.isIntersecting);
-        if (!entry.isIntersecting) {
-          setPhase("idle");
-          setTypedAnswer("");
+    let animationFrame = 0;
+    const checkPosition = () => {
+      const cardBounds = card.getBoundingClientRect();
+      const galleryBounds = gallery.getBoundingClientRect();
+      const center = galleryBounds.left + galleryBounds.width / 2;
+      const activationRadius = galleryBounds.width * 0.07;
+      const isInCenter = cardBounds.right > center - activationRadius
+        && cardBounds.left < center + activationRadius;
+
+      if (isInCenter !== centeredRef.current) {
+        centeredRef.current = isInCenter;
+        if (isInCenter) {
+          if (resetTimerRef.current) {
+            clearTimeout(resetTimerRef.current);
+            resetTimerRef.current = null;
+          }
+          setIsCentered(true);
+        } else {
+          setIsCentered(false);
+          const hasFinished = phaseRef.current === "feedback";
+          if (hasFinished) {
+            resetTimerRef.current = setTimeout(resetDemo, 2800);
+          } else {
+            resetDemo();
+          }
         }
-      },
-      {
-        root: gallery,
-        rootMargin: "0px -48% 0px -48%",
-        threshold: 0.01,
-      },
-    );
+      }
 
-    observer.observe(card);
-    return () => observer.disconnect();
-  }, []);
+      animationFrame = requestAnimationFrame(checkPosition);
+    };
+
+    animationFrame = requestAnimationFrame(checkPosition);
+    return () => {
+      cancelAnimationFrame(animationFrame);
+      if (resetTimerRef.current) clearTimeout(resetTimerRef.current);
+    };
+  }, [resetDemo]);
 
   useEffect(() => {
     if (!isCentered) return;
@@ -46,18 +79,18 @@ function useCenteredDemo(answer: string) {
     for (let index = 1; index <= answer.length; index += 1) {
       timers.push(
         setTimeout(() => {
-          setPhase("typing");
+          updatePhase("typing");
           setTypedAnswer(answer.slice(0, index));
         }, startDelay + index * characterDelay),
       );
     }
 
     const submittedAt = startDelay + answer.length * characterDelay + 300;
-    timers.push(setTimeout(() => setPhase("submitted"), submittedAt));
-    timers.push(setTimeout(() => setPhase("feedback"), submittedAt + 450));
+    timers.push(setTimeout(() => updatePhase("submitted"), submittedAt));
+    timers.push(setTimeout(() => updatePhase("feedback"), submittedAt + 450));
 
     return () => timers.forEach(clearTimeout);
-  }, [answer, isCentered]);
+  }, [answer, isCentered, updatePhase]);
 
   return { cardRef, phase, typedAnswer };
 }
@@ -115,9 +148,6 @@ function SyllablPreview() {
         <i /><i /><i /><i className="is-current" /><i /><i />
       </div>
       <div className="preview-syllabl-panel">
-        <div className="preview-syllabl-meta">
-          <span>daily #497</span><b>level 4 of 6</b>
-        </div>
         <div className="preview-syllabl-token">
           <small>today’s letters</small><strong>PRO</strong>
         </div>
@@ -203,7 +233,6 @@ function BeforeAfterPreview() {
       <div className="preview-before-after-input">
         <span>your answer</span>
         <strong className="preview-entry-value" data-preview-entry>{typedAnswer || "type or tap"}</strong>
-        <small>{typedAnswer.length}/18</small>
         <b aria-hidden="true">{phase === "feedback" ? "✓" : "→"}</b>
       </div>
       <small className="preview-live-feedback">

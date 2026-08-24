@@ -53,7 +53,13 @@ test("the home page routes into the hub rather than legacy deployments", () => {
   assert.match(heroPreviewSource, /is-answer-last/);
   assert.match(heroPreviewSource, /data-preview-game/);
   assert.match(heroPreviewSource, /data-preview-entry/);
-  assert.match(heroPreviewSource, /IntersectionObserver/);
+  assert.match(heroPreviewSource, /requestAnimationFrame\(checkPosition\)/);
+  assert.match(heroPreviewSource, /activationRadius = galleryBounds\.width \* 0\.07/);
+  assert.match(heroPreviewSource, /setTimeout\(resetDemo, 2800\)/);
+  assert.doesNotMatch(heroPreviewSource, /daily #497|level 4 of 6/);
+  assert.doesNotMatch(heroPreviewSource, /typedAnswer\.length/);
+  assert.doesNotMatch(homeSource, /A game collection by Mario Gerardi/);
+  assert.doesNotMatch(homeSource, /Three ready now\. Three more on the way\./);
   assert.doesNotMatch(homeSource, /preview-card-gridl/);
   assert.match(cardSource, /game\.id === "expl41n" \|\| game\.id === "decode" \|\| game\.id === "gridl"/);
   assert.match(cardSource, /coming soon!/);

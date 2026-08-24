@@ -18986,6 +18986,111 @@ body:has(.syllabl-game-card .syllabl-play) {
   font-variant-numeric: tabular-nums;
 }
 
+/* Homepage cameo rhythm: consistent breathing room without flattening game identity. */
+.site-frame:not([data-game]) .hero-copy {
+  grid-template-rows: auto auto;
+}
+
+.site-frame:not([data-game]) .hero h1 {
+  grid-row: 1 / span 2;
+}
+
+.site-frame:not([data-game]) .hero-intro {
+  grid-row: 1;
+}
+
+.site-frame:not([data-game]) .hero-actions {
+  grid-row: 2;
+}
+
+.site-frame:not([data-game]) .section-heading {
+  grid-template-columns: 1fr;
+}
+
+.site-frame:not([data-game]) .preview-syllabl-panel {
+  grid-template-rows: auto 1fr auto;
+  gap: clamp(10px, 1.2vw, 14px);
+  padding: clamp(16px, 1.8vw, 20px);
+}
+
+.site-frame:not([data-game]) .preview-syllabl-token {
+  width: clamp(82px, 8vw, 96px);
+  min-height: clamp(74px, 7.6vw, 88px);
+  margin-top: 0;
+}
+
+.site-frame:not([data-game]) .preview-syllabl-panel > p {
+  max-width: 92%;
+  margin: 0 auto;
+  font-size: clamp(.52rem, .76vw, .65rem);
+}
+
+.site-frame:not([data-game]) .preview-entry-stack {
+  gap: 6px;
+}
+
+.site-frame:not([data-game]) .preview-rarity-panel {
+  margin-top: 12px;
+  padding: clamp(8px, 1vw, 12px) 2px 0;
+}
+
+.site-frame:not([data-game]) .preview-rarity-panel > strong {
+  margin: clamp(10px, 1.4vw, 15px) 0 7px;
+  font-size: clamp(2.8rem, 4.6vw, 4.2rem);
+}
+
+.site-frame:not([data-game]) .preview-rarity-panel > p {
+  display: grid;
+  min-height: 2.7em;
+  max-width: 92%;
+  place-items: start center;
+  font-size: clamp(.54rem, .72vw, .64rem);
+  line-height: 1.35;
+}
+
+.site-frame:not([data-game]) .preview-rarity-entry {
+  margin-top: auto;
+}
+
+.site-frame:not([data-game]) .preview-rarity-score {
+  margin-top: 10px;
+  padding-top: 9px;
+}
+
+.site-frame:not([data-game]) .preview-before-after-puzzle {
+  margin-top: 13px;
+  padding: clamp(14px, 1.6vw, 18px);
+}
+
+.site-frame:not([data-game]) .preview-before-after-input {
+  min-height: 55px;
+  gap: 3px 12px;
+  margin-top: 10px;
+}
+
+.site-frame:not([data-game]) .preview-before-after-input > b {
+  grid-column: 2;
+  grid-row: 1 / span 2;
+  width: 30px;
+  height: 30px;
+}
+
+.site-frame:not([data-game]) .preview-card-before-after > .preview-live-feedback {
+  margin-top: 8px;
+}
+
+@media (max-width: 980px) {
+  .site-frame:not([data-game]) .hero-copy {
+    grid-template-rows: none;
+  }
+
+  .site-frame:not([data-game]) .hero h1,
+  .site-frame:not([data-game]) .hero-intro,
+  .site-frame:not([data-game]) .hero-actions {
+    grid-row: auto;
+  }
+}
+
 .game-card[data-game="syllabl"] {
   background:
     radial-gradient(circle at 12% 88%, rgb(52 144 220 / .12), transparent 34%),

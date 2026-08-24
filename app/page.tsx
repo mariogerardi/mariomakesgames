@@ -3,7 +3,6 @@ import { GameCard } from "../src/app-shell/game-card";
 import { HeroGamePreviews } from "../src/app-shell/hero-game-previews";
 import { SiteFooter } from "../src/app-shell/site-footer";
 import { SiteHeader } from "../src/app-shell/site-header";
-import { siteBrand } from "../src/app-shell/site-brand";
 import { hubGames } from "../src/games/registry";
 
 export default function Home() {
@@ -15,7 +14,6 @@ export default function Home() {
       <main>
         <section className="hero page-width">
           <div className="hero-copy">
-            <p className="eyebrow">A game collection by {siteBrand.creator}</p>
             <h1>Challenge yourself<span className="hero-period">.</span></h1>
             <p className="hero-intro">
               Pick a game and see how you do.
@@ -50,9 +48,6 @@ export default function Home() {
               <p className="eyebrow">All games</p>
               <h2>Choose your next one.</h2>
             </div>
-            <p>
-              Three ready now. Three more on the way.
-            </p>
           </div>
 
           <div className="game-grid">
