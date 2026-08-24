@@ -567,19 +567,32 @@ export function SyllablGame() {
           <article className="syllabl-info-card">
             {view === "how-to" ? (
               <>
-                <header className="syllabl-info-hero">
-                  <p className="syllabl-info-kicker">three rules are all you need</p>
+                <header className="syllabl-info-hero syllabl-info-hero--compact">
+                  <p className="syllabl-info-kicker">one answer · three checks</p>
                   <h2>how to play</h2>
-                  <span>build six valid words around the same three-letter string.</span>
+                  <span>find six words that fit the letters, their placement, and the syllable count.</span>
                 </header>
-                <div className="syllabl-how-grid">
-                  <section><b>1</b><h3>spot the letters</h3><p>every answer must include today’s three-letter string.</p></section>
-                  <section><b>2</b><h3>place them right</h3><p>begin with it, end with it, contain it, or use it at both ends.</p></section>
-                  <section><b>3</b><h3>match the sound</h3><p>your word must have exactly the number of syllables shown.</p></section>
+                <div className="syllabl-how-layout">
+                  <section className="syllabl-worked-example" aria-label="Worked Syllabl example">
+                    <header><span>example level</span><b>4 of 6</b></header>
+                    <div className="syllabl-example-token"><small>today’s letters</small><strong>PRO</strong></div>
+                    <p>find a word that <b>contains PRO</b> and has <b>5 syllables</b>.</p>
+                    <div className="syllabl-example-entry"><strong>procrastinator</strong><span>✓ valid</span></div>
+                    <div className="syllabl-example-syllables" aria-label="pro cras ti na tor: five syllables">
+                      {['pro', 'cras', 'ti', 'na', 'tor'].map((part) => <span key={part}>{part}</span>)}
+                    </div>
+                  </section>
+                  <ol className="syllabl-how-steps">
+                    <li><b>1</b><span><strong>find the letters</strong><small>Every answer includes the day’s three-letter string.</small></span></li>
+                    <li><b>2</b><span><strong>place them correctly</strong><small>The level may ask you to begin, end, contain, or bookend the word with it.</small></span></li>
+                    <li><b>3</b><span><strong>match the sound</strong><small>Your answer needs exactly the number of syllables shown.</small></span></li>
+                  </ol>
                 </div>
-                <div className="syllabl-rule-example">
-                  <strong>dra</strong>
-                  <span><b><i>dra</i>gon</b><b>hy<i>dra</i></b><b>be<i>dra</i>ggled</b></span>
+                <div className="syllabl-stage-story">
+                  <span><strong>one puzzle, six answers</strong><small>each level changes the placement and syllable rule.</small></span>
+                  <ol aria-label="six Syllabl levels">
+                    {[1, 2, 3, 4, 5, 6].map((level) => <li className={level === 4 ? "is-example" : ""} key={level}>{level}</li>)}
+                  </ol>
                 </div>
                 <footer className="syllabl-info-footer">
                   <p><b>unlimited guesses</b><b>no timer</b><b>no penalties</b></p>
@@ -613,15 +626,29 @@ export function SyllablGame() {
               </>
             ) : (
               <>
-                <header className="syllabl-info-hero syllabl-about-hero">
+                <header className="syllabl-info-hero syllabl-info-hero--compact syllabl-about-hero">
                   <p className="syllabl-info-kicker">small sounds · big possibilities</p>
-                  <h2>about</h2>
-                  <p>syllabl is mario gerardi’s daily word puzzle about the small sounds hiding inside larger words.</p>
+                  <h2>about syllabl</h2>
+                  <p>I built syllabl around a simple obsession: how many different words can grow around the same small sound?</p>
                 </header>
-                <div className="syllabl-about-grid">
-                  <section><span>the idea</span><p>one three-letter string can unlock a surprising number of words. syllabl turns that discovery into six focused challenges.</p></section>
-                  <section><span>the goal</span><p>there are no points to chase. creativity matters, but completing all six levels is the only win condition.</p></section>
-                  <aside><b>1</b><span>new puzzle daily</span><b>6</b><span>words to find</span><b>∞</b><span>guesses allowed</span></aside>
+                <div className="syllabl-about-layout">
+                  <section className="syllabl-about-story">
+                    <span>the game</span>
+                    <h3>follow the string wherever it goes.</h3>
+                    <p>One three-letter string can turn up at the beginning of a word, at the end, somewhere in the middle, or on both sides. Syllabl turns that word hunt into six compact daily challenges.</p>
+                    <p>The point is not to optimize a score. It is to satisfy every rule, finish the set, and occasionally find a word you did not expect.</p>
+                  </section>
+                  <aside className="syllabl-about-facts" aria-label="Syllabl at a glance">
+                    <div><b>1</b><span>new puzzle<br />each day</span></div>
+                    <div><b>6</b><span>words complete<br />a run</span></div>
+                    <div><b>∞</b><span>guesses and<br />no timer</span></div>
+                  </aside>
+                </div>
+                <div className="syllabl-about-loop">
+                  <span><b>letters</b><small>spot the string</small></span><i>→</i>
+                  <span><b>placement</b><small>fit the level</small></span><i>→</i>
+                  <span><b>syllables</b><small>count the sounds</small></span><i>→</i>
+                  <span><b>next word</b><small>do it five more times</small></span>
                 </div>
                 <footer className="syllabl-info-footer">
                   <button className="syllabl-primary-action" onClick={() => openView("daily")} type="button">play syllabl <span aria-hidden="true">→</span></button>

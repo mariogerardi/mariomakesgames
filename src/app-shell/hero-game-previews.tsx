@@ -66,6 +66,38 @@ function phaseClass(phase: PreviewPhase) {
   return `is-${phase}`;
 }
 
+function useAnimatedPreviewScore(phase: PreviewPhase, target: number) {
+  const [displayScore, setDisplayScore] = useState(0);
+
+  useEffect(() => {
+    if (phase !== "feedback") {
+      const resetFrame = requestAnimationFrame(() => setDisplayScore(0));
+      return () => cancelAnimationFrame(resetFrame);
+    }
+
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      const reducedMotionFrame = requestAnimationFrame(() => setDisplayScore(target));
+      return () => cancelAnimationFrame(reducedMotionFrame);
+    }
+
+    const duration = 1200;
+    let animationFrame = 0;
+    animationFrame = requestAnimationFrame((startedAt) => {
+      const step = (now: number) => {
+        const elapsed = Math.min(1, (now - startedAt) / duration);
+        const eased = 1 - Math.pow(1 - elapsed, 3);
+        setDisplayScore(target * eased);
+        if (elapsed < 1) animationFrame = requestAnimationFrame(step);
+      };
+      animationFrame = requestAnimationFrame(step);
+    });
+
+    return () => cancelAnimationFrame(animationFrame);
+  }, [phase, target]);
+
+  return displayScore.toFixed(4);
+}
+
 function SyllablPreview() {
   const { cardRef, phase, typedAnswer } = useCenteredDemo("procrastinator");
 
@@ -108,6 +140,7 @@ function SyllablPreview() {
 
 function RarityPreview() {
   const { cardRef, phase, typedAnswer } = useCenteredDemo("bejeweled");
+  const displayScore = useAnimatedPreviewScore(phase, 79.91765);
 
   return (
     <div
@@ -137,7 +170,7 @@ function RarityPreview() {
           <b>{phase === "feedback" ? "✓" : "→"}</b>
         </div>
         <div className="preview-rarity-score">
-          <span>rarity score</span><b>{phase === "feedback" ? "27.3905" : "0.0000"}</b>
+          <span>rarity score</span><b data-preview-score>{displayScore}</b>
         </div>
       </div>
     </div>

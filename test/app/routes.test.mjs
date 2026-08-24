@@ -47,6 +47,8 @@ test("the home page routes into the hub rather than legacy deployments", () => {
   assert.match(heroPreviewSource, /5 syllables/);
   assert.match(heroPreviewSource, /bejeweled/);
   assert.match(heroPreviewSource, />WEL</);
+  assert.match(heroPreviewSource, /79\.91765/);
+  assert.match(heroPreviewSource, /data-preview-score/);
   assert.match(heroPreviewSource, /is-answer-first/);
   assert.match(heroPreviewSource, /is-answer-last/);
   assert.match(heroPreviewSource, /data-preview-game/);
@@ -56,6 +58,7 @@ test("the home page routes into the hub rather than legacy deployments", () => {
   assert.match(cardSource, /game\.id === "expl41n" \|\| game\.id === "decode" \|\| game\.id === "gridl"/);
   assert.match(cardSource, /coming soon!/);
   assert.match(cardSource, /aria-disabled="true"/);
+  assert.match(homeSource, /Challenge yourself<span className="hero-period">\.<\/span>/);
 });
 
 test("the shared shell exposes accessible navigation and page landmarks", () => {
@@ -113,9 +116,12 @@ test("the Syllabl facelift keeps its core flow responsive and addressable", () =
     "syllabl-step-progress",
     "syllabl-play-card",
     "syllabl-complete-answers",
-    "syllabl-how-grid",
+    "syllabl-how-layout",
+    "syllabl-worked-example",
+    "syllabl-stage-story",
     "syllabl-theme-preview",
-    "syllabl-about-grid",
+    "syllabl-about-layout",
+    "syllabl-about-loop",
     "syllabl-view-frame",
   ]) {
     assert.match(gameSource, new RegExp(landmark), `missing Syllabl facelift landmark: ${landmark}`);

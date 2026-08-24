@@ -16,7 +16,7 @@ export default function Home() {
         <section className="hero page-width">
           <div className="hero-copy">
             <p className="eyebrow">A game collection by {siteBrand.creator}</p>
-            <h1>Challenge Yourself</h1>
+            <h1>Challenge yourself<span className="hero-period">.</span></h1>
             <p className="hero-intro">
               Pick a game and see how you do.
             </p>
