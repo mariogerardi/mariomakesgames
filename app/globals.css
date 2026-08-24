@@ -19036,7 +19036,7 @@ body:has(.syllabl-game-card .syllabl-play) {
 .site-frame:not([data-game]) .preview-syllabl-panel > p {
   max-width: 96%;
   margin: 0 auto;
-  font-size: clamp(.62rem, .86vw, .74rem);
+  font-size: clamp(.68rem, .92vw, .8rem);
   line-height: 1.4;
 }
 
@@ -19082,6 +19082,126 @@ body:has(.syllabl-game-card .syllabl-play) {
   font: 550 clamp(.58rem, .78vw, .69rem) "IBM Plex Sans", var(--sans);
   line-height: 1.35;
   text-align: center;
+}
+
+.site-frame:not([data-game]) .preview-rarity-result {
+  display: grid;
+  flex: 1;
+  width: 100%;
+  align-content: center;
+  justify-items: center;
+  color: #2f2434;
+  animation: preview-rarity-result-in 260ms ease both;
+}
+
+.site-frame:not([data-game]) .preview-rarity-result > small {
+  color: #746775;
+  font: 750 clamp(.4rem, .55vw, .49rem) "IBM Plex Sans", var(--sans);
+  letter-spacing: .14em;
+  text-transform: uppercase;
+}
+
+.site-frame:not([data-game]) .preview-rarity-result > strong {
+  max-width: 100%;
+  margin-top: 7px;
+  overflow-wrap: anywhere;
+  font: 600 clamp(1.55rem, 2.8vw, 2.35rem) "IBM Plex Sans", var(--sans);
+  letter-spacing: .08em;
+  line-height: 1;
+  text-transform: lowercase;
+}
+
+.site-frame:not([data-game]) .preview-rarity-result mark {
+  color: #7b4eb2;
+  background: transparent;
+  font-weight: 650;
+}
+
+.site-frame:not([data-game]) .preview-rarity-definition {
+  display: grid;
+  gap: 2px;
+  max-width: 92%;
+  margin: 9px 0 0;
+  color: #746775;
+  font: 500 clamp(.48rem, .65vw, .58rem) "IBM Plex Sans", var(--sans);
+  line-height: 1.35;
+  text-align: center;
+}
+
+.site-frame:not([data-game]) .preview-rarity-definition em {
+  color: #7b4eb2;
+  font-size: .82em;
+  font-style: normal;
+  font-weight: 650;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+}
+
+.site-frame:not([data-game]) .preview-rarity-result-score {
+  display: flex;
+  gap: 7px;
+  align-items: baseline;
+  margin-top: 13px;
+  font-family: "IBM Plex Sans", var(--sans);
+}
+
+.site-frame:not([data-game]) .preview-rarity-result-score b {
+  font-size: clamp(1.45rem, 2.6vw, 2.15rem);
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  line-height: 1;
+}
+
+.site-frame:not([data-game]) .preview-rarity-result-score span {
+  color: #746775;
+  font-size: clamp(.38rem, .5vw, .46rem);
+  letter-spacing: .14em;
+  text-transform: uppercase;
+}
+
+.site-frame:not([data-game]) .preview-rarity-result-tier {
+  display: flex;
+  gap: 8px;
+  align-items: baseline;
+  margin-top: 7px;
+  font: 550 clamp(.45rem, .62vw, .56rem) "IBM Plex Sans", var(--sans);
+}
+
+.site-frame:not([data-game]) .preview-rarity-result-tier b {
+  color: #8d52b5;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+}
+
+.site-frame:not([data-game]) .preview-rarity-result-tier span { color: #746775; }
+
+.site-frame:not([data-game]) .preview-rarity-tier-track {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 5px;
+  width: min(88%, 290px);
+  margin-top: 12px;
+}
+
+.site-frame:not([data-game]) .preview-rarity-tier-track i {
+  height: 6px;
+  border-radius: 999px;
+}
+
+.site-frame:not([data-game]) .preview-rarity-tier-track i:nth-child(1) { background: rgb(47 143 131 / .32); }
+.site-frame:not([data-game]) .preview-rarity-tier-track i:nth-child(2) { background: rgb(71 118 184 / .32); }
+.site-frame:not([data-game]) .preview-rarity-tier-track i:nth-child(3) { background: rgb(106 96 200 / .32); }
+.site-frame:not([data-game]) .preview-rarity-tier-track i:nth-child(4) { background: rgb(141 82 181 / .32); }
+.site-frame:not([data-game]) .preview-rarity-tier-track i:nth-child(5) { background: rgb(182 70 122 / .32); }
+.site-frame:not([data-game]) .preview-rarity-tier-track i:nth-child(6) { background: rgb(217 79 82 / .32); }
+.site-frame:not([data-game]) .preview-rarity-tier-track i.is-current {
+  background: #8d52b5;
+  box-shadow: 0 0 0 2px #eee5ef;
+}
+
+@keyframes preview-rarity-result-in {
+  from { opacity: 0; transform: translateY(5px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
 .site-frame:not([data-game]) .preview-rarity-entry {

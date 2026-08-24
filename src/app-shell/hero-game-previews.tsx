@@ -27,7 +27,7 @@ function useCenteredDemo(answer: string) {
 
   useEffect(() => {
     const card = cardRef.current;
-    const gallery = card?.closest(".hero-gallery");
+    const gallery = card?.closest(".hero-gallery, .social-card-render__games");
     const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     if (!card || !gallery || prefersReducedMotion) return;
 
@@ -184,26 +184,39 @@ function RarityPreview() {
         <span>rarity</span>
       </div>
       <div className="preview-rarity-panel">
-        <div className="preview-rarity-string-block">
-          <small>today’s string</small>
-          <strong>WEL</strong>
-          <p>
-            {phase === "submitted"
-              ? "checking the field…"
-              : phase === "feedback"
-                ? "accepted. your one guess is locked."
-                : "one valid guess. make it count."}
-          </p>
-        </div>
-        <div className="preview-rarity-entry">
-          <span className="preview-entry-value" data-preview-entry>
-            {typedAnswer || "your word"}
-          </span>
-          <b>{phase === "feedback" ? "✓" : "→"}</b>
-        </div>
-        <div className="preview-rarity-score">
-          <span>rarity score</span><b data-preview-score>{displayScore}</b>
-        </div>
+        {phase === "feedback" ? (
+          <div className="preview-rarity-result">
+            <small>your entry</small>
+            <strong>beje<mark>wel</mark>ed</strong>
+            <p className="preview-rarity-definition">
+              <em>adjective</em>
+              <span>decorated or adorned with jewels.</span>
+            </p>
+            <div className="preview-rarity-result-score">
+              <b data-preview-score>{displayScore}</b><span>points</span>
+            </div>
+            <div className="preview-rarity-result-tier">
+              <b>rare</b><span>a genuinely rare find</span>
+            </div>
+            <div className="preview-rarity-tier-track" aria-hidden="true">
+              <i /><i /><i /><i className="is-current" /><i /><i />
+            </div>
+          </div>
+        ) : (
+          <>
+            <div className="preview-rarity-string-block">
+              <small>today’s string</small>
+              <strong>WEL</strong>
+              <p>{phase === "submitted" ? "checking the field…" : "one valid guess. make it count."}</p>
+            </div>
+            <div className="preview-rarity-entry">
+              <span className="preview-entry-value" data-preview-entry>
+                {typedAnswer || "your word"}
+              </span>
+              <b>→</b>
+            </div>
+          </>
+        )}
       </div>
     </div>
   );
