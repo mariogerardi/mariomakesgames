@@ -17954,6 +17954,16 @@ body:has(.syllabl-game-card .syllabl-play) {
   border-bottom: 2px solid var(--ba-underline);
 }
 
+.before-after-game-card .ba-phrase.is-answer-first > b {
+  place-items: center end;
+  text-align: right;
+}
+
+.before-after-game-card .ba-phrase.is-answer-last > b {
+  place-items: center start;
+  text-align: left;
+}
+
 .before-after-game-card .ba-phrase > b::before { display: none; }
 
 .before-after-game-card .ba-phrase > b span {
@@ -18424,6 +18434,16 @@ body:has(.syllabl-game-card .syllabl-play) {
   color: #1d1d1f;
 }
 
+.site-frame:not([data-game]) .preview-before-after-phrases .is-answer-first b {
+  place-items: center end;
+  text-align: right;
+}
+
+.site-frame:not([data-game]) .preview-before-after-phrases .is-answer-last b {
+  place-items: center start;
+  text-align: left;
+}
+
 .site-frame:not([data-game]) .preview-before-after-phrases b::before { display: none; }
 
 .site-frame:not([data-game]) .preview-before-after-phrases b::after {
@@ -18464,44 +18484,72 @@ body:has(.syllabl-game-card .syllabl-play) {
 .site-frame:not([data-game]) .preview-card-before-after.is-submitted .preview-before-after-phrases em::before,
 .site-frame:not([data-game]) .preview-card-before-after.is-feedback .preview-before-after-phrases em::before { opacity: .92; }
 
-.preview-before-after-keyboard {
+.preview-before-after-input {
   display: grid;
-  gap: 3px;
+  grid-template-columns: 1fr auto;
+  gap: 2px 10px;
+  min-height: 53px;
+  align-items: center;
   margin-top: 9px;
+  padding: 8px 10px 8px 12px;
+  border: 1px solid rgb(29 29 31 / .13);
+  border-radius: 11px;
+  background: #fff;
+  box-shadow: 0 5px 14px rgb(0 0 0 / .055);
 }
 
-.preview-before-after-keyboard > span {
-  display: flex;
-  gap: 3px;
-  justify-content: center;
+.preview-before-after-input > span,
+.preview-before-after-input > small {
+  color: rgb(29 29 31 / .48);
+  font: 700 clamp(.31rem, .47vw, .4rem) "Manrope", var(--sans);
+  letter-spacing: .07em;
+  text-transform: uppercase;
 }
 
-.preview-before-after-keyboard i {
-  display: grid;
-  flex: 1 1 0;
-  max-width: 25px;
-  height: clamp(14px, 1.8vw, 20px);
-  place-items: center;
-  border-radius: 4px;
+.preview-before-after-input > strong {
+  overflow: hidden;
   color: #1d1d1f;
-  background: #e2e2e8;
-  box-shadow: 0 1px 0 rgb(29 29 31 / .13);
-  font: 650 clamp(.28rem, .46vw, .39rem) "Sansita Swashed", Georgia, serif;
-  font-style: normal;
+  font: 700 clamp(.76rem, 1.2vw, 1rem) "Sansita Swashed", Georgia, serif;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
-.preview-before-after-keyboard i.is-submit {
-  flex-grow: 2.2;
-  max-width: 46px;
+.preview-before-after-input > small {
+  grid-column: 2;
+  grid-row: 1;
+}
+
+.preview-before-after-input > b {
+  display: grid;
+  grid-column: 2;
+  grid-row: 2;
+  width: 27px;
+  height: 27px;
+  place-items: center;
+  border-radius: 8px;
   color: #fff;
   background: #1688f7;
+  font: 800 .7rem "Manrope", var(--sans);
+}
+
+.preview-card-before-after.is-feedback .preview-before-after-input {
+  border-color: rgb(49 155 93 / .42);
+  box-shadow: 0 0 0 2px rgb(49 155 93 / .08);
+}
+
+.preview-card-before-after.is-feedback .preview-before-after-input > b {
+  background: #319b5d;
 }
 
 .site-frame:not([data-game]) .preview-card-before-after > .preview-live-feedback {
-  margin-top: 5px;
+  min-height: 16px;
+  margin-top: 7px;
   color: #319b5d;
   font-family: "Sansita Swashed", Georgia, serif;
+  font-size: clamp(.72rem, 1.05vw, .9rem);
+  font-weight: 700;
   letter-spacing: 0;
+  line-height: 1.1;
   text-transform: lowercase;
 }
 

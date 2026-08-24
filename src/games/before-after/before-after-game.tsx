@@ -160,7 +160,7 @@ function PhraseRows({
       {puzzle.clueWords.slice(0, 2).map((clue, index) => {
         const answerFirst = puzzle.position === "before" || (puzzle.position === "both" && index === 0);
         return (
-          <div className="ba-phrase" key={`${clue}-${index}`}>
+          <div className={`ba-phrase ${answerFirst ? "is-answer-first" : "is-answer-last"}`} key={`${clue}-${index}`}>
             {answerFirst && <AnswerBlank value={shown} />}
             <span>{clue.toLowerCase()}</span>
             {!answerFirst && <AnswerBlank value={shown} />}

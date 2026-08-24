@@ -67,7 +67,7 @@ function phaseClass(phase: PreviewPhase) {
 }
 
 function SyllablPreview() {
-  const { cardRef, phase, typedAnswer } = useCenteredDemo("program");
+  const { cardRef, phase, typedAnswer } = useCenteredDemo("procrastinator");
 
   return (
     <div
@@ -89,7 +89,7 @@ function SyllablPreview() {
         <div className="preview-syllabl-token">
           <small>today’s letters</small><strong>PRO</strong>
         </div>
-        <p>find a word that <b>contains PRO</b> and has <b>2 syllables</b>.</p>
+        <p>find a word that <b>contains PRO</b> and has <b>5 syllables</b>.</p>
         <div className="preview-entry-stack">
           <div className="preview-syllabl-entry">
             <span className="preview-entry-value" data-preview-entry>
@@ -98,7 +98,7 @@ function SyllablPreview() {
             <b>{phase === "feedback" ? "✓" : "→"}</b>
           </div>
           <small className="preview-live-feedback">
-            {phase === "submitted" ? "checking…" : phase === "feedback" ? "valid · 2 syllables" : "\u00a0"}
+            {phase === "submitted" ? "checking…" : phase === "feedback" ? "valid · 5 syllables" : "\u00a0"}
           </small>
         </div>
       </div>
@@ -107,7 +107,7 @@ function SyllablPreview() {
 }
 
 function RarityPreview() {
-  const { cardRef, phase, typedAnswer } = useCenteredDemo("street");
+  const { cardRef, phase, typedAnswer } = useCenteredDemo("bejeweled");
 
   return (
     <div
@@ -122,7 +122,7 @@ function RarityPreview() {
       </div>
       <div className="preview-rarity-panel">
         <small>today’s string</small>
-        <strong>STR</strong>
+        <strong>WEL</strong>
         <p>
           {phase === "submitted"
             ? "checking the field…"
@@ -163,14 +163,15 @@ function BeforeAfterPreview() {
           word before <b>double</b> or after <b>heavenly</b>.
         </p>
         <div className="preview-before-after-phrases">
-          <span><b><em className="preview-entry-value" data-preview-entry>{shownAnswer}</em></b><i>double</i></span>
-          <span><i>heavenly</i><b><em className="preview-entry-value">{shownAnswer}</em></b></span>
+          <span className="is-answer-first"><b><em className="preview-entry-value">{shownAnswer}</em></b><i>double</i></span>
+          <span className="is-answer-last"><i>heavenly</i><b><em className="preview-entry-value">{shownAnswer}</em></b></span>
         </div>
       </div>
-      <div className="preview-before-after-keyboard" aria-hidden="true">
-        <span>{"qwertyuiop".split("").map((letter) => <i key={letter}>{letter}</i>)}</span>
-        <span>{"asdfghjkl".split("").map((letter) => <i key={letter}>{letter}</i>)}</span>
-        <span><i>⌫</i>{"zxcvbnm".split("").map((letter) => <i key={letter}>{letter}</i>)}<i className="is-submit">submit</i></span>
+      <div className="preview-before-after-input">
+        <span>your answer</span>
+        <strong className="preview-entry-value" data-preview-entry>{typedAnswer || "type or tap"}</strong>
+        <small>{typedAnswer.length}/18</small>
+        <b aria-hidden="true">{phase === "feedback" ? "✓" : "→"}</b>
       </div>
       <small className="preview-live-feedback">
         {phase === "submitted" ? "checking both phrases…" : phase === "feedback" ? "bridge found" : "\u00a0"}
