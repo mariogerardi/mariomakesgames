@@ -6,57 +6,64 @@ import { useCallback, useEffect, useRef, useState } from "react";
 type PreviewPhase = "idle" | "typing" | "submitted" | "feedback";
 
 function useCenteredDemo(answer: string) {
-  const cardRef = useRef<HTMLDivElement>(null);
-  const phaseRef = useRef<PreviewPhase>("idle");
-  const resetTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const centeredRef = useRef(false);
-  const [isCentered, setIsCentered] = useState(false);
+  const cardRefs = useRef<Array<HTMLDivElement | null>>([]);
+  const galleryVisibleRef = useRef(false);
+  const hasRunRef = useRef(false);
+  const [runNumber, setRunNumber] = useState(0);
   const [phase, setPhase] = useState<PreviewPhase>("idle");
   const [typedAnswer, setTypedAnswer] = useState("");
 
   const updatePhase = useCallback((nextPhase: PreviewPhase) => {
-    phaseRef.current = nextPhase;
     setPhase(nextPhase);
   }, []);
 
   const resetDemo = useCallback(() => {
     updatePhase("idle");
     setTypedAnswer("");
-    resetTimerRef.current = null;
   }, [updatePhase]);
 
+  const setCardRef = useCallback((instance: number, card: HTMLDivElement | null) => {
+    cardRefs.current[instance] = card;
+  }, []);
+
   useEffect(() => {
-    const card = cardRef.current;
+    const card = cardRefs.current.find(Boolean);
     const gallery = card?.closest(".hero-gallery, .social-card-render__games");
     const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     if (!card || !gallery || prefersReducedMotion) return;
 
     let animationFrame = 0;
     const checkPosition = () => {
-      const cardBounds = card.getBoundingClientRect();
       const galleryBounds = gallery.getBoundingClientRect();
+      const galleryIsVisible = galleryBounds.bottom > 0
+        && galleryBounds.top < window.innerHeight
+        && galleryBounds.right > 0
+        && galleryBounds.left < window.innerWidth;
+
+      if (!galleryIsVisible) {
+        if (galleryVisibleRef.current) {
+          galleryVisibleRef.current = false;
+          hasRunRef.current = false;
+          setRunNumber(0);
+          resetDemo();
+        }
+        animationFrame = requestAnimationFrame(checkPosition);
+        return;
+      }
+
+      galleryVisibleRef.current = true;
       const center = galleryBounds.left + galleryBounds.width / 2;
       const activationRadius = galleryBounds.width * 0.07;
-      const isInCenter = cardBounds.right > center - activationRadius
-        && cardBounds.left < center + activationRadius;
+      const hasCenteredCard = cardRefs.current.some((candidate) => {
+        if (!candidate) return false;
+        const bounds = candidate.getBoundingClientRect();
+        return bounds.right > center - activationRadius
+          && bounds.left < center + activationRadius;
+      });
 
-      if (isInCenter !== centeredRef.current) {
-        centeredRef.current = isInCenter;
-        if (isInCenter) {
-          if (resetTimerRef.current) {
-            clearTimeout(resetTimerRef.current);
-            resetTimerRef.current = null;
-          }
-          setIsCentered(true);
-        } else {
-          setIsCentered(false);
-          const hasFinished = phaseRef.current === "feedback";
-          if (hasFinished) {
-            resetTimerRef.current = setTimeout(resetDemo, 2800);
-          } else {
-            resetDemo();
-          }
-        }
+      if (hasCenteredCard && !hasRunRef.current) {
+        hasRunRef.current = true;
+        setRunNumber((current) => current + 1);
       }
 
       animationFrame = requestAnimationFrame(checkPosition);
@@ -65,12 +72,11 @@ function useCenteredDemo(answer: string) {
     animationFrame = requestAnimationFrame(checkPosition);
     return () => {
       cancelAnimationFrame(animationFrame);
-      if (resetTimerRef.current) clearTimeout(resetTimerRef.current);
     };
   }, [resetDemo]);
 
   useEffect(() => {
-    if (!isCentered) return;
+    if (runNumber === 0) return;
 
     const timers: ReturnType<typeof setTimeout>[] = [];
     const startDelay = 5200;
@@ -90,9 +96,9 @@ function useCenteredDemo(answer: string) {
     timers.push(setTimeout(() => updatePhase("feedback"), submittedAt + 450));
 
     return () => timers.forEach(clearTimeout);
-  }, [answer, isCentered, updatePhase]);
+  }, [answer, runNumber, updatePhase]);
 
-  return { cardRef, phase, typedAnswer };
+  return { phase, setCardRef, typedAnswer };
 }
 
 function phaseClass(phase: PreviewPhase) {
@@ -131,8 +137,16 @@ function useAnimatedPreviewScore(phase: PreviewPhase, target: number) {
   return displayScore.toFixed(4);
 }
 
-function SyllablPreview() {
-  const { cardRef, phase, typedAnswer } = useCenteredDemo("procrastinator");
+type PreviewDemo = ReturnType<typeof useCenteredDemo>;
+
+type PreviewProps = {
+  demo: PreviewDemo;
+  instance: number;
+};
+
+function SyllablPreview({ demo, instance }: PreviewProps) {
+  const { phase, setCardRef, typedAnswer } = demo;
+  const cardRef = useCallback((card: HTMLDivElement | null) => setCardRef(instance, card), [instance, setCardRef]);
 
   return (
     <div
@@ -151,7 +165,7 @@ function SyllablPreview() {
         <div className="preview-syllabl-token">
           <small>today’s letters</small><strong>PRO</strong>
         </div>
-        <p>find a word that <b>fully contains PRO</b> and has <b>5 syllables</b>.</p>
+        <p>find a word that <b>fully contains PRO</b><br aria-hidden="true" /> and has <b>5 syllables</b>.</p>
         <div className="preview-entry-stack">
           <div className="preview-syllabl-entry">
             <span className="preview-entry-value" data-preview-entry>
@@ -160,7 +174,7 @@ function SyllablPreview() {
             <b>{phase === "feedback" ? "✓" : "→"}</b>
           </div>
           <small className="preview-live-feedback">
-            {phase === "submitted" ? "checking…" : phase === "feedback" ? "valid · 5 syllables" : "\u00a0"}
+            {phase === "submitted" ? "checking…" : phase === "feedback" ? "valid · 5 syllables" : "enter your word…"}
           </small>
         </div>
       </div>
@@ -168,8 +182,9 @@ function SyllablPreview() {
   );
 }
 
-function RarityPreview() {
-  const { cardRef, phase, typedAnswer } = useCenteredDemo("bejeweled");
+function RarityPreview({ demo, instance }: PreviewProps) {
+  const { phase, setCardRef, typedAnswer } = demo;
+  const cardRef = useCallback((card: HTMLDivElement | null) => setCardRef(instance, card), [instance, setCardRef]);
   const displayScore = useAnimatedPreviewScore(phase, 79.91765);
 
   return (
@@ -222,8 +237,9 @@ function RarityPreview() {
   );
 }
 
-function BeforeAfterPreview() {
-  const { cardRef, phase, typedAnswer } = useCenteredDemo("body");
+function BeforeAfterPreview({ demo, instance }: PreviewProps) {
+  const { phase, setCardRef, typedAnswer } = demo;
+  const cardRef = useCallback((card: HTMLDivElement | null) => setCardRef(instance, card), [instance, setCardRef]);
   const shownAnswer = typedAnswer || "\u00a0";
 
   return (
@@ -257,12 +273,33 @@ function BeforeAfterPreview() {
   );
 }
 
-export function HeroGamePreviews() {
+function PreviewSet({ demos, instance }: { demos: PreviewDemo[]; instance: number }) {
   return (
     <>
-      <SyllablPreview />
-      <RarityPreview />
-      <BeforeAfterPreview />
+      <SyllablPreview demo={demos[0]} instance={instance} />
+      <RarityPreview demo={demos[1]} instance={instance} />
+      <BeforeAfterPreview demo={demos[2]} instance={instance} />
+    </>
+  );
+}
+
+export function HeroGamePreviews({ duplicated = false }: { duplicated?: boolean }) {
+  const demos = [
+    useCenteredDemo("procrastinator"),
+    useCenteredDemo("bejeweled"),
+    useCenteredDemo("body"),
+  ];
+
+  if (!duplicated) return <PreviewSet demos={demos} instance={0} />;
+
+  return (
+    <>
+      <div className="hero-marquee-group">
+        <PreviewSet demos={demos} instance={0} />
+      </div>
+      <div className="hero-marquee-group">
+        <PreviewSet demos={demos} instance={1} />
+      </div>
     </>
   );
 }

@@ -32,12 +32,7 @@ export default function Home() {
 
           <div className="hero-gallery" aria-hidden="true">
             <div className="hero-marquee">
-              <div className="hero-marquee-group">
-                <HeroGamePreviews />
-              </div>
-              <div className="hero-marquee-group">
-                <HeroGamePreviews />
-              </div>
+              <HeroGamePreviews duplicated />
             </div>
           </div>
         </section>

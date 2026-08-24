@@ -36,6 +36,7 @@ test("the home page routes into the hub rather than legacy deployments", () => {
   assert.doesNotMatch(homeSource, /hero-shape-blue/);
   assert.match(homeSource, /hero-marquee/);
   assert.match(homeSource, /HeroGamePreviews/);
+  assert.match(homeSource, /HeroGamePreviews duplicated/);
   assert.match(heroPreviewSource, /preview-syllabl-panel/);
   assert.match(heroPreviewSource, /preview-rarity-brand/);
   assert.match(heroPreviewSource, /preview-rarity-entry/);
@@ -62,7 +63,10 @@ test("the home page routes into the hub rather than legacy deployments", () => {
   assert.match(heroPreviewSource, /requestAnimationFrame\(checkPosition\)/);
   assert.match(heroPreviewSource, /social-card-render__games/);
   assert.match(heroPreviewSource, /activationRadius = galleryBounds\.width \* 0\.07/);
-  assert.match(heroPreviewSource, /setTimeout\(resetDemo, 2800\)/);
+  assert.match(heroPreviewSource, /galleryIsVisible/);
+  assert.match(heroPreviewSource, /hasRunRef/);
+  assert.match(heroPreviewSource, /enter your word…/);
+  assert.doesNotMatch(heroPreviewSource, /setTimeout\(resetDemo, 2800\)/);
   assert.doesNotMatch(heroPreviewSource, /daily #497|level 4 of 6/);
   assert.doesNotMatch(heroPreviewSource, /typedAnswer\.length/);
   assert.doesNotMatch(homeSource, /A game collection by Mario Gerardi/);
