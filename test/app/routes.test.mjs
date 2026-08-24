@@ -45,7 +45,8 @@ test("the home page routes into the hub rather than legacy deployments", () => {
   assert.match(heroPreviewSource, /preview-before-after-phrases/);
   assert.match(heroPreviewSource, /preview-before-after-input/);
   assert.match(heroPreviewSource, /procrastinator/);
-  assert.match(heroPreviewSource, /fully contains PRO/);
+  assert.match(heroPreviewSource, /begins with PRO/);
+  assert.doesNotMatch(heroPreviewSource, /fully contains PRO/);
   assert.match(heroPreviewSource, /5 syllables/);
   assert.match(heroPreviewSource, /bejeweled/);
   assert.match(heroPreviewSource, />WEL</);

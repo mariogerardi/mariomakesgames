@@ -195,7 +195,7 @@ function SyllablPreview({ demo, instance }: PreviewProps) {
         <div className="preview-syllabl-token">
           <small>today’s letters</small><strong>PRO</strong>
         </div>
-        <p>find a word that <b>fully contains PRO</b><br aria-hidden="true" /> and has <b>5 syllables</b>.</p>
+        <p>find a word that <b>begins with PRO</b><br aria-hidden="true" /> and has <b>5 syllables</b>.</p>
         <div className="preview-entry-stack">
           <div className="preview-syllabl-entry">
             <span className="preview-entry-value" data-preview-entry>
