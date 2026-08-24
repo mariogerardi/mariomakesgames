@@ -7,6 +7,7 @@ type PreviewPhase = "idle" | "typing" | "submitted" | "feedback";
 
 function useCenteredDemo(answer: string) {
   const cardRefs = useRef<Array<HTMLDivElement | null>>([]);
+  const activeCardCenterRef = useRef<number | null>(null);
   const galleryVisibleRef = useRef(false);
   const hasRunRef = useRef(false);
   const [runNumber, setRunNumber] = useState(0);
@@ -43,6 +44,7 @@ function useCenteredDemo(answer: string) {
       if (!galleryIsVisible) {
         if (galleryVisibleRef.current) {
           galleryVisibleRef.current = false;
+          activeCardCenterRef.current = null;
           hasRunRef.current = false;
           setRunNumber(0);
           resetDemo();
@@ -54,14 +56,42 @@ function useCenteredDemo(answer: string) {
       galleryVisibleRef.current = true;
       const center = galleryBounds.left + galleryBounds.width / 2;
       const activationRadius = galleryBounds.width * 0.07;
-      const hasCenteredCard = cardRefs.current.some((candidate) => {
-        if (!candidate) return false;
+      const candidates = cardRefs.current.flatMap((candidate) => {
+        if (!candidate) return [];
         const bounds = candidate.getBoundingClientRect();
-        return bounds.right > center - activationRadius
-          && bounds.left < center + activationRadius;
+        return [{ bounds, center: bounds.left + bounds.width / 2 }];
       });
 
-      if (hasCenteredCard && !hasRunRef.current) {
+      if (activeCardCenterRef.current !== null && candidates.length > 0) {
+        const previousCenter = activeCardCenterRef.current;
+        const activeCard = candidates.reduce((closest, candidate) => (
+          Math.abs(candidate.center - previousCenter) < Math.abs(closest.center - previousCenter)
+            ? candidate
+            : closest
+        ));
+
+        activeCardCenterRef.current = activeCard.center;
+        const activeCardIsVisible = activeCard.bounds.right > galleryBounds.left
+          && activeCard.bounds.left < galleryBounds.right;
+
+        if (!activeCardIsVisible) {
+          activeCardCenterRef.current = null;
+          hasRunRef.current = false;
+          setRunNumber(0);
+          resetDemo();
+        }
+
+        animationFrame = requestAnimationFrame(checkPosition);
+        return;
+      }
+
+      const centeredCard = candidates
+        .filter((candidate) => candidate.bounds.right > center - activationRadius
+          && candidate.bounds.left < center + activationRadius)
+        .sort((left, right) => Math.abs(left.center - center) - Math.abs(right.center - center))[0];
+
+      if (centeredCard && !hasRunRef.current) {
+        activeCardCenterRef.current = centeredCard.center;
         hasRunRef.current = true;
         setRunNumber((current) => current + 1);
       }

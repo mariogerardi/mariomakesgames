@@ -65,6 +65,8 @@ test("the home page routes into the hub rather than legacy deployments", () => {
   assert.match(heroPreviewSource, /activationRadius = galleryBounds\.width \* 0\.07/);
   assert.match(heroPreviewSource, /galleryIsVisible/);
   assert.match(heroPreviewSource, /hasRunRef/);
+  assert.match(heroPreviewSource, /activeCardCenterRef/);
+  assert.match(heroPreviewSource, /activeCardIsVisible/);
   assert.match(heroPreviewSource, /enter your word…/);
   assert.doesNotMatch(heroPreviewSource, /setTimeout\(resetDemo, 2800\)/);
   assert.doesNotMatch(heroPreviewSource, /daily #497|level 4 of 6/);
