@@ -19008,21 +19008,36 @@ body:has(.syllabl-game-card .syllabl-play) {
 }
 
 .site-frame:not([data-game]) .preview-syllabl-panel {
-  grid-template-rows: auto 1fr auto;
-  gap: clamp(10px, 1.2vw, 14px);
+  grid-template-rows: auto auto auto;
+  gap: clamp(18px, 2vw, 24px);
+  align-content: center;
   padding: clamp(16px, 1.8vw, 20px);
 }
 
+.site-frame:not([data-game]) .preview-syllabl-wordmark {
+  font-size: clamp(1.08rem, 1.8vw, 1.42rem);
+}
+
 .site-frame:not([data-game]) .preview-syllabl-token {
-  width: clamp(82px, 8vw, 96px);
-  min-height: clamp(74px, 7.6vw, 88px);
+  width: clamp(104px, 9.6vw, 118px);
+  min-height: clamp(94px, 9vw, 108px);
   margin-top: 0;
 }
 
+.site-frame:not([data-game]) .preview-syllabl-token small {
+  font-size: clamp(.43rem, .6vw, .53rem);
+}
+
+.site-frame:not([data-game]) .preview-syllabl-token strong {
+  margin-top: 6px;
+  font-size: clamp(1.85rem, 3vw, 2.55rem);
+}
+
 .site-frame:not([data-game]) .preview-syllabl-panel > p {
-  max-width: 92%;
+  max-width: 96%;
   margin: 0 auto;
-  font-size: clamp(.52rem, .76vw, .65rem);
+  font-size: clamp(.62rem, .86vw, .74rem);
+  line-height: 1.4;
 }
 
 .site-frame:not([data-game]) .preview-entry-stack {
@@ -19034,27 +19049,59 @@ body:has(.syllabl-game-card .syllabl-play) {
   padding: clamp(8px, 1vw, 12px) 2px 0;
 }
 
-.site-frame:not([data-game]) .preview-rarity-panel > strong {
-  margin: clamp(10px, 1.4vw, 15px) 0 7px;
-  font-size: clamp(2.8rem, 4.6vw, 4.2rem);
+.site-frame:not([data-game]) .preview-rarity-string-block {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: clamp(10px, 1.15vw, 14px);
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  min-height: 0;
+  padding-block: 4px 12px;
 }
 
-.site-frame:not([data-game]) .preview-rarity-panel > p {
-  display: grid;
-  min-height: 2.7em;
-  max-width: 92%;
-  place-items: start center;
-  font-size: clamp(.54rem, .72vw, .64rem);
+.site-frame:not([data-game]) .preview-rarity-string-block > small {
+  color: #746775;
+  font: 750 clamp(.43rem, .58vw, .52rem) "IBM Plex Sans", var(--sans);
+  letter-spacing: .12em;
+  text-transform: uppercase;
+}
+
+.site-frame:not([data-game]) .preview-rarity-string-block > strong {
+  color: #69428e;
+  font: 620 clamp(3rem, 4.8vw, 4.35rem) "IBM Plex Sans", var(--sans);
+  letter-spacing: .16em;
+  line-height: 1;
+  transform: translateX(.08em);
+}
+
+.site-frame:not([data-game]) .preview-rarity-string-block > p {
+  margin: 0;
+  color: #746775;
+  font: 550 clamp(.58rem, .78vw, .69rem) "IBM Plex Sans", var(--sans);
   line-height: 1.35;
+  text-align: center;
 }
 
 .site-frame:not([data-game]) .preview-rarity-entry {
-  margin-top: auto;
+  margin-top: 0;
 }
 
 .site-frame:not([data-game]) .preview-rarity-score {
   margin-top: 10px;
   padding-top: 9px;
+}
+
+.site-frame:not([data-game]) .preview-syllabl-entry .preview-entry-value {
+  font-size: clamp(.76rem, 1.08vw, .94rem);
+  font-weight: 540;
+}
+
+.site-frame:not([data-game]) .preview-card-syllabl.is-typing .preview-entry-value,
+.site-frame:not([data-game]) .preview-card-syllabl.is-submitted .preview-entry-value,
+.site-frame:not([data-game]) .preview-card-syllabl.is-feedback .preview-entry-value {
+  font-weight: 560;
 }
 
 .site-frame:not([data-game]) .preview-before-after-puzzle {

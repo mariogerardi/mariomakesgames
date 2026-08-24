@@ -151,7 +151,7 @@ function SyllablPreview() {
         <div className="preview-syllabl-token">
           <small>today’s letters</small><strong>PRO</strong>
         </div>
-        <p>find a word that <b>contains PRO</b> and has <b>5 syllables</b>.</p>
+        <p>find a word that <b>fully contains PRO</b> and has <b>5 syllables</b>.</p>
         <div className="preview-entry-stack">
           <div className="preview-syllabl-entry">
             <span className="preview-entry-value" data-preview-entry>
@@ -184,15 +184,17 @@ function RarityPreview() {
         <span>rarity</span>
       </div>
       <div className="preview-rarity-panel">
-        <small>today’s string</small>
-        <strong>WEL</strong>
-        <p>
-          {phase === "submitted"
-            ? "checking the field…"
-            : phase === "feedback"
-              ? "accepted. your one word is locked."
-              : "one valid word. make it count."}
-        </p>
+        <div className="preview-rarity-string-block">
+          <small>today’s string</small>
+          <strong>WEL</strong>
+          <p>
+            {phase === "submitted"
+              ? "checking the field…"
+              : phase === "feedback"
+                ? "accepted. your one guess is locked."
+                : "one valid guess. make it count."}
+          </p>
+        </div>
         <div className="preview-rarity-entry">
           <span className="preview-entry-value" data-preview-entry>
             {typedAnswer || "your word"}
