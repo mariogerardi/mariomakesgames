@@ -13,13 +13,17 @@ export function GameLocalBar({
   ariaLabel,
   brand,
   className,
+  homeAriaLabel,
   items,
+  navigationAriaLabel,
   onHome,
 }: {
   ariaLabel: string;
   brand: ReactNode;
   className: string;
+  homeAriaLabel?: string;
   items: GameLocalBarItem[];
+  navigationAriaLabel?: string;
   onHome: () => void;
 }) {
   const navRef = useRef<HTMLElement>(null);
@@ -40,14 +44,14 @@ export function GameLocalBar({
   return (
     <header className={`game-local-bar ${className}`}>
       <button
-        aria-label={`Open ${ariaLabel} menu`}
+        aria-label={homeAriaLabel ?? `Open ${ariaLabel} menu`}
         className="game-local-bar__brand"
         onClick={onHome}
         type="button"
       >
         {brand}
       </button>
-      <nav aria-label={`${ariaLabel} navigation`} ref={navRef}>
+      <nav aria-label={navigationAriaLabel ?? `${ariaLabel} navigation`} ref={navRef}>
         {items.map((item) => (
           <button
             aria-current={item.current ? "page" : undefined}

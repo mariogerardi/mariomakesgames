@@ -3,16 +3,19 @@
 ## Current phase
 
 Pre-H13: restore each migrated game's source-faithful styling inside the
-full-viewport game shell. Syllabl, classic Rarity, Gridl, Expl41n, Before&After, and DECODE are complete;
-proceed game-by-game only when explicitly requested.
+full-viewport game shell. Syllabl, classic Rarity, Gridl, Expl41n, Before&After,
+and DECODE are complete; proceed game-by-game only when explicitly requested.
+TOKEN and DUAL are native playtest previews. Their checked-in catalogs are
+deliberately small and must not be described as publication-scale daily
+libraries.
 
-All six launch games are playable at their internal routes. DECODE preserves
+All six migrated games are playable at their internal routes. DECODE preserves
 Timed and the original fixed Daily 5, duplicate-aware positional feedback,
 20-second Timed resets, four difficulty tiers, the upward Daily clock, and all
 118 unique authored puzzles. The exact duplicate and two incorrect source color
-arrays are corrected; the nonfunctional ZEN control remains excluded. Gemboard
-remains retired. Do not begin shared identity and progress work (H13) until it
-is explicitly requested.
+arrays are corrected; its hub-native Zen mode adds an untimed continuous run.
+Gemboard remains retired. Do not begin shared identity and progress work (H13)
+until it is explicitly requested.
 
 All game routes use the shared compact hub header and a full-viewport game
 canvas with one floating back-to-Games control. Every game also owns a
@@ -49,10 +52,10 @@ four real puzzle packs, playable archive, custom creator, statistics, and reset
 control. Preserve the 204-puzzle authored corpus and tested bridge engine. Do
 not restore placeholder rank packs, preview-only achievements, developer tools,
 dead sharing, or fabricated community guesses and leaderboards.
-DECODE owns its restrained dark decoding-console identity, two-mode landing
+DECODE owns its restrained dark decoding-console identity, three-mode landing
 screen, semantic color-and-symbol clue tiles, responsive two-column play room,
 Timed difficulty ladder, fixed Sea Creatures progress track, decoding protocol,
-and mode-specific result summaries. Preserve both tested modes, all 118 unique
+and mode-specific result summaries. Preserve all three tested modes, all 118 unique
 authored puzzles, duplicate-aware feedback, exact clocks, and the four Timed
 length tiers. Do not add a calendar rotation, cosmetic themes, skips, power-ups,
 or community features.

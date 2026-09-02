@@ -1,4 +1,4 @@
-export type DecodeMode = "timed" | "daily-5";
+export type DecodeMode = "timed" | "daily-5" | "zen";
 export type DecodeStatus = "playing" | "expired" | "complete";
 export type DecodeState =
   | {
@@ -13,6 +13,11 @@ export type DecodeState =
       score: number;
       dailyIndex: number;
       elapsedSeconds: number;
+    }
+  | {
+      mode: "zen";
+      status: DecodeStatus;
+      score: number;
     };
 export type DecodeFeedback = "correct" | "present" | "absent";
 

@@ -36,12 +36,14 @@ test("the home page routes into the hub rather than legacy deployments", () => {
   assert.doesNotMatch(homeSource, /hero-shape-blue/);
   assert.match(homeSource, /hero-marquee/);
   assert.match(homeSource, /HeroGamePreviews/);
-  assert.match(homeSource, /HeroGamePreviews duplicated/);
+  assert.match(homeSource, /HeroGamePreviews duplicated includeDecode/);
   assert.match(heroPreviewSource, /preview-syllabl-panel/);
   assert.match(heroPreviewSource, /preview-rarity-brand/);
   assert.match(heroPreviewSource, /preview-rarity-entry/);
   assert.doesNotMatch(heroPreviewSource, /preview-rarity-keyboard/);
   assert.match(heroPreviewSource, /preview-card-before-after/);
+  assert.match(heroPreviewSource, /preview-card-decode/);
+  assert.match(heroPreviewSource, /data-preview-game="decode"/);
   assert.match(heroPreviewSource, /preview-before-after-phrases/);
   assert.match(heroPreviewSource, /preview-before-after-input/);
   assert.match(heroPreviewSource, /procrastinator/);
@@ -75,7 +77,9 @@ test("the home page routes into the hub rather than legacy deployments", () => {
   assert.doesNotMatch(homeSource, /A game collection by Mario Gerardi/);
   assert.doesNotMatch(homeSource, /Three ready now\. Three more on the way\./);
   assert.doesNotMatch(homeSource, /preview-card-gridl/);
-  assert.match(cardSource, /game\.id === "expl41n" \|\| game\.id === "decode" \|\| game\.id === "gridl"/);
+  assert.match(cardSource, /game\.hubStatus === "coming-soon"/);
+  assert.match(cardSource, /game\.id === "decode"/);
+  assert.match(cardSource, /decode-card-wordmark/);
   assert.match(cardSource, /coming soon!/);
   assert.match(cardSource, /aria-disabled="true"/);
   assert.match(homeSource, /Challenge yourself<span className="hero-period">\.<\/span>/);
@@ -92,16 +96,11 @@ test("the shared shell exposes accessible navigation and page landmarks", () => 
   assert.match(footerSource, /<footer/);
 });
 
-test("H2 does not request persistence or upload infrastructure", () => {
-  const hosting = JSON.parse(
-    fs.readFileSync(
-      path.join(repositoryRoot, ".openai", "hosting.json"),
-      "utf8",
-    ),
-  );
-  assert.equal(hosting.d1, null);
-  assert.equal(hosting.r2, null);
-  assert.equal(typeof hosting.project_id, "string");
+test("the application has no Sites-specific build or hosting coupling", () => {
+  const viteSource = read("vite.config.ts");
+  assert.equal(fs.existsSync(path.join(repositoryRoot, ".openai", "hosting.json")), false);
+  assert.equal(fs.existsSync(path.join(repositoryRoot, "build", "sites-vite-plugin.ts")), false);
+  assert.doesNotMatch(viteSource, /hosting\.json|sites-vite-plugin|sites\(\)/);
 });
 
 test("the Syllabl route exposes the complete playable migration", () => {
@@ -289,24 +288,84 @@ test("the Before&After route exposes the complete bridge game", () => {
   assert.match(gameSource, /is-answer-last/);
 });
 
-test("the DECODE route exposes both preserved playable modes", () => {
+test("the DECODE route exposes all playable modes", () => {
   const routeSource = read("app/games/[gameId]/page.tsx");
   const gameSource = read("src/games/decode/decode-game.tsx");
   assert.match(routeSource, /DecodeGame/);
-  assert.match(gameSource, /"timed", "daily-5"/);
+  assert.match(gameSource, /"timed", "daily-5", "zen"/);
   assert.match(gameSource, /deriveDecodeFeedback/);
   assert.match(gameSource, /evaluateDecodeAttempt/);
   assert.match(gameSource, /tickDecodeClock/);
   assert.match(gameSource, /decodeDailyPuzzles/);
   assert.match(gameSource, /PROGRESS_KEY/);
-  assert.doesNotMatch(gameSource, /zen/i);
+  assert.match(gameSource, /One answer\./);
+  assert.doesNotMatch(gameSource, /One word\./);
+  assert.doesNotMatch(gameSource, />Begin<|>How to play<\/button><\/div>/);
+  assert.match(gameSource, /decode-home-wordmark/);
+  assert.match(gameSource, /decode-result-modal/);
+  assert.match(gameSource, /focusInput/);
+  assert.match(gameSource, /useModalFocus/);
+  assert.match(gameSource, /back to menu/);
+  assert.match(gameSource, /Type your answer, then press Enter/);
+  assert.doesNotMatch(gameSource, /decode-console-actions|decode-submit|TierLadder|DailyProgress/);
+  assert.doesNotMatch(gameSource, /decode-legend/);
+  assert.doesNotMatch(gameSource, /decode-keyboard|KEYBOARD/);
+  assert.match(gameSource, /No clock\. A quiet stream of signals\./);
+});
+
+test("the TOKEN route exposes the native prediction game", () => {
+  const routeSource = read("app/games/[gameId]/page.tsx");
+  const gameSource = read("src/games/token/token-game.tsx");
+  const engineSource = read("src/games/token/engine.mjs");
+  assert.match(routeSource, /TokenGame/);
+  assert.match(gameSource, /Predict TOKEN’s next token/);
+  assert.match(gameSource, /token-results/);
+  assert.match(gameSource, /token-inspection/);
+  assert.match(gameSource, /gameStorageKey\("token", "runs"\)/);
+  assert.match(gameSource, /gameStorageKey\("token", "library"\)/);
+  assert.match(gameSource, /TokenDaily|TOKEN daily puzzles/);
+  assert.match(gameSource, /TokenArchive|TOKEN archive/);
+  assert.match(engineSource, /scoreTokenEntry/);
+  assert.match(engineSource, /transitionTokenRun/);
+});
+
+test("the DUAL route exposes bilingual daily play and its lexical boundary", () => {
+  const routeSource = read("app/games/[gameId]/page.tsx");
+  const gameSource = read("src/games/dual/dual-game.tsx");
+  const engineSource = read("src/games/dual/engine.mjs");
+  const lexiconSource = read("src/games/dual/lexicon.mjs");
+  const cardSource = read("src/app-shell/game-card.tsx");
+  assert.match(routeSource, /DualGame/);
+  assert.match(gameSource, /GameLocalBar/);
+  assert.match(gameSource, /ALL DUALS FOUND/);
+  assert.match(gameSource, /gameStorageKey\("dual", "daily"\)/);
+  assert.match(gameSource, /gameStorageKey\("dual", "runs"\)/);
+  assert.match(gameSource, /gameStorageKey\("dual", "interface-language"\)/);
+  assert.match(gameSource, /DualMenu/);
+  assert.match(gameSource, /DualArchive/);
+  assert.match(gameSource, /DualStats/);
+  assert.match(gameSource, /DualSettings/);
+  assert.match(gameSource, /DEFAULT_DUAL_INTERFACE_LANGUAGE/);
+  assert.match(gameSource, /data-interface-language=\{language\}/);
+  assert.match(gameSource, /en="One string"|"One string", "Una secuencia"/);
+  assert.match(gameSource, /"Two languages", "Dos idiomas"/);
+  assert.match(gameSource, /"Enter", "Enviar", "es"/);
+  assert.doesNotMatch(gameSource, /One string\. Two languages\./);
+  assert.doesNotMatch(gameSource, /either side—and/);
+  assert.match(engineSource, /submitDualWord/);
+  assert.match(engineSource, /hydrateDualSession/);
+  assert.match(lexiconSource, /canonicalContainsSequence/);
+  assert.match(cardSource, /dual-card-wordmark/);
 });
 
 test("game routes use the full-viewport shared play shell", () => {
   const routeSource = read("app/games/[gameId]/page.tsx");
+  const backSource = read("src/app-shell/game-canvas-back.tsx");
   const styles = read("app/globals.css");
   assert.doesNotMatch(routeSource, /game-route-bar|game-route-features|game-route-identity/);
-  assert.match(routeSource, /className="game-canvas-back"/);
+  assert.match(routeSource, /GameCanvasBack/);
+  assert.match(backSource, /className="game-canvas-back"/);
+  assert.match(backSource, /dualLanguage === "es"/);
   assert.match(routeSource, /className="game-canvas"/);
   assert.doesNotMatch(routeSource, /className="room-grid"/);
   assert.doesNotMatch(routeSource, /<SiteFooter/);

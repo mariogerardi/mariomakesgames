@@ -1,0 +1,18 @@
+[
+  {
+    "id": "ota-001",
+    "sequence": "OTA",
+    "targetScore": 12,
+    "minimumEnglish": 5,
+    "minimumSpanish": 5,
+    "dualCount": 2
+  },
+  {
+    "id": "tra-001",
+    "sequence": "TRA",
+    "targetScore": 10,
+    "minimumEnglish": 4,
+    "minimumSpanish": 4,
+    "dualCount": 1
+  }
+]

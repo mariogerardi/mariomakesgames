@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
-import Link from "next/link";
 import { notFound } from "next/navigation";
+import { GameCanvasBack } from "../../../src/app-shell/game-canvas-back";
 import { SiteHeader } from "../../../src/app-shell/site-header";
 import { getHubGame, hubGames } from "../../../src/games/registry";
 import { RarityGame } from "../../../src/games/rarity/rarity-game";
@@ -9,6 +9,8 @@ import { GridlGame } from "../../../src/games/gridl/gridl-game";
 import { Expl41nGame } from "../../../src/games/expl41n/expl41n-game";
 import { BeforeAfterGame } from "../../../src/games/before-after/before-after-game";
 import { DecodeGame } from "../../../src/games/decode/decode-game";
+import { TokenGame } from "../../../src/games/token/token-game";
+import { DualGame } from "../../../src/games/dual/dual-game";
 
 type GamePageProps = {
   params: Promise<{ gameId: string }>;
@@ -51,10 +53,7 @@ export default async function GamePage({ params }: GamePageProps) {
       <main className="game-page">
         <section className="game-canvas" aria-label={`${game.name} play area`}>
           <h1 className="game-canvas-title">{game.name}</h1>
-          <Link className="game-canvas-back" href="/#games" aria-label="Back to all games">
-            <span aria-hidden="true">←</span>
-            Games
-          </Link>
+          <GameCanvasBack gameId={game.id} />
           {game.id === "syllabl" ? (
             <SyllablGame />
           ) : game.id === "rarity" ? (
@@ -67,6 +66,10 @@ export default async function GamePage({ params }: GamePageProps) {
             <BeforeAfterGame />
           ) : game.id === "decode" ? (
             <DecodeGame />
+          ) : game.id === "token" ? (
+            <TokenGame />
+          ) : game.id === "dual" ? (
+            <DualGame />
           ) : null}
         </section>
       </main>

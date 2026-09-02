@@ -303,32 +303,66 @@ function BeforeAfterPreview({ demo, instance }: PreviewProps) {
   );
 }
 
-function PreviewSet({ demos, instance }: { demos: PreviewDemo[]; instance: number }) {
+function DecodePreview({ demo, instance }: PreviewProps) {
+  const { phase, setCardRef, typedAnswer } = demo;
+  const cardRef = useCallback((card: HTMLDivElement | null) => setCardRef(instance, card), [instance, setCardRef]);
+  const clueStates: PreviewPhase[] = ["typing", "typing", "typing", "idle"];
+  const logoStates = ["correct", "present", "correct", "present", "absent", "correct"];
+
+  return (
+    <div
+      className={`preview-card preview-card-decode ${phaseClass(phase)}`}
+      data-preview-game="decode"
+      data-preview-phase={phase}
+      ref={cardRef}
+    >
+      <div className="preview-decode-topline" aria-label="DECODE">
+        {"DECODE".split("").map((letter, index) => <i className={`is-${logoStates[index]}`} key={`${letter}-${index}`}>{letter}</i>)}
+      </div>
+      <small className="preview-decode-label">Clue word</small>
+      <div className="preview-decode-clue">
+        {"KNIT".split("").map((letter, index) => (
+          <span className={`is-${clueStates[index] === "idle" ? "absent" : "present"}`} key={`${letter}-${index}`}><b>{letter}</b><i>{clueStates[index] === "idle" ? "×" : "↔"}</i></span>
+        ))}
+      </div>
+      <div className="preview-decode-definition"><small>Definition</small><p>“flirtatious gesture, or signal of a kind”</p></div>
+      <div className="preview-decode-answer">
+        <small>Answer</small>
+        <div>{Array.from({ length: 4 }, (_, index) => <span key={index}>{typedAnswer[index] || ""}</span>)}</div>
+      </div>
+      <p className="preview-decode-feedback">{phase === "submitted" ? "decoding…" : phase === "feedback" ? "signal decoded" : "\u00a0"}</p>
+    </div>
+  );
+}
+
+function PreviewSet({ demos, includeDecode, instance }: { demos: PreviewDemo[]; includeDecode: boolean; instance: number }) {
   return (
     <>
       <SyllablPreview demo={demos[0]} instance={instance} />
       <RarityPreview demo={demos[1]} instance={instance} />
       <BeforeAfterPreview demo={demos[2]} instance={instance} />
+      {includeDecode && <DecodePreview demo={demos[3]} instance={instance} />}
     </>
   );
 }
 
-export function HeroGamePreviews({ duplicated = false }: { duplicated?: boolean }) {
+export function HeroGamePreviews({ duplicated = false, includeDecode = false }: { duplicated?: boolean; includeDecode?: boolean }) {
   const demos = [
     useCenteredDemo("procrastinator"),
     useCenteredDemo("bejeweled"),
     useCenteredDemo("body"),
+    useCenteredDemo("WINK"),
   ];
 
-  if (!duplicated) return <PreviewSet demos={demos} instance={0} />;
+  if (!duplicated) return <PreviewSet demos={demos} includeDecode={includeDecode} instance={0} />;
 
   return (
     <>
       <div className="hero-marquee-group">
-        <PreviewSet demos={demos} instance={0} />
+        <PreviewSet demos={demos} includeDecode={includeDecode} instance={0} />
       </div>
       <div className="hero-marquee-group">
-        <PreviewSet demos={demos} instance={1} />
+        <PreviewSet demos={demos} includeDecode={includeDecode} instance={1} />
       </div>
     </>
   );

@@ -15,7 +15,11 @@
     "test": "node --test",
     "test:app": "node --test test/app/*.test.mjs",
     "test:contracts": "node --test test/contracts/*.test.mjs",
-    "test:legacy": "node --test test/legacy/*.test.mjs"
+    "test:legacy": "node --test test/legacy/*.test.mjs",
+    "dual:data:download": "node scripts/dual/download-kaikki.mjs",
+    "dual:data:frequency": "node scripts/dual/prepare-wordfreq.mjs",
+    "dual:data:build": "node --expose-gc --max-old-space-size=4096 scripts/dual/build-kaikki-index.mjs",
+    "dual:data": "npm run dual:data:download && npm run dual:data:frequency && npm run dual:data:build"
   },
   "engines": {
     "node": ">=22.13.0"

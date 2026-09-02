@@ -3,8 +3,7 @@ import type { HubGame } from "../games/registry";
 import { GameMark } from "./game-mark";
 
 export function GameCard({ game }: { game: HubGame }) {
-  const isComingSoon =
-    game.id === "expl41n" || game.id === "decode" || game.id === "gridl";
+  const isComingSoon = game.hubStatus === "coming-soon";
   const content = (
     <>
       <div className="card-topline">
@@ -26,6 +25,18 @@ export function GameCard({ game }: { game: HubGame }) {
         ) : game.id === "before-after" ? (
           <h3 className="before-after-card-wordmark">
             <span>before</span><i>&amp;</i><b>after</b>
+          </h3>
+        ) : game.id === "decode" ? (
+          <h3 className="decode-card-wordmark" aria-label="DECODE">
+            {"DECODE".split("").map((letter, index) => (
+              <span className={`is-${["correct", "present", "correct", "present", "absent", "correct"][index]}`} key={`${letter}-${index}`}>{letter}</span>
+            ))}
+          </h3>
+        ) : game.id === "token" ? (
+          <h3 className="token-card-wordmark">TOKEN<i /></h3>
+        ) : game.id === "dual" ? (
+          <h3 className="dual-card-wordmark" aria-label="DUAL">
+            <span>DU</span><i aria-hidden="true" /><b>AL</b>
           </h3>
         ) : <h3>{game.name}</h3>}
         <span>{game.description}</span>

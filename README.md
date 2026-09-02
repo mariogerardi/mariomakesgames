@@ -7,9 +7,9 @@ A collection of original browser games by Mario Gerardi.
 ![mariomakesgames! preview](public/og.png)
 
 The hub gives each game its own visual identity and rules while keeping them
-under one shared, responsive home. Syllabl, Rarity, and Before&After are
-available from the hub now; Expl41n, DECODE, and Gridl are included in the
-collection and currently presented as coming soon.
+under one shared, responsive home. Syllabl, Rarity, Before&After, and DECODE
+are live; TOKEN and DUAL are available as playtest previews; Expl41n and Gridl
+have playable internal routes but remain locked on the public collection.
 
 ## Games
 
@@ -18,8 +18,10 @@ collection and currently presented as coming soon.
 | **Syllabl** | Find six words that satisfy changing letter-placement and syllable rules. |
 | **Rarity** | Submit one valid word containing the daily string and make it count. |
 | **Before&After** | Find the word that belongs before, after, or between two clues. |
-| **Expl41n** | Give an AI just enough of a clue to guess the secret word. |
 | **DECODE** | Transform one word into another using color, position, and a crossword-style hint. |
+| **TOKEN** | Predict the next token in a frozen AI response. |
+| **DUAL** | Find English and Spanish words containing the same letter string. |
+| **Expl41n** | Give an AI just enough of a clue to guess the secret word. |
 | **Gridl** | Route word fragments across a map of crossings, blockers, recalls, and portals. |
 
 ## Run it locally
@@ -32,6 +34,17 @@ npm run dev
 ```
 
 Open [http://localhost:3000](http://localhost:3000).
+
+DUAL has a local-only authoring view. To download the English and Spanish
+Kaikki source snapshots and build its review index:
+
+```bash
+npm run dual:data
+```
+
+The roughly 4 GB source download, SQLite review database, and browser-facing
+candidate pools are Git-ignored. Once built, the **Build** destination appears
+only on DUAL pages served from localhost.
 
 Some games use externally hosted word-validation, scoring, or guessing
 services. Those integrations are isolated behind service modules so the game
@@ -56,6 +69,7 @@ comparisons in a standalone checkout.
 - `src/platform/` — shared daily, storage, sharing, analytics, and result boundaries
 - `test/` — application, domain, contract, and historical parity coverage
 - `docs/` — architecture decisions and migration records
+- `.local/dual-kaikki/` — ignored DUAL source data and authoring database
 - `contracts/` — preserved gameplay behavior for each migrated game
 
 ## Ownership

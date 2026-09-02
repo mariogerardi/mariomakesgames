@@ -32,7 +32,7 @@ export default function Home() {
 
           <div className="hero-gallery" aria-hidden="true">
             <div className="hero-marquee">
-              <HeroGamePreviews duplicated />
+              <HeroGamePreviews duplicated includeDecode />
             </div>
           </div>
         </section>

@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, type RefObject } from "react";
 import { gameStorageKey } from "../../platform/storage";
 import { GameLocalBar } from "../../app-shell/game-local-bar";
 import {
@@ -22,14 +22,7 @@ import {
 } from "./engine.mjs";
 
 const PROGRESS_KEY = gameStorageKey("decode", "progress");
-const KEYBOARD = ["QWERTYUIOP", "ASDFGHJKL", "ZXCVBNM"];
-const MODES = ["timed", "daily-5"] as const;
-const TIERS = [
-  { length: 4, range: "0–9", label: "signal I" },
-  { length: 5, range: "10–19", label: "signal II" },
-  { length: 6, range: "20–29", label: "signal III" },
-  { length: 7, range: "30+", label: "signal IV" },
-] as const;
+const MODES = ["timed", "daily-5", "zen"] as const;
 
 type DecodeProgress = {
   bestTimedScore: number;
@@ -63,7 +56,9 @@ function readProgress() {
 }
 
 function modeLabel(mode: DecodeMode) {
-  return mode === "timed" ? "Timed" : "Daily 5";
+  if (mode === "timed") return "Timed";
+  if (mode === "daily-5") return "Daily 5";
+  return "Zen";
 }
 
 function feedbackLabel(feedback: DecodeFeedback) {
@@ -72,12 +67,60 @@ function feedbackLabel(feedback: DecodeFeedback) {
   return "not used";
 }
 
-function DecodeWordmark() {
+function DecodeTileWordmark({ compact = false }: { compact?: boolean }) {
+  const states: DecodeFeedback[] = ["correct", "present", "correct", "present", "absent", "correct"];
   return (
-    <div className="decode-wordmark" aria-label="Decode">
-      <span>DE</span><strong>CODE</strong><i aria-hidden="true" />
+    <div className={`decode-home-wordmark${compact ? " is-compact" : ""}`} aria-label="DECODE">
+      {"DECODE".split("").map((letter, index) => (
+        <span className={`is-${states[index]}`} key={`${letter}-${index}`}>{letter}</span>
+      ))}
     </div>
   );
+}
+
+function useModalFocus(
+  containerRef: RefObject<HTMLElement | null>,
+  initialRef: RefObject<HTMLButtonElement | null>,
+  onDismiss: () => void,
+) {
+  const dismissRef = useRef(onDismiss);
+
+  useEffect(() => {
+    dismissRef.current = onDismiss;
+  }, [onDismiss]);
+
+  useEffect(() => {
+    const previousFocus = document.activeElement instanceof HTMLElement ? document.activeElement : null;
+
+    function handleKeyDown(event: KeyboardEvent) {
+      if (event.key === "Escape") {
+        event.preventDefault();
+        dismissRef.current();
+        return;
+      }
+      if (event.key !== "Tab") return;
+      const controls = Array.from(
+        containerRef.current?.querySelectorAll<HTMLButtonElement>("button:not(:disabled)") || [],
+      );
+      if (!controls.length) return;
+      const first = controls[0];
+      const last = controls[controls.length - 1];
+      if (event.shiftKey && document.activeElement === first) {
+        event.preventDefault();
+        last.focus();
+      } else if (!event.shiftKey && document.activeElement === last) {
+        event.preventDefault();
+        first.focus();
+      }
+    }
+
+    window.requestAnimationFrame(() => initialRef.current?.focus());
+    document.addEventListener("keydown", handleKeyDown);
+    return () => {
+      document.removeEventListener("keydown", handleKeyDown);
+      previousFocus?.focus();
+    };
+  }, [containerRef, initialRef]);
 }
 
 export function DecodeGame() {
@@ -109,7 +152,7 @@ export function DecodeGame() {
   }, []);
 
   useEffect(() => {
-    if (!active || transitioning) return;
+    if (!active || transitioning || run?.mode === "zen") return;
     const timer = window.setInterval(() => {
       setRun((current) => {
         if (!current || current.status !== "playing") return current;
@@ -117,7 +160,7 @@ export function DecodeGame() {
       });
     }, 1_000);
     return () => window.clearInterval(timer);
-  }, [active, transitioning]);
+  }, [active, transitioning, run?.mode]);
 
   useEffect(() => {
     if (!run || run.mode !== "timed" || run.status !== "expired" || recordedExpiry.current) return;
@@ -142,7 +185,6 @@ export function DecodeGame() {
   }, []);
 
   const clueFeedback = puzzle ? deriveDecodeFeedback(puzzle.clueWord, puzzle.answer) : [];
-  const answerLength = puzzle?.answer.length || 4;
   const clock =
     run?.mode === "timed"
       ? run.secondsRemaining
@@ -165,33 +207,28 @@ export function DecodeGame() {
     setCorrectPulse(false);
   }
 
+  function focusInput() {
+    window.requestAnimationFrame(() => inputRef.current?.focus());
+  }
+
   function handleBegin(nextMode: DecodeMode = mode) {
     clearTransition();
     recordedExpiry.current = false;
     setMode(nextMode);
     const nextRun = createDecodeState(nextMode);
-    const nextPuzzle = nextMode === "timed" ? selectTimedDecodePuzzle(4) : decodeDailyPuzzles[0];
+    const nextPuzzle = nextMode === "daily-5" ? decodeDailyPuzzles[0] : selectTimedDecodePuzzle(4);
     setRun(nextRun);
     setPuzzle(nextPuzzle);
     setAnswer("");
-    setFeedback(nextMode === "timed" ? "Twenty seconds. Read both signals." : "Five sea creatures. Take the time you need.");
-    setTone("neutral");
-    queueMicrotask(() => inputRef.current?.focus());
-  }
-
-  function handleMode(nextMode: DecodeMode) {
-    if (active) return;
-    clearTransition();
-    setMode(nextMode);
-    setRun(null);
-    setPuzzle(null);
-    setAnswer("");
     setFeedback(
       nextMode === "timed"
-        ? "Solve quickly. Word length rises every ten points."
-        : "Solve the original five-puzzle Sea Creatures sequence.",
+        ? "Twenty seconds. Type your answer, then press Enter."
+        : nextMode === "daily-5"
+          ? "Five sea creatures. Type your answer, then press Enter."
+          : "No clock. Take your time, then press Enter.",
     );
     setTone("neutral");
+    focusInput();
   }
 
   function handleHome() {
@@ -215,6 +252,7 @@ export function DecodeGame() {
       setTone("error");
       setWrongPulse(true);
       window.setTimeout(() => setWrongPulse(false), 360);
+      focusInput();
       return;
     }
 
@@ -237,14 +275,16 @@ export function DecodeGame() {
     const nextLength = result.nextWordLength;
     const nextPuzzle = result.state.mode === "daily-5"
       ? decodeDailyPuzzles[result.state.dailyIndex]
-      : selectTimedDecodePuzzle(nextLength!);
+      : selectTimedDecodePuzzle(nextLength ?? 4);
     const levelChanged = result.state.mode === "timed" && nextLength !== puzzle.answer.length;
     setFeedback(
       result.state.mode === "daily-5"
         ? `${result.state.score} of 5 decoded.`
-        : levelChanged
-          ? `Signal escalated — ${nextLength} letter words unlocked.`
-          : "Correct. Clock restored to twenty seconds.",
+        : result.state.mode === "timed"
+          ? levelChanged
+            ? `Signal escalated — ${nextLength} letter words unlocked.`
+            : "Correct. Clock restored to twenty seconds."
+          : "Correct. Take your time with the next clue.",
     );
     setTransitioning(true);
     transitionTimer.current = window.setTimeout(() => {
@@ -256,30 +296,20 @@ export function DecodeGame() {
       setFeedback(
         result.state.mode === "daily-5"
           ? `Puzzle ${result.state.dailyIndex + 1} of 5. Read both clues.`
-          : `${nextLength}-letter signal active.`,
+          : result.state.mode === "timed"
+            ? `${nextLength}-letter signal active.`
+            : "New signal. No clock.",
       );
-      inputRef.current?.focus();
+      focusInput();
       transitionTimer.current = null;
-    }, 540);
-  }
-
-  function handleKey(key: string) {
-    if (!interactive) return;
-    if (key === "ENTER") {
-      handleSubmit();
-    } else if (key === "⌫") {
-      setAnswer((value) => value.slice(0, -1));
-    } else {
-      setAnswer((value) => normalizeDecodeInput(`${value}${key}`, answerLength));
-    }
-    inputRef.current?.focus();
+    }, 780);
   }
 
   return (
     <div className={`decode-game-card${urgent ? " is-urgent" : ""}`}>
       <GameLocalBar
         ariaLabel="DECODE"
-        brand={<DecodeWordmark />}
+        brand={<DecodeTileWordmark compact />}
         className="game-local-bar--decode"
         items={[
           { label: "Home", current: !run, onSelect: handleHome },
@@ -296,22 +326,19 @@ export function DecodeGame() {
 
       {puzzle && run ? (
         <>
-          <RunRail clock={clock} progress={progress} run={run} urgent={urgent} />
           <main className="decode-play-layout">
             <section className="decode-signal-panel">
-              <span className="decode-signal-label">Clue word</span>
-              <ClueWord feedback={clueFeedback} puzzle={puzzle} />
-              <div className="decode-legend" aria-label="Color key">
-                <span><i className="is-correct">●</i>Same spot</span>
-                <span><i className="is-present">↔</i>Other spot</span>
-                <span><i className="is-absent">×</i>Not used</span>
+              <div className="decode-puzzle-meta">
+                <RunRail clock={clock} onRestart={() => handleBegin()} progress={progress} run={run} urgent={urgent} />
+                <span className="decode-signal-label">Clue word</span>
               </div>
+              <ClueWord feedback={clueFeedback} puzzle={puzzle} />
               <div className={`decode-definition${correctPulse ? " is-correct" : ""}${wrongPulse ? " is-wrong" : ""}`}>
                 <span>Definition</span>
                 <p>“{puzzle.clue}”</p>
               </div>
               <div className="decode-answer-zone">
-                <div><span>Answer</span><small>{answer.length}/{puzzle.answer.length}</small></div>
+                <div><span>Answer</span></div>
                 <button
                   aria-label="Focus answer entry"
                   className={`decode-answer-grid${wrongPulse ? " is-wrong" : ""}${correctPulse ? " is-correct" : ""}`}
@@ -341,55 +368,69 @@ export function DecodeGame() {
                   value={answer}
                 />
               </div>
+              <p className={`decode-feedback is-${tone}`} id="decode-feedback" aria-live="polite">{feedback}</p>
             </section>
-
-            <aside className="decode-console-panel">
-              {run.status === "playing" ? (
-                <>
-                  {run.mode === "timed" ? <TierLadder score={run.score} /> : <DailyProgress run={run} />}
-                  <Keyboard disabled={!interactive} onKey={handleKey} />
-                  <button className="decode-submit" disabled={!interactive || answer.length !== puzzle.answer.length} onClick={handleSubmit} type="button">
-                    <span>Decode</span><small>enter ↵</small>
-                  </button>
-                  <p className={`decode-feedback is-${tone}`} id="decode-feedback" aria-live="polite">{feedback}</p>
-                  <button className="decode-reset" onClick={() => handleBegin()} type="button">restart run</button>
-                </>
-              ) : (
-                <ResultPanel mode={run.mode} progress={progress} puzzle={puzzle} run={run} onAgain={() => handleBegin()} />
-              )}
-            </aside>
           </main>
         </>
       ) : (
-        <Welcome mode={mode} progress={progress} onBegin={() => handleBegin()} onHow={() => setShowHow(true)} onMode={handleMode} />
+        <Welcome progress={progress} onMode={handleBegin} />
       )}
 
       <footer className="decode-footer">
         <button onClick={() => setShowHow(true)} type="button"><span>?</span> How to play</button>
       </footer>
 
+      {run && puzzle && run.status !== "playing" && (
+        <div className="decode-result-modal" role="dialog" aria-modal="true" aria-labelledby="decode-result-title">
+          <ResultPanel mode={run.mode} onAgain={() => handleBegin()} onHome={handleHome} progress={progress} puzzle={puzzle} run={run} />
+        </div>
+      )}
+
       {showHow && <HowToPlay onClose={() => setShowHow(false)} />}
     </div>
   );
 }
 
-function RunRail({ clock, progress, run, urgent }: {
+function RunRail({ clock, onRestart, progress, run, urgent }: {
   clock: number;
+  onRestart: () => void;
   progress: DecodeProgress;
   run: DecodeState;
   urgent: boolean;
 }) {
   const timed = run.mode === "timed";
+  const zen = run.mode === "zen";
+  if (zen) {
+    return (
+      <section className="decode-run-rail" aria-label="Zen run status">
+        <div><span>Mode</span><strong>Zen</strong></div>
+        <div><span>Solved</span><strong>{run.score}</strong></div>
+        <div><span>Clock</span><strong>Off</strong></div>
+        <button onClick={onRestart} type="button">new session</button>
+      </section>
+    );
+  }
   const meter = timed ? Math.max(0, Math.min(100, (clock / 20) * 100)) : Math.min(100, (run.score / 5) * 100);
   return (
     <section className="decode-run-rail" aria-label="Run status">
       <div className={`decode-clock${urgent ? " is-urgent" : ""}`}>
         <span>{timed ? "Time" : "Elapsed"}</span>
         <strong>{formatDecodeTime(clock)}</strong>
-        <i><span style={{ width: `${meter}%` }} /></i>
+        {timed && <i><span style={{ width: `${meter}%` }} /></i>}
       </div>
-      <div><span>{timed ? "Score" : "Puzzle"}</span><strong>{timed ? run.score : `${Math.min(run.dailyIndex + 1, 5)}/5`}</strong></div>
+      <div className="decode-run-progress">
+        <span>{timed ? "Score" : "Puzzle"}</span>
+        <strong>{timed ? run.score : `${Math.min(run.dailyIndex + 1, 5)}/5`}</strong>
+        {!timed && (
+          <i className="decode-mini-daily-track" aria-hidden="true">
+            {Array.from({ length: 5 }, (_, index) => (
+              <b className={index < run.dailyIndex ? "is-complete" : index === run.dailyIndex ? "is-current" : ""} key={index} />
+            ))}
+          </i>
+        )}
+      </div>
       <div><span>Best</span><strong>{timed ? progress.bestTimedScore : progress.bestDailySeconds === null ? "—" : formatDecodeTime(progress.bestDailySeconds)}</strong></div>
+      <button onClick={onRestart} type="button">restart run</button>
     </section>
   );
 }
@@ -410,99 +451,70 @@ function ClueWord({ feedback, puzzle }: { feedback: DecodeFeedback[]; puzzle: De
   );
 }
 
-function TierLadder({ score }: { score: number }) {
-  const currentLength = decodeTimedWordLength(score);
-  return (
-    <section className="decode-progress-card">
-      <div className="decode-console-heading"><span>Difficulty</span><b>{currentLength} letters</b></div>
-      <div className="decode-tier-ladder">
-        {TIERS.map((tier) => {
-          const current = tier.length === currentLength;
-          const complete = tier.length < currentLength;
-          return <div aria-label={`${tier.label}, ${tier.length} letters`} className={`${current ? "is-current" : ""}${complete ? " is-complete" : ""}`} key={tier.length}><i>{complete ? "✓" : tier.length}</i></div>;
-        })}
-      </div>
-    </section>
-  );
-}
-
-function DailyProgress({ run }: { run: Extract<DecodeState, { mode: "daily-5" }> }) {
-  return (
-    <section className="decode-progress-card">
-      <div className="decode-console-heading"><span>Daily 5</span><b>{Math.min(run.dailyIndex + 1, 5)}/5</b></div>
-      <div className="decode-daily-track">
-        {decodeDailyPuzzles.map((puzzle, index) => {
-          const complete = index < run.dailyIndex || run.status === "complete";
-          const current = index === run.dailyIndex && run.status === "playing";
-          return <div aria-label={`Puzzle ${index + 1}${complete ? ", complete" : current ? ", current" : ""}`} className={`${complete ? "is-complete" : ""}${current ? " is-current" : ""}`} key={puzzle.id}><i>{complete ? "✓" : index + 1}</i></div>;
-        })}
-      </div>
-    </section>
-  );
-}
-
-function Keyboard({ disabled, onKey }: { disabled: boolean; onKey: (key: string) => void }) {
-  return (
-    <div className="decode-keyboard" aria-label="Letter keyboard">
-      {KEYBOARD.map((row) => (
-        <div key={row}>
-          {row.split("").map((key) => <button disabled={disabled} key={key} onClick={() => onKey(key)} type="button">{key}</button>)}
-          {row === "ZXCVBNM" && <button className="is-delete" disabled={disabled} onClick={() => onKey("⌫")} type="button" aria-label="Delete letter">⌫</button>}
-        </div>
-      ))}
-    </div>
-  );
-}
-
-function ResultPanel({ mode, progress, puzzle, run, onAgain }: {
+function ResultPanel({ mode, progress, puzzle, run, onAgain, onHome }: {
   mode: DecodeMode;
   progress: DecodeProgress;
   puzzle: DecodePuzzle;
   run: DecodeState;
   onAgain: () => void;
+  onHome: () => void;
 }) {
+  const actionRef = useRef<HTMLButtonElement>(null);
+  const dialogRef = useRef<HTMLElement>(null);
+  useModalFocus(dialogRef, actionRef, onHome);
+
   if (mode === "timed" && run.mode === "timed") {
     const length = decodeTimedWordLength(run.score);
     return (
-      <section className="decode-result is-expired">
-        <span>Transmission ended</span><strong>{run.score}</strong><h2>signals decoded</h2>
+      <section className="decode-result is-expired" ref={dialogRef}>
+        <span>Transmission ended</span><strong>{run.score}</strong><h2 id="decode-result-title">signals decoded</h2>
         <div><p><small>Tier reached</small><b>{length} letters</b></p><p><small>Personal best</small><b>{progress.bestTimedScore}</b></p></div>
         <p className="decode-final-answer">Final answer <b>{puzzle.answer}</b></p>
-        <button onClick={onAgain} type="button">start a new run</button>
+        <div className="decode-result-actions">
+          <button onClick={onAgain} ref={actionRef} type="button">start a new run</button>
+          <button onClick={onHome} type="button">back to menu</button>
+        </div>
       </section>
     );
   }
   return (
-    <section className="decode-result">
-      <span>Sequence decoded</span><strong>{run.mode === "daily-5" ? formatDecodeTime(run.elapsedSeconds) : "0:00"}</strong><h2>Sea Creatures</h2>
+    <section className="decode-result" ref={dialogRef}>
+      <span>Sequence decoded</span><strong>{run.mode === "daily-5" ? formatDecodeTime(run.elapsedSeconds) : "0:00"}</strong><h2 id="decode-result-title">Sea Creatures</h2>
       <div className="decode-result-answers">{decodeDailyPuzzles.map((entry) => <b key={entry.id}>{entry.answer}</b>)}</div>
       <p className="decode-final-answer">Best time <b>{progress.bestDailySeconds === null ? "--" : formatDecodeTime(progress.bestDailySeconds)}</b></p>
-      <button onClick={onAgain} type="button">decode again</button>
+      <div className="decode-result-actions">
+        <button onClick={onAgain} ref={actionRef} type="button">decode again</button>
+        <button onClick={onHome} type="button">back to menu</button>
+      </div>
     </section>
   );
 }
 
-function Welcome({ mode, progress, onBegin, onHow, onMode }: {
-  mode: DecodeMode;
+function Welcome({ progress, onMode }: {
   progress: DecodeProgress;
-  onBegin: () => void;
-  onHow: () => void;
   onMode: (mode: DecodeMode) => void;
 }) {
   return (
     <main className="decode-welcome">
       <section className="decode-welcome-copy">
-        <span className="decode-kicker">DECODE</span>
-        <h1>Two clues.<br /><em>One word.</em></h1>
-        <p>Use color and meaning to find the answer.</p>
-        <div><button onClick={onBegin} type="button">Begin</button><button onClick={onHow} type="button">How to play</button></div>
+        <DecodeTileWordmark />
+        <h1>Two clues. <em>One answer.</em></h1>
       </section>
       <section className="decode-mode-cards" aria-label="Choose a game mode">
-        <button className={mode === "timed" ? "is-current" : ""} onClick={() => onMode("timed")} type="button">
-          <div><strong>Timed</strong><p>Twenty seconds per word.</p></div><b>{progress.bestTimedScore}<small>best</small></b>
+        <button onClick={() => onMode("daily-5")} type="button">
+          <div className="decode-mode-copy"><strong>Daily 5</strong><p>Five puzzles against the clock.</p></div>
+          <span className="decode-mode-best"><small>best</small><b>{progress.bestDailySeconds === null ? "--" : formatDecodeTime(progress.bestDailySeconds)}</b></span>
+          <i aria-hidden="true">↗</i>
         </button>
-        <button className={mode === "daily-5" ? "is-current" : ""} onClick={() => onMode("daily-5")} type="button">
-          <div><strong>Daily 5</strong><p>Five puzzles against the clock.</p></div><b>{progress.bestDailySeconds === null ? "--" : formatDecodeTime(progress.bestDailySeconds)}<small>best</small></b>
+        <button onClick={() => onMode("timed")} type="button">
+          <div className="decode-mode-copy"><strong>Timed</strong><p>Twenty seconds per answer.</p></div>
+          <span className="decode-mode-best"><small>best</small><b>{progress.bestTimedScore}</b></span>
+          <i aria-hidden="true">↗</i>
+        </button>
+        <button onClick={() => onMode("zen")} type="button">
+          <div className="decode-mode-copy"><strong>Zen</strong><p>No clock. A quiet stream of signals.</p></div>
+          <span className="decode-mode-best"><small>pace</small><b>easy</b></span>
+          <i aria-hidden="true">↗</i>
         </button>
       </section>
     </main>
@@ -510,27 +522,39 @@ function Welcome({ mode, progress, onBegin, onHow, onMode }: {
 }
 
 function HowToPlay({ onClose }: { onClose: () => void }) {
-  const example = deriveDecodeFeedback("EXPANSE", "EXAMPLE");
+  const example = deriveDecodeFeedback("PLACE", "CLAMP");
+  const closeRef = useRef<HTMLButtonElement>(null);
+  const dialogRef = useRef<HTMLElement>(null);
+  useModalFocus(dialogRef, closeRef, onClose);
   return (
     <div className="decode-how-modal" role="dialog" aria-modal="true" aria-labelledby="decode-how-title">
-      <section>
-        <header><div><span>Decoding protocol</span><h2 id="decode-how-title">How to play</h2></div><button onClick={onClose} type="button" aria-label="Close instructions">×</button></header>
-        <p className="decode-how-intro">Every puzzle sends two signals: a colored word showing how letters carry over, and a definition describing the answer.</p>
-        <div className="decode-how-example">
-          <span>Example signal</span>
-          <div className="decode-clue-word">{"EXPANSE".split("").map((letter, index) => {
-            const state = example[index];
-            return <i className={`is-${state}`} key={index}><b>{letter}</b><small>{state === "correct" ? "●" : state === "present" ? "↔" : "×"}</small></i>;
-          })}</div>
-          <p>“instruction clarifier”</p>
-          <strong>EXAMPLE</strong>
+      <section ref={dialogRef}>
+        <header><h2 id="decode-how-title">How to play</h2><button onClick={onClose} ref={closeRef} type="button" aria-label="Close instructions">×</button></header>
+        <p className="decode-how-intro">Find the answer that matches both clues. The colored clue word shows which letters carry over; the definition tells you what the answer means. Your answer is always the same length as the clue word.</p>
+        <div className="decode-how-example-section">
+          <span className="decode-how-example-label">Example</span>
+          <div className="decode-how-example">
+            <div className="decode-how-example-flow">
+              <div className="decode-how-clues">
+                <div className="decode-clue-word">{"PLACE".split("").map((letter, index) => {
+                  const state = example[index];
+                  return <i className={`is-${state}`} key={index}><b>{letter}</b><small>{state === "correct" ? "●" : state === "present" ? "↔" : "×"}</small></i>;
+                })}</div>
+                <p>“fastening tool”</p>
+              </div>
+              <i className="decode-how-arrow" aria-hidden="true">→</i>
+              <div className="decode-how-answer" aria-label="Correct answer, CLAMP">
+                {"CLAMP".split("").map((letter) => <span key={letter}><b>{letter}</b><small aria-hidden="true">●</small></span>)}
+              </div>
+            </div>
+          </div>
+          <div className="decode-how-rules">
+            <article><i className="is-correct">●</i><div><b>Same position</b><p>Green letters stay in this exact spot.</p></div></article>
+            <article><i className="is-present">↔</i><div><b>Different position</b><p>Blue letters appear elsewhere in the answer.</p></div></article>
+            <article><i className="is-absent">×</i><div><b>Not used</b><p>Gray letters have no remaining match in the answer.</p></div></article>
+          </div>
+          <p className="decode-how-entry-note">Use both signals, then type your answer and press <kbd>Enter</kbd> to submit.</p>
         </div>
-        <div className="decode-how-rules">
-          <article><i className="is-correct">●</i><div><b>Same position</b><p>Green letters remain at this exact index.</p></div></article>
-          <article><i className="is-present">↔</i><div><b>Different position</b><p>Blue letters appear elsewhere in the answer.</p></div></article>
-          <article><i className="is-absent">×</i><div><b>Not used</b><p>Gray letters have no unmatched copy in the answer.</p></div></article>
-        </div>
-        <button className="decode-how-close" onClick={onClose} type="button">ready to decode</button>
       </section>
     </div>
   );

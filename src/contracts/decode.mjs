@@ -65,6 +65,13 @@ export function createDecodeState(mode) {
       elapsedSeconds: 0,
     };
   }
+  if (mode === "zen") {
+    return {
+      mode,
+      status: "playing",
+      score: 0,
+    };
+  }
   throw new RangeError(`Unsupported DECODE mode: ${mode}`);
 }
 
@@ -113,6 +120,19 @@ export function evaluateDecodeAttempt({ state, answer, guess }) {
     };
   }
 
+  if (state.mode === "zen") {
+    return {
+      correct: true,
+      reason: null,
+      complete: false,
+      nextWordLength: 4,
+      state: {
+        ...state,
+        score: state.score + 1,
+      },
+    };
+  }
+
   throw new RangeError(`Unsupported DECODE mode: ${state.mode}`);
 }
 
@@ -136,6 +156,7 @@ export function tickDecodeClock(state, seconds = 1) {
       elapsedSeconds: state.elapsedSeconds + seconds,
     };
   }
+  if (state.mode === "zen") return state;
   throw new RangeError(`Unsupported DECODE mode: ${state.mode}`);
 }
 

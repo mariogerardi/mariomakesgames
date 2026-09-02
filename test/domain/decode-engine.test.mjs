@@ -70,3 +70,13 @@ test("Daily 5 completion preserves its elapsed clock", () => {
   assert.equal(state.elapsedSeconds, 73);
   assert.equal(formatDecodeTime(state.elapsedSeconds), "1:13");
 });
+
+test("Zen remains untimed and continues after correct answers", () => {
+  const state = createDecodeState("zen");
+  assert.equal(tickDecodeClock(state, 60), state);
+  const result = evaluateDecodeAttempt({ state, answer: "BARE", guess: "bare" });
+  assert.equal(result.correct, true);
+  assert.equal(result.complete, false);
+  assert.equal(result.state.score, 1);
+  assert.equal(result.nextWordLength, 4);
+});

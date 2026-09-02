@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "workingHubName": "Games Hub",
+  "workingHubName": "mariomakesgames!",
   "launch": [
     {
       "priority": 1,
@@ -9,6 +9,7 @@
       "repository": "mariogerardi/playsyllabl",
       "sourceStatus": "audited",
       "migrationStatus": "migrated",
+      "hubStatus": "live",
       "role": "flagship",
       "session": "six-stage daily vocabulary puzzle"
     },
@@ -19,6 +20,7 @@
       "repository": "mariogerardi/rarity",
       "sourceStatus": "audited",
       "migrationStatus": "migrated",
+      "hubStatus": "live",
       "role": "companion-daily",
       "session": "one accepted rarity-scored word"
     },
@@ -27,39 +29,65 @@
       "id": "before-after",
       "name": "Before&After",
       "repository": "mariogerardi/before-after",
-      "sourceStatus": "audit-required",
-      "migrationStatus": "not-started",
+      "sourceStatus": "audited",
+      "migrationStatus": "migrated",
+      "hubStatus": "live",
       "role": "association",
       "session": "bridge two clues with a shared word"
     },
     {
       "priority": 4,
-      "id": "expl41n",
-      "name": "Expl41n",
-      "repository": "mariogerardi/explain-game",
-      "sourceStatus": "audit-required",
-      "migrationStatus": "not-started",
-      "role": "ai-wildcard",
-      "session": "strategic clues for an AI guesser"
-    },
-    {
-      "priority": 5,
       "id": "decode",
       "name": "DECODE",
       "repository": "mariogerardi/mariogerardi.github.io",
       "publicUrl": "https://mariogerardi.github.io/",
       "sourceStatus": "audited",
-      "migrationStatus": "contracting",
+      "migrationStatus": "migrated",
+      "hubStatus": "live",
       "role": "clue-decoder",
       "session": "decode a transformed word using positional colors and a definition"
     },
     {
+      "priority": 5,
+      "id": "token",
+      "name": "TOKEN",
+      "repository": "mariogerardi/games-hub",
+      "sourceStatus": "authored",
+      "migrationStatus": "native",
+      "hubStatus": "live-preview",
+      "role": "prediction",
+      "session": "predict the next token in a frozen AI response"
+    },
+    {
       "priority": 6,
+      "id": "dual",
+      "name": "DUAL",
+      "repository": "mariogerardi/games-hub",
+      "sourceStatus": "authored",
+      "migrationStatus": "native",
+      "hubStatus": "live-preview",
+      "role": "bilingual-wordplay",
+      "session": "find English and Spanish words sharing one string"
+    },
+    {
+      "priority": 7,
+      "id": "expl41n",
+      "name": "Expl41n",
+      "repository": "mariogerardi/explain-game",
+      "sourceStatus": "audited",
+      "migrationStatus": "migrated",
+      "hubStatus": "coming-soon",
+      "role": "ai-wildcard",
+      "session": "strategic clues for an AI guesser"
+    },
+    {
+      "priority": 8,
       "id": "gridl",
       "name": "Gridl",
       "repository": "mariogerardi/wordgrid",
       "sourceStatus": "audited",
-      "migrationStatus": "contracting",
+      "migrationStatus": "migrated",
+      "hubStatus": "coming-soon",
       "role": "campaign",
       "session": "handcrafted spatial word-routing levels"
     }

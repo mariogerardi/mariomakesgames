@@ -4,7 +4,9 @@ export type GameId =
   | "gridl"
   | "expl41n"
   | "before-after"
-  | "decode";
+  | "decode"
+  | "token"
+  | "dual";
 
 export type GameManifest = {
   id: GameId;

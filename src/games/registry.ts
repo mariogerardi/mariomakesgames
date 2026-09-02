@@ -1,10 +1,12 @@
 import catalog from "../../catalog.json";
 import { beforeAfterManifest } from "./before-after/manifest";
 import { decodeManifest } from "./decode/manifest";
+import { dualManifest } from "./dual/manifest";
 import { expl41nManifest } from "./expl41n/manifest";
 import { gridlManifest } from "./gridl/manifest";
 import { rarityManifest } from "./rarity/manifest";
 import { syllablManifest } from "./syllabl/manifest";
+import { tokenManifest } from "./token/manifest";
 import type { GameId, GameManifest } from "./types";
 
 const detailsById: Record<GameId, GameManifest> = {
@@ -14,9 +16,12 @@ const detailsById: Record<GameId, GameManifest> = {
   expl41n: expl41nManifest,
   "before-after": beforeAfterManifest,
   decode: decodeManifest,
+  token: tokenManifest,
+  dual: dualManifest,
 };
 
 export type HubGame = GameManifest & {
+  hubStatus: "live" | "live-preview" | "coming-soon";
   name: string;
   priority: number;
   session: string;
@@ -30,6 +35,7 @@ export const hubGames: readonly HubGame[] = catalog.launch.map((entry) => {
   }
   return {
     ...details,
+    hubStatus: entry.hubStatus as HubGame["hubStatus"],
     name: entry.name,
     priority: entry.priority,
     session: entry.session,

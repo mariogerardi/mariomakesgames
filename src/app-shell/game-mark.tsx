@@ -44,6 +44,14 @@ export function GameMark({ game, size = "small" }: GameMarkProps) {
         <span className="before-after-collection-mark">
           <i>b</i><b>&amp;</b><i>a</i>
         </span>
+      ) : game.id === "decode" ? (
+        <span className="decode-collection-mark">
+          <i>D</i>
+        </span>
+      ) : game.id === "token" ? (
+        <span className="token-collection-mark">T<i /></span>
+      ) : game.id === "dual" ? (
+        <span className="dual-collection-mark"><i>EN</i><b>ES</b></span>
       ) : game.symbol}
     </div>
   );

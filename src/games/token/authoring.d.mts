@@ -1,0 +1,30 @@
+export type RawTokenRecord = {
+  alternatives: { logprob: number; token: string }[];
+  end: number;
+  id: string;
+  index: number;
+  logprob: number;
+  start: number;
+  token: string;
+};
+export type TokenWordUnit = { easyStatus: "ready" | "fragmented" | "not-word"; id: string; index: number; selectable: boolean; sourceTokenIndexes: number[]; text: string };
+export type TokenDraft = {
+  authoringNotes: string;
+  id: string;
+  model: string;
+  prompt: string;
+  rawTokens: RawTokenRecord[];
+  responseText: string;
+  schemaVersion: number;
+  words: TokenWordUnit[];
+};
+export const TOKEN_BUILDER_DEFAULTS: Readonly<{ maxOutputTokens: number; model: string; temperature: number; topLogprobs: number }>;
+export function clampBuilderNumber(value: unknown, options: { fallback: number; max: number; min: number; step?: number }): number;
+export function normalizeBuilderSettings(value?: Record<string, unknown>): { maxOutputTokens: number; temperature: number };
+export function scoreLogprob(logprob: unknown): number;
+export function formatRawModelToken(value: unknown): string;
+export function createTokenDraftFromGeneration(value: { authoringNotes?: string; id?: string; model?: string; prompt: string; responseText: string; tokenLogprobs?: readonly { token: string; logprob?: number; top_logprobs?: readonly { token: string; logprob?: number }[] }[] }): TokenDraft;
+export function createPlayablePuzzleFromDraft(value: { difficulty: "easy" | "hard"; draft: TokenDraft; selectedStopIds: Iterable<string> }): { difficulty: "easy" | "hard"; id: string; prompt: string; responseTokens: string[]; schemaVersion: number; stops: { candidates: { token: string; score: number }[]; index: number; token: string }[]; tokenizer: { id: string; note: string } };
+export function createTokenBuilderExport(value: { difficulty: "easy" | "hard"; draft: TokenDraft; selectedStopIds: Iterable<string> }): { authoring: { authoringNotes: string; model: string; rawTokens: RawTokenRecord[]; responseText: string }; puzzle: ReturnType<typeof createPlayablePuzzleFromDraft>; schemaVersion: number; selection: { difficulty: "easy" | "hard"; selectedStopIds: string[] } };
+export function validateBuilderPrompt(value: unknown): { prompt: string; valid: boolean; reason: string | null };
+export function validateAuthoringNotes(value: unknown): { notes: string; valid: boolean; reason: string | null };

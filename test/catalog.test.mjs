@@ -15,9 +15,11 @@ test("launch catalog is ordered and stable", () => {
       { priority: 1, id: "syllabl" },
       { priority: 2, id: "rarity" },
       { priority: 3, id: "before-after" },
-      { priority: 4, id: "expl41n" },
-      { priority: 5, id: "decode" },
-      { priority: 6, id: "gridl" },
+      { priority: 4, id: "decode" },
+      { priority: 5, id: "token" },
+      { priority: 6, id: "dual" },
+      { priority: 7, id: "expl41n" },
+      { priority: 8, id: "gridl" },
     ],
   );
 });
@@ -30,4 +32,21 @@ test("retired and separate products cannot leak into launch", () => {
   assert.ok(
     catalog.separateProducts.some((product) => product.id === "plotter"),
   );
+});
+
+test("catalog publication status matches the public hub", () => {
+  const statusById = Object.fromEntries(
+    catalog.launch.map(({ id, hubStatus }) => [id, hubStatus]),
+  );
+  assert.deepEqual(statusById, {
+    syllabl: "live",
+    rarity: "live",
+    "before-after": "live",
+    decode: "live",
+    token: "live-preview",
+    dual: "live-preview",
+    expl41n: "coming-soon",
+    gridl: "coming-soon",
+  });
+  assert.ok(catalog.launch.every(({ migrationStatus }) => ["migrated", "native"].includes(migrationStatus)));
 });
