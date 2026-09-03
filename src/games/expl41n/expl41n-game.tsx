@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import Image from "next/image";
+import "./expl41n.css";
 import { gameStorageKey } from "../../platform/storage";
 import {
   expl41nArchiveMonths,

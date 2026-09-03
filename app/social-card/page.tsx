@@ -1,4 +1,6 @@
 import type { Metadata } from "next";
+import "../styles/hub.css";
+import "../styles/social-card.css";
 import { HeroGamePreviews } from "../../src/app-shell/hero-game-previews";
 import { siteBrand } from "../../src/app-shell/site-brand";
 

@@ -8,6 +8,7 @@ import {
   useMemo,
   useState,
 } from "react";
+import "./gridl.css";
 import { gameStorageKey } from "../../platform/storage";
 import { GameLocalBar } from "../../app-shell/game-local-bar";
 import {

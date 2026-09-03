@@ -1,13 +1,17 @@
 "use client";
 
 import { useEffect, useRef, useState, type RefObject } from "react";
+import "./decode.css";
 import { gameStorageKey } from "../../platform/storage";
 import { GameLocalBar } from "../../app-shell/game-local-bar";
 import {
-  decodeDailyPuzzles,
-  selectTimedDecodePuzzle,
+  decodeModePuzzleBank,
+  selectDecodePuzzleFromPool,
+  selectDailyDecodePuzzles,
   type DecodePuzzle,
 } from "./catalog";
+import { loadLocalStudioPublished, loadLocalStudioSlot } from "../../authoring/local-runtime";
+import { decodePayloadEntries } from "../../authoring/decode-payload";
 import {
   createDecodeState,
   decodeTimedWordLength,
@@ -128,6 +132,9 @@ export function DecodeGame() {
   const recordedExpiry = useRef(false);
   const transitionTimer = useRef<number | null>(null);
   const [mode, setMode] = useState<DecodeMode>("timed");
+  const [zenLength, setZenLength] = useState<4 | 5 | 6 | 7>(4);
+  const [dailyPuzzles, setDailyPuzzles] = useState<DecodePuzzle[]>(() => [...selectDailyDecodePuzzles()]);
+  const [localModePuzzles, setLocalModePuzzles] = useState<Record<"timed" | "zen", DecodePuzzle[]>>({ timed: [], zen: [] });
   const [run, setRun] = useState<DecodeState | null>(null);
   const [puzzle, setPuzzle] = useState<DecodePuzzle | null>(null);
   const [answer, setAnswer] = useState("");
@@ -149,6 +156,39 @@ export function DecodeGame() {
     return () => {
       cancelled = true;
     };
+  }, []);
+
+  useEffect(() => {
+    let cancelled = false;
+    void loadLocalStudioPublished("decode").then((documents) => {
+      if (cancelled) return;
+      const latest = [...documents.reduce((items, document) => {
+        const current = items.get(document.id);
+        if (!current || current.revision < document.revision) items.set(document.id, document);
+        return items;
+      }, new Map<string, (typeof documents)[number]>()).values()];
+      const collect = (mode: "timed" | "zen") => latest.flatMap((document) => document.gameId === "decode" && document.payload.modes.includes(mode)
+        ? decodePayloadEntries(document.payload).map((entry, index) => ({ id: `${document.id}-${index + 1}`, ...entry, ...(document.payload.theme ? { theme: document.payload.theme } : {}) }))
+        : []);
+      setLocalModePuzzles({ timed: collect("timed"), zen: collect("zen") });
+    });
+    return () => { cancelled = true; };
+  }, []);
+
+  useEffect(() => {
+    let cancelled = false;
+    const today = new Date();
+    const dateKey = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, "0")}-${String(today.getDate()).padStart(2, "0")}`;
+    void loadLocalStudioSlot("decode", "daily-5", dateKey).then((documents) => {
+      if (cancelled) return;
+      const entries = documents.flatMap((document) => document.gameId === "decode" ? decodePayloadEntries(document.payload).map((entry, index) => ({
+        id: `${document.id}-${index + 1}`,
+        ...entry,
+        ...(document.payload.theme ? { theme: document.payload.theme } : {}),
+      })) : []);
+      if (entries.length === 5) setDailyPuzzles(entries);
+    });
+    return () => { cancelled = true; };
   }, []);
 
   useEffect(() => {
@@ -211,12 +251,18 @@ export function DecodeGame() {
     window.requestAnimationFrame(() => inputRef.current?.focus());
   }
 
+  function selectModePuzzle(length: 4 | 5 | 6 | 7, selectedMode: "timed" | "zen") {
+    const authored = localModePuzzles[selectedMode].filter((entry) => entry.answer.length === length);
+    const combined = [...decodeModePuzzleBank(length), ...authored];
+    return selectDecodePuzzleFromPool(combined)!;
+  }
+
   function handleBegin(nextMode: DecodeMode = mode) {
     clearTransition();
     recordedExpiry.current = false;
     setMode(nextMode);
     const nextRun = createDecodeState(nextMode);
-    const nextPuzzle = nextMode === "daily-5" ? decodeDailyPuzzles[0] : selectTimedDecodePuzzle(4);
+    const nextPuzzle = nextMode === "daily-5" ? dailyPuzzles[0] : selectModePuzzle(nextMode === "zen" ? zenLength : 4, nextMode);
     setRun(nextRun);
     setPuzzle(nextPuzzle);
     setAnswer("");
@@ -274,8 +320,8 @@ export function DecodeGame() {
 
     const nextLength = result.nextWordLength;
     const nextPuzzle = result.state.mode === "daily-5"
-      ? decodeDailyPuzzles[result.state.dailyIndex]
-      : selectTimedDecodePuzzle(nextLength ?? 4);
+      ? dailyPuzzles[result.state.dailyIndex]
+      : selectModePuzzle(result.state.mode === "zen" ? zenLength : (nextLength ?? 4), result.state.mode);
     const levelChanged = result.state.mode === "timed" && nextLength !== puzzle.answer.length;
     setFeedback(
       result.state.mode === "daily-5"
@@ -373,7 +419,7 @@ export function DecodeGame() {
           </main>
         </>
       ) : (
-        <Welcome progress={progress} onMode={handleBegin} />
+        <Welcome progress={progress} onMode={handleBegin} zenLength={zenLength} onZenLength={setZenLength} />
       )}
 
       <footer className="decode-footer">
@@ -382,7 +428,7 @@ export function DecodeGame() {
 
       {run && puzzle && run.status !== "playing" && (
         <div className="decode-result-modal" role="dialog" aria-modal="true" aria-labelledby="decode-result-title">
-          <ResultPanel mode={run.mode} onAgain={() => handleBegin()} onHome={handleHome} progress={progress} puzzle={puzzle} run={run} />
+          <ResultPanel dailyPuzzles={dailyPuzzles} mode={run.mode} onAgain={() => handleBegin()} onHome={handleHome} progress={progress} puzzle={puzzle} run={run} />
         </div>
       )}
 
@@ -451,7 +497,8 @@ function ClueWord({ feedback, puzzle }: { feedback: DecodeFeedback[]; puzzle: De
   );
 }
 
-function ResultPanel({ mode, progress, puzzle, run, onAgain, onHome }: {
+function ResultPanel({ dailyPuzzles, mode, progress, puzzle, run, onAgain, onHome }: {
+  dailyPuzzles: DecodePuzzle[];
   mode: DecodeMode;
   progress: DecodeProgress;
   puzzle: DecodePuzzle;
@@ -479,8 +526,8 @@ function ResultPanel({ mode, progress, puzzle, run, onAgain, onHome }: {
   }
   return (
     <section className="decode-result" ref={dialogRef}>
-      <span>Sequence decoded</span><strong>{run.mode === "daily-5" ? formatDecodeTime(run.elapsedSeconds) : "0:00"}</strong><h2 id="decode-result-title">Sea Creatures</h2>
-      <div className="decode-result-answers">{decodeDailyPuzzles.map((entry) => <b key={entry.id}>{entry.answer}</b>)}</div>
+      <span>Sequence decoded</span><strong>{run.mode === "daily-5" ? formatDecodeTime(run.elapsedSeconds) : "0:00"}</strong><h2 id="decode-result-title">{dailyPuzzles.every((entry) => entry.theme && entry.theme === dailyPuzzles[0]?.theme) ? dailyPuzzles[0]?.theme : "Daily 5"}</h2>
+      <div className="decode-result-answers">{dailyPuzzles.map((entry) => <b key={entry.id}>{entry.answer}</b>)}</div>
       <p className="decode-final-answer">Best time <b>{progress.bestDailySeconds === null ? "--" : formatDecodeTime(progress.bestDailySeconds)}</b></p>
       <div className="decode-result-actions">
         <button onClick={onAgain} ref={actionRef} type="button">decode again</button>
@@ -490,9 +537,11 @@ function ResultPanel({ mode, progress, puzzle, run, onAgain, onHome }: {
   );
 }
 
-function Welcome({ progress, onMode }: {
+function Welcome({ progress, onMode, zenLength, onZenLength }: {
   progress: DecodeProgress;
   onMode: (mode: DecodeMode) => void;
+  zenLength: 4 | 5 | 6 | 7;
+  onZenLength: (length: 4 | 5 | 6 | 7) => void;
 }) {
   return (
     <main className="decode-welcome">
@@ -513,9 +562,13 @@ function Welcome({ progress, onMode }: {
         </button>
         <button onClick={() => onMode("zen")} type="button">
           <div className="decode-mode-copy"><strong>Zen</strong><p>No clock. A quiet stream of signals.</p></div>
-          <span className="decode-mode-best"><small>pace</small><b>easy</b></span>
+          <span className="decode-mode-best decode-zen-length"><small>length</small><b>{zenLength}</b></span>
           <i aria-hidden="true">↗</i>
         </button>
+        <div className="decode-zen-selector" aria-label="Zen word length" role="group">
+          <span>Zen length</span>
+          {([4, 5, 6, 7] as const).map((length) => <button aria-pressed={zenLength === length} key={length} onClick={() => onZenLength(length)} type="button">{length}</button>)}
+        </div>
       </section>
     </main>
   );

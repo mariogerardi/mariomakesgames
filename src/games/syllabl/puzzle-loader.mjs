@@ -1,5 +1,6 @@
-const DAY_IN_MILLISECONDS = 86_400_000;
-export const SYLLABL_DAILY_START_DATE = "2025-04-13";
+import { CURRENT_DAILY_EPOCH, dailyCatalogOffset } from "../../platform/daily-calendar.mjs";
+
+export const SYLLABL_DAILY_START_DATE = CURRENT_DAILY_EPOCH;
 
 function assertDateKey(dateKey) {
   const match = /^(\d{4})-(\d{2})-(\d{2})$/.exec(dateKey);
@@ -74,10 +75,9 @@ export function selectDailySyllablPuzzle(
   if (!Array.isArray(puzzles) || puzzles.length === 0) {
     throw new TypeError("Cannot select from an empty Syllabl catalog");
   }
-  const dayOffset = Math.floor(
-    (assertDateKey(dateKey) - assertDateKey(startDateKey)) /
-      DAY_IN_MILLISECONDS,
-  );
+  assertDateKey(dateKey);
+  assertDateKey(startDateKey);
+  const dayOffset = dailyCatalogOffset(dateKey, startDateKey);
   const puzzleIndex = ((dayOffset % puzzles.length) + puzzles.length) %
     puzzles.length;
   return { puzzle: puzzles[puzzleIndex], puzzleIndex, dayOffset };

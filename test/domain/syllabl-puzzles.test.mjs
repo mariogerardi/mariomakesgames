@@ -42,22 +42,22 @@ test("all 125 canonical daily puzzles satisfy the production schema", () => {
   assert.equal(new Set(puzzles.map((puzzle) => puzzle.puzzleLetters)).size, 125);
 });
 
-test("daily selection preserves the legacy April 13, 2025 rotation", () => {
+test("the historical catalog is remapped from September 1, 2026", () => {
   const puzzles = loadSyllablPuzzleCatalog(readJson(bundledPath));
   assert.equal(
-    selectDailySyllablPuzzle(puzzles, "2025-04-13").puzzle.puzzleLetters,
+    selectDailySyllablPuzzle(puzzles, "2026-09-01").puzzle.puzzleLetters,
     "dra",
   );
   assert.equal(
-    selectDailySyllablPuzzle(puzzles, "2025-04-14").puzzle.puzzleLetters,
+    selectDailySyllablPuzzle(puzzles, "2026-09-02").puzzle.puzzleLetters,
     "alt",
   );
   assert.equal(
-    selectDailySyllablPuzzle(puzzles, "2025-04-12").puzzle.puzzleLetters,
+    selectDailySyllablPuzzle(puzzles, "2026-08-31").puzzle.puzzleLetters,
     puzzles.at(-1).puzzleLetters,
   );
   assert.equal(
-    selectDailySyllablPuzzle(puzzles, "2025-08-16").puzzle.puzzleLetters,
+    selectDailySyllablPuzzle(puzzles, "2027-01-04").puzzle.puzzleLetters,
     "dra",
   );
 });

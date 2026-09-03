@@ -1,0 +1,11 @@
+{
+  "schemaVersion": 1,
+  "promotedAt": null,
+  "schedule": {
+    "kind": "puzzle-schedule",
+    "schemaVersion": 1,
+    "timeZone": "America/New_York",
+    "entries": []
+  },
+  "puzzles": []
+}

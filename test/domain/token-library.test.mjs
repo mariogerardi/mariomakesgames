@@ -29,14 +29,14 @@ const testPuzzles = [
 ];
 
 test("TOKEN daily selection is date-stable and keeps Easy and Hard separate", () => {
-  const firstEasy = selectDailyTokenPuzzle(testPuzzles, { date: "2026-08-29", difficulty: "easy" });
-  const firstHard = selectDailyTokenPuzzle(testPuzzles, { date: "2026-08-29", difficulty: "hard" });
-  const nextEasy = selectDailyTokenPuzzle(testPuzzles, { date: "2026-08-30", difficulty: "easy" });
+  const firstEasy = selectDailyTokenPuzzle(testPuzzles, { date: "2026-09-01", difficulty: "easy" });
+  const firstHard = selectDailyTokenPuzzle(testPuzzles, { date: "2026-09-01", difficulty: "hard" });
+  const nextEasy = selectDailyTokenPuzzle(testPuzzles, { date: "2026-09-02", difficulty: "easy" });
 
   assert.equal(firstEasy?.puzzle.difficulty, "easy");
   assert.equal(firstHard?.puzzle.difficulty, "hard");
   assert.notEqual(firstEasy?.puzzle.id, nextEasy?.puzzle.id);
-  assert.equal(tokenDateKey("2026-08-29"), "2026-08-29");
+  assert.equal(tokenDateKey("2026-09-01"), "2026-09-01");
 });
 
 test("TOKEN local archive only persists complete puzzles and replaces matching saves", () => {

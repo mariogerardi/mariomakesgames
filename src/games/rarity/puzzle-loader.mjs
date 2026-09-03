@@ -1,5 +1,6 @@
-const DAY_IN_MILLISECONDS = 86_400_000;
-export const RARITY_FALLBACK_START_DATE = "2026-02-01";
+import { CURRENT_DAILY_EPOCH, dailyCatalogOffset } from "../../platform/daily-calendar.mjs";
+
+export const RARITY_FALLBACK_START_DATE = CURRENT_DAILY_EPOCH;
 
 function dateTimestamp(dateKey) {
   const match = /^(\d{4})-(\d{2})-(\d{2})$/.exec(dateKey);
@@ -50,10 +51,9 @@ export function selectFallbackRarityPuzzle(
   if (!Array.isArray(puzzles) || puzzles.length === 0) {
     throw new TypeError("Cannot select from an empty Rarity catalog");
   }
-  const dayOffset = Math.floor(
-    (dateTimestamp(dateKey) - dateTimestamp(startDateKey)) /
-      DAY_IN_MILLISECONDS,
-  );
+  dateTimestamp(dateKey);
+  dateTimestamp(startDateKey);
+  const dayOffset = dailyCatalogOffset(dateKey, startDateKey);
   const puzzleIndex =
     ((dayOffset % puzzles.length) + puzzles.length) % puzzles.length;
   return {

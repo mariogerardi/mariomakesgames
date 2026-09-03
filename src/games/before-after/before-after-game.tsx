@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
+import "./before-after.css";
 import { gameStorageKey } from "../../platform/storage";
 import { GameLocalBar } from "../../app-shell/game-local-bar";
 import {
@@ -18,20 +19,17 @@ import {
   remainingBridgeSeconds,
   serializeBridgeSession,
   submitBridgeAnswer,
-  validateCustomBridgePuzzle,
   type BridgeMode,
-  type BridgePosition,
   type BridgePuzzle,
   type BridgeSession,
 } from "./engine.mjs";
 
 const DAILY_KEY = gameStorageKey("before-after", "daily");
 const PROGRESS_KEY = gameStorageKey("before-after", "progress");
-const CUSTOM_KEY = gameStorageKey("before-after", "custom");
 const THEME_KEY = gameStorageKey("before-after", "theme");
 const KEYBOARD = ["QWERTYUIOP", "ASDFGHJKL", "ZXCVBNM"];
-const CORE_VIEWS = ["daily", "packs", "archive", "custom", "stats"] as const;
-const ROUTED_VIEWS = ["daily", "packs", "archive", "custom", "stats", "themes", "settings", "insights"] as const;
+const CORE_VIEWS = ["daily", "packs", "archive", "stats"] as const;
+const ROUTED_VIEWS = ["daily", "packs", "archive", "stats", "themes", "settings", "insights"] as const;
 
 type View =
   | "menu"
@@ -80,7 +78,6 @@ const THEMES: Array<{ id: ThemeId; name: string; description: string }> = [
 const MENU_ITEMS: Array<{ view: View; title: string; subtitle: string }> = [
   { view: "daily", title: "daily", subtitle: "today’s sixty-second bridge" },
   { view: "packs", title: "puzzle packs", subtitle: "204 handcrafted connections" },
-  { view: "custom", title: "create", subtitle: "make a bridge of your own" },
   { view: "archive", title: "archive", subtitle: "revisit the last thirty days" },
   { view: "stats", title: "statistics", subtitle: "your lifetime record" },
   { view: "themes", title: "themes", subtitle: "change the whole atmosphere" },
@@ -128,14 +125,14 @@ function formatDuration(durationMs: number) {
   return `${Math.floor(totalSeconds / 60)}m ${String(totalSeconds % 60).padStart(2, "0")}s`;
 }
 
-function instructionFor(puzzle: BridgePuzzle) {
+export function beforeAfterInstruction(puzzle: BridgePuzzle) {
   const [first, second] = puzzle.clueWords;
   if (puzzle.position === "before") return <>word before <b>{first}</b> or <b>{second}</b>.</>;
   if (puzzle.position === "after") return <>word after <b>{first}</b> or <b>{second}</b>.</>;
   return <>word before <b>{first}</b> or after <b>{second}</b>.</>;
 }
 
-function Wordmark({ compact = false }: { compact?: boolean }) {
+export function BeforeAfterWordmark({ compact = false }: { compact?: boolean }) {
   return (
     <div className={`ba-wordmark${compact ? " is-compact" : ""}`} aria-label="Before and After">
       <span className="ba-wordmark-before">before</span>
@@ -145,7 +142,7 @@ function Wordmark({ compact = false }: { compact?: boolean }) {
   );
 }
 
-function PhraseRows({
+export function BeforeAfterPhraseRows({
   puzzle,
   answer,
   revealed,
@@ -194,15 +191,8 @@ export function BeforeAfterGame() {
   const [answer, setAnswer] = useState("");
   const [feedback, setFeedback] = useState("Find the word that completes both phrases.");
   const [tone, setTone] = useState<"neutral" | "error" | "success">("neutral");
-  const [customFeedback, setCustomFeedback] = useState("");
-  const [customTone, setCustomTone] = useState<"neutral" | "error" | "success">("neutral");
   const [remaining, setRemaining] = useState(60);
   const [progress, setProgress] = useState<BridgeProgress>(EMPTY_PROGRESS);
-  const [customPuzzles, setCustomPuzzles] = useState<BridgePuzzle[]>([]);
-  const [customAnswer, setCustomAnswer] = useState("");
-  const [customClueOne, setCustomClueOne] = useState("");
-  const [customClueTwo, setCustomClueTwo] = useState("");
-  const [customPosition, setCustomPosition] = useState<BridgePosition>("before");
   const [showCelebration, setShowCelebration] = useState(false);
   const [confirmReset, setConfirmReset] = useState(false);
 
@@ -213,7 +203,6 @@ export function BeforeAfterGame() {
     queueMicrotask(() => {
       if (cancelled) return;
       const storedProgress = readJson<BridgeProgress>(PROGRESS_KEY, EMPTY_PROGRESS);
-      const storedCustom = readJson<BridgePuzzle[]>(CUSTOM_KEY, []);
       const storedDaily = readJson<Record<string, unknown> | null>(DAILY_KEY, null);
       const storedTheme = localStorage.getItem(THEME_KEY) as ThemeId | null;
       const restored = hydrateBridgeSession({
@@ -227,7 +216,6 @@ export function BeforeAfterGame() {
         totalAttempts: Number(storedProgress.totalAttempts) || 0,
         dailyDates: Array.isArray(storedProgress.dailyDates) ? storedProgress.dailyDates : [],
       });
-      setCustomPuzzles(Array.isArray(storedCustom) ? storedCustom : []);
       if (THEMES.some((candidate) => candidate.id === storedTheme)) setTheme(storedTheme!);
       setSession(restored);
       setAnswer(restored.answerText);
@@ -305,10 +293,6 @@ export function BeforeAfterGame() {
     if (next === "packs") {
       setIsPackOpen(false);
       setPackPage(0);
-    }
-    if (next === "custom") {
-      setCustomFeedback("");
-      setCustomTone("neutral");
     }
     if (next === "daily") {
       const restored = hydrateBridgeSession({
@@ -420,33 +404,6 @@ export function BeforeAfterGame() {
     startPuzzle(dailyPuzzle, "daily");
   }
 
-  function createCustom() {
-    const result = validateCustomBridgePuzzle({
-      answer: customAnswer,
-      clueOne: customClueOne,
-      clueTwo: customClueTwo,
-      position: customPosition,
-    });
-    if (!result.valid) {
-      const messages: Record<string, string> = {
-        "answer-required": "Add an answer.",
-        "answer-too-long": `Keep the answer to ${BEFORE_AFTER_ANSWER_LIMIT} letters.`,
-        "two-clues-required": "Add two clue words.",
-        "clues-unique": "Use two different clues.",
-        "position-invalid": "Choose a bridge direction.",
-      };
-      setCustomFeedback(messages[result.reason] || "Check your puzzle.");
-      setCustomTone("error");
-      return;
-    }
-    const nextCustom = [result.puzzle, ...customPuzzles];
-    setCustomPuzzles(nextCustom);
-    localStorage.setItem(CUSTOM_KEY, JSON.stringify(nextCustom));
-    setCustomFeedback("");
-    setCustomTone("neutral");
-    startPuzzle(result.puzzle, "custom");
-  }
-
   function keyboardKey(key: string) {
     if (key === "⌫") {
       setAnswer((value) => value.slice(0, -1));
@@ -470,26 +427,17 @@ export function BeforeAfterGame() {
     setConfirmReset(false);
   }
 
-  const previewPuzzle: BridgePuzzle = {
-    id: "preview",
-    answer: customAnswer || "bridge",
-    clueWords: [customClueOne || "first clue", customClueTwo || "second clue"],
-    position: customPosition,
-    difficulty: 1,
-  };
-
   return (
     <div className="before-after-game-card" data-theme={theme} data-view={isPlaying ? "play" : view}>
       <GameLocalBar
         ariaLabel="Before and After"
-        brand={<Wordmark compact />}
+        brand={<BeforeAfterWordmark compact />}
         className="game-local-bar--before-after"
         items={[
           { label: "Menu", current: view === "menu" && !isPlaying, onSelect: () => openView("menu") },
           { label: "Daily", current: (view === "daily" || view === "insights") && (isPlaying || view === "insights"), onSelect: () => openView("daily") },
           { label: "Packs", current: view === "packs" || (isPlaying && session?.mode === "packs"), onSelect: () => openView("packs") },
           { label: "Archive", current: view === "archive" || (isPlaying && session?.mode === "archive"), onSelect: () => openView("archive") },
-          { label: "Custom", current: view === "custom" || (isPlaying && session?.mode === "custom"), onSelect: () => openView("custom") },
           { label: "Stats", current: view === "stats", onSelect: () => openView("stats") },
           { label: "Themes", current: view === "themes", onSelect: () => openView("themes") },
           { label: "Settings", current: view === "settings", onSelect: () => openView("settings") },
@@ -521,32 +469,14 @@ export function BeforeAfterGame() {
         />
       ) : (
         <section className="ba-view">
-          <header className="ba-view-heading"><h2>{view === "stats" ? "statistics" : view === "custom" ? "create a puzzle" : view === "packs" ? "puzzle packs" : view}</h2></header>
+          <header className="ba-view-heading"><h2>{view === "stats" ? "statistics" : view === "packs" ? "puzzle packs" : view}</h2></header>
           {view === "packs" && (
             <PacksView currentPack={currentPack} isOpen={isPackOpen} packId={packId} page={packPage} progress={progress} onBack={() => setIsPackOpen(false)} onPack={choosePack} onPage={setPackPage} onPuzzle={choosePackPuzzle} />
           )}
           {view === "archive" && (
             <ArchiveView archive={archive} progress={progress} onPuzzle={(puzzle) => startPuzzle(puzzle, "archive")} />
           )}
-          {view === "custom" && (
-            <CreatorView
-              answer={customAnswer}
-              clueOne={customClueOne}
-              clueTwo={customClueTwo}
-              customPuzzles={customPuzzles}
-              feedback={customFeedback}
-              onAnswer={setCustomAnswer}
-              onClueOne={setCustomClueOne}
-              onClueTwo={setCustomClueTwo}
-              onCreate={createCustom}
-              onPlay={(puzzle) => startPuzzle(puzzle, "custom")}
-              onPosition={setCustomPosition}
-              position={customPosition}
-              previewPuzzle={previewPuzzle}
-              tone={customTone}
-            />
-          )}
-          {view === "stats" && <StatsView progress={progress} customCount={customPuzzles.length} />}
+          {view === "stats" && <StatsView progress={progress} />}
           {view === "themes" && <ThemesView selected={theme} onSelect={selectTheme} />}
           {view === "settings" && (
             <SettingsView confirmReset={confirmReset} onConfirm={resetProgress} onToggle={() => setConfirmReset((value) => !value)} />
@@ -578,7 +508,7 @@ function MainMenu({ progress, onOpen }: { progress: BridgeProgress; onOpen: (vie
   return (
     <section className="ba-menu">
       <div className="ba-menu-hero">
-        <Wordmark />
+        <BeforeAfterWordmark />
         <p>one word. two phrases. find the bridge.</p>
       </div>
       <div className="ba-menu-grid">
@@ -644,8 +574,8 @@ function PlayView({
       <div className="ba-play-layout">
         <div className="ba-puzzle-column">
           <div className="ba-puzzle-card">
-            <p className="ba-instruction">{instructionFor(session.puzzle)}</p>
-            <PhraseRows puzzle={session.puzzle} answer={answer} revealed={revealed} />
+            <p className="ba-instruction">{beforeAfterInstruction(session.puzzle)}</p>
+            <BeforeAfterPhraseRows puzzle={session.puzzle} answer={answer} revealed={revealed} />
           </div>
           <p className={`ba-feedback is-${tone}`} aria-live="polite">{feedback}</p>
           {session.status === "expired" && (
@@ -801,52 +731,7 @@ function ArchiveView({ archive, progress, onPuzzle }: {
   );
 }
 
-function CreatorView({ answer, clueOne, clueTwo, customPuzzles, feedback, onAnswer, onClueOne, onClueTwo, onCreate, onPlay, onPosition, position, previewPuzzle, tone }: {
-  answer: string;
-  clueOne: string;
-  clueTwo: string;
-  customPuzzles: BridgePuzzle[];
-  feedback: string;
-  onAnswer: (value: string) => void;
-  onClueOne: (value: string) => void;
-  onClueTwo: (value: string) => void;
-  onCreate: () => void;
-  onPlay: (puzzle: BridgePuzzle) => void;
-  onPosition: (position: BridgePosition) => void;
-  position: BridgePosition;
-  previewPuzzle: BridgePuzzle;
-  tone: string;
-}) {
-  return (
-    <div className="ba-creator">
-      <div className="ba-creator-preview">
-        <div className="ba-section-intro"><p>live preview</p><span>Exactly how your puzzle lands in play.</span></div>
-        <div className="ba-puzzle-card">
-          <p className="ba-instruction">{instructionFor(previewPuzzle)}</p>
-          <PhraseRows puzzle={previewPuzzle} answer={answer} revealed={false} />
-        </div>
-      </div>
-      <div className="ba-creator-form">
-        <p>choose your puzzle format</p>
-        <div className="ba-position-picker">
-          {(["before", "after", "both"] as BridgePosition[]).map((value) => (
-            <button className={position === value ? "is-current" : ""} key={value} onClick={() => onPosition(value)} type="button">{value === "both" ? "before & after" : value}</button>
-          ))}
-        </div>
-        <label>first clue<input onChange={(event) => onClueOne(event.target.value)} placeholder="e.g. nail" value={clueOne} /></label>
-        <label>second clue<input onChange={(event) => onClueTwo(event.target.value)} placeholder="e.g. steel" value={clueTwo} /></label>
-        <label>answer<input maxLength={BEFORE_AFTER_ANSWER_LIMIT} onChange={(event) => onAnswer(event.target.value)} placeholder="e.g. body" value={answer} /></label>
-        <button className="ba-save" onClick={onCreate} type="button">save &amp; play puzzle</button>
-        <p className={`ba-feedback is-${tone}`}>{feedback}</p>
-        {customPuzzles.length > 0 && (
-          <div className="ba-custom-list"><span>your puzzles</span>{customPuzzles.slice(0, 5).map((puzzle) => <button key={puzzle.id} onClick={() => onPlay(puzzle)} type="button">{puzzle.clueWords.join(" · ")} <b>›</b></button>)}</div>
-        )}
-      </div>
-    </div>
-  );
-}
-
-function StatsView({ progress, customCount }: { progress: BridgeProgress; customCount: number }) {
+function StatsView({ progress }: { progress: BridgeProgress }) {
   const solves = Object.values(progress.solved);
   const totalDuration = solves.reduce((sum, solve) => sum + solve.durationMs, 0);
   const totalSolveAttempts = solves.reduce((sum, solve) => sum + solve.attempts, 0);
@@ -864,7 +749,6 @@ function StatsView({ progress, customCount }: { progress: BridgeProgress; custom
         ["daily solved", String(progress.dailyDates.length)],
         ["today", progress.dailyDates.includes(bridgeDateKey(new Date())) ? "complete" : "open"],
       ]} />
-      <StatSection title="custom creations" accent="create" stats={[["created", String(customCount)], ["saved locally", customCount ? "yes" : "--"]]} />
       <div className="ba-stat-section">
         <h3>pack breakdown</h3>
         <div className="ba-pack-stats">
@@ -903,7 +787,7 @@ function SettingsView({ confirmReset, onConfirm, onToggle }: { confirmReset: boo
     <div className="ba-settings-page">
       <div className="ba-settings-card">
         <span className="ba-settings-icon">↺</span>
-        <div><h3>reset progress</h3><p>Clear solved puzzles, Daily history, attempts, and streak data. Your custom puzzles and chosen theme will stay.</p></div>
+        <div><h3>reset progress</h3><p>Clear solved puzzles, Daily history, attempts, and streak data. Your chosen theme will stay.</p></div>
         {!confirmReset ? <button onClick={onToggle} type="button">reset progress</button> : <div className="ba-confirm"><strong>Are you sure?</strong><button onClick={onConfirm} type="button">yes, reset</button><button onClick={onToggle} type="button">cancel</button></div>}
       </div>
       <p className="ba-local-note">Before&amp;After stores progress only on this device.</p>

@@ -7,6 +7,7 @@ import {
   useState,
   type CSSProperties,
 } from "react";
+import "./token.css";
 import { GameLocalBar } from "../../app-shell/game-local-bar";
 import { gameStorageKey } from "../../platform/storage";
 import {
@@ -41,7 +42,6 @@ import {
   selectDailyTokenPuzzle,
   serializeLocalTokenLibrary,
   tokenDateKey,
-  upsertLocalTokenLibraryEntry,
   type TokenLibraryEntry,
 } from "./library.mjs";
 
@@ -70,7 +70,7 @@ type TokenRun = {
   submissions: TokenSubmission[];
 };
 
-type TokenView = "menu" | "daily" | "archive" | "play" | "how" | "build";
+type TokenView = "menu" | "daily" | "archive" | "play" | "how";
 
 type BuilderSettings = {
   maxOutputTokens: number;
@@ -157,7 +157,7 @@ function selectTokenDailyPuzzle({
       index: 0,
       origin: "local",
       puzzle: scheduled.puzzle,
-      summary: "Scheduled from this browser’s local Builder.",
+      summary: "Scheduled from a local Puzzle Studio draft.",
       title: scheduled.title,
       total: 1,
     };
@@ -206,10 +206,6 @@ function TokenWordmark({ compact = false }: { compact?: boolean }) {
   return <span className={`token-wordmark${compact ? " is-compact" : ""}`} aria-label="TOKEN">TOKEN<i /></span>;
 }
 
-function isLocalBuilderHost(hostname: string) {
-  return hostname === "localhost" || hostname === "127.0.0.1" || hostname === "::1";
-}
-
 export function TokenGame() {
   const inputRef = useRef<HTMLInputElement>(null);
   const [puzzle, setPuzzle] = useState<TokenPuzzle>(tokenDemoPuzzle);
@@ -225,7 +221,6 @@ export function TokenGame() {
   const [inspectedStop, setInspectedStop] = useState<number | null>(null);
   const [keyboardOpen, setKeyboardOpen] = useState(false);
   const [view, setView] = useState<TokenView>("menu");
-  const [builderAvailable, setBuilderAvailable] = useState(false);
 
   const dailyEasy = useMemo(
     () => selectTokenDailyPuzzle({
@@ -259,7 +254,7 @@ export function TokenGame() {
       savedAt: stored.savedAt,
       summary: stored.dailyDate
         ? "Scheduled locally for " + stored.dailyDate + "."
-        : "Saved from this browser’s local Builder.",
+        : "Saved from a local Puzzle Studio draft.",
       title: stored.title,
     })),
   ], [localLibrary]);
@@ -298,11 +293,6 @@ export function TokenGame() {
     return () => {
       cancelled = true;
     };
-  }, []);
-
-  useEffect(() => {
-    const frame = window.requestAnimationFrame(() => setBuilderAvailable(isLocalBuilderHost(window.location.hostname)));
-    return () => window.cancelAnimationFrame(frame);
   }, []);
 
   useEffect(() => {
@@ -463,25 +453,6 @@ export function TokenGame() {
     setView("play");
   }
 
-  function playDraft(draft: TokenPuzzle) {
-    setPuzzle(draft);
-    setEntry("");
-    setCharacterCursor(0);
-    setInspectedStop(null);
-    setShowResults(false);
-    setResultsDismissed(false);
-    setRun({ ...initialRun(draft), phase: TOKEN_PHASES.GENERATING });
-    setView("play");
-  }
-
-  function saveToLocalArchive(nextPuzzle: TokenPuzzle, title: string, dailyDate: string | null) {
-    setLocalLibrary((current) => upsertLocalTokenLibraryEntry(current, {
-      dailyDate,
-      puzzle: nextPuzzle,
-      title,
-    }));
-  }
-
   function removeFromLocalArchive(puzzleId: string) {
     setLocalLibrary((current) => current.filter((entry) => entry.puzzle.id !== puzzleId));
     if (puzzle.id === puzzleId) {
@@ -525,7 +496,7 @@ export function TokenGame() {
     : null;
 
   return (
-    <div className={`token-game${keyboardOpen ? " is-keyboard-open" : ""}${view === "build" ? " is-builder" : ""}`}>
+    <div className={`token-game${keyboardOpen ? " is-keyboard-open" : ""}`}>
       <GameLocalBar
         ariaLabel="TOKEN"
         brand={<TokenWordmark compact />}
@@ -536,7 +507,6 @@ export function TokenGame() {
           { label: "Archive", current: view === "archive", onSelect: () => setView("archive") },
           { label: "Play", current: view === "play", onSelect: play },
           { label: "How to play", current: view === "how", onSelect: () => setView("how") },
-          ...(builderAvailable ? [{ label: "Build", current: view === "build", onSelect: () => setView("build") }] : []),
         ]}
         onHome={() => setView("menu")}
       />
@@ -569,8 +539,6 @@ export function TokenGame() {
         />
       ) : view === "how" ? (
         <TokenHow onPlay={play} />
-      ) : view === "build" && builderAvailable ? (
-        <TokenBuilder onPlayDraft={playDraft} onSaveToArchive={saveToLocalArchive} />
       ) : (
       <main className="token-surface" aria-label="TOKEN prediction game">
         <p className="token-prompt">{puzzle.prompt}</p>
@@ -717,7 +685,7 @@ function TokenMenu({ dailyEasy, dailyHard, onArchive, onDaily, onPlay, puzzle, r
           <button className="token-menu-archive" onClick={onArchive} type="button">
             <span>Archive</span>
             <strong>Pick a response.</strong>
-            <small>Published puzzles and your local Builder saves.</small>
+            <small>Published puzzles and your earlier local drafts.</small>
             <b aria-hidden="true">→</b>
           </button>
         </div>
@@ -773,13 +741,13 @@ function TokenArchive({ activePuzzleId, entries, onPlay, onRemove }: {
       <header className="token-library-heading">
         <p>Archive</p>
         <h2>Frozen responses.</h2>
-        <span>Published fixtures stay separate from work you save from the local Builder.</span>
+        <span>Published fixtures stay separate from locally authored drafts.</span>
       </header>
       <section className="token-archive-section">
         <header><p>Easy · readable words</p><span>{easy.length} {easy.length === 1 ? "puzzle" : "puzzles"}</span></header>
         <div className="token-library-grid">
           {easy.map((entry) => (
-            <TokenArchiveCard active={entry.puzzle.id === activePuzzleId} entry={entry} key={entry.puzzle.id} label={entry.origin === "local" ? "Local Builder" : "Edition"} onPlay={onPlay} onRemove={onRemove} />
+            <TokenArchiveCard active={entry.puzzle.id === activePuzzleId} entry={entry} key={entry.puzzle.id} label={entry.origin === "local" ? "Local draft" : "Edition"} onPlay={onPlay} onRemove={onRemove} />
           ))}
         </div>
       </section>
@@ -787,7 +755,7 @@ function TokenArchive({ activePuzzleId, entries, onPlay, onRemove }: {
         <header><p>Hard · raw tokens</p><span>{hard.length} {hard.length === 1 ? "puzzle" : "puzzles"}</span></header>
         <div className="token-library-grid">
           {hard.map((entry) => (
-            <TokenArchiveCard active={entry.puzzle.id === activePuzzleId} entry={entry} key={entry.puzzle.id} label={entry.origin === "local" ? "Local Builder" : "Edition"} onPlay={onPlay} onRemove={onRemove} />
+            <TokenArchiveCard active={entry.puzzle.id === activePuzzleId} entry={entry} key={entry.puzzle.id} label={entry.origin === "local" ? "Local draft" : "Edition"} onPlay={onPlay} onRemove={onRemove} />
           ))}
         </div>
       </section>
@@ -825,7 +793,7 @@ function TokenHow({ onPlay }: { onPlay: () => void }) {
         <header><p>How it works</p><h2>Predict the machine.</h2></header>
         <ol>
           <li><b>01</b><span><strong>Read the frozen response</strong><small>TOKEN streams an authored model response a character at a time.</small></span></li>
-          <li><b>02</b><span><strong>Predict its next token</strong><small>When the cursor stops, type the next unit and press Enter. Builder drafts can use readable words or raw model-token pieces.</small></span></li>
+          <li><b>02</b><span><strong>Predict its next token</strong><small>When the cursor stops, type the next unit and press Enter. Easy uses readable words; Hard reveals raw model-token pieces.</small></span></li>
           <li><b>03</b><span><strong>See how close you were</strong><small>The top token is worth 100. Stored alternatives can earn partial credit.</small></span></li>
         </ol>
         <footer><p>You are predicting the machine, not writing the response.</p><button onClick={onPlay} type="button">Start predicting <span aria-hidden="true">→</span></button></footer>
@@ -834,10 +802,11 @@ function TokenHow({ onPlay }: { onPlay: () => void }) {
   );
 }
 
-function TokenBuilder({ onPlayDraft, onSaveToArchive }: {
-  onPlayDraft: (draft: TokenPuzzle) => void;
-  onSaveToArchive: (puzzle: TokenPuzzle, title: string, dailyDate: string | null) => void;
-}) {
+export function TokenBuilder({ onPlayDraft, onSaveToArchive, onStudioPayload }: {
+  onPlayDraft?: (draft: TokenPuzzle) => void;
+  onSaveToArchive?: (puzzle: TokenPuzzle, title: string, dailyDate: string | null) => void;
+  onStudioPayload?: (payload: { difficulty: TokenDifficulty; summary: string; generation: TokenDraft; selectedStopIds: string[] }) => void;
+} = {}) {
   const [prompt, setPrompt] = useState("Explain why a helpful machine should make its reasoning feel understandable rather than magical.");
   const [authoringNotes, setAuthoringNotes] = useState("Maximum five sentences.");
   const [settings, setSettings] = useState<BuilderSettings>(() => normalizeBuilderSettings(TOKEN_BUILDER_DEFAULTS));
@@ -915,11 +884,22 @@ function TokenBuilder({ onPlayDraft, onSaveToArchive }: {
   }
 
   function saveToArchive() {
-    if (!playableDraft) return;
+    if (!playableDraft || !onSaveToArchive) return;
     onSaveToArchive(playableDraft, archiveTitle, dailyDate || null);
     setArchiveMessage(dailyDate
       ? "Saved locally and scheduled as this browser’s " + difficulty + " Daily for " + dailyDate + "."
       : "Saved locally. It is now available in Archive, but it will not replace a Daily puzzle.");
+  }
+
+  function useInStudio() {
+    if (!draft || !canPlayDraft) return;
+    onStudioPayload?.({
+      difficulty,
+      summary: draft.prompt,
+      generation: draft,
+      selectedStopIds: [...selectedStopIds],
+    });
+    setArchiveMessage("Generation and selected stops copied into this Studio puzzle.");
   }
 
   function toggleStop(id: string) {
@@ -1089,16 +1069,7 @@ function TokenBuilder({ onPlayDraft, onSaveToArchive }: {
           </details>
           <footer>
             <button className="token-builder-export" onClick={downloadDraft} type="button">Download fixture JSON</button>
-            <label className="token-builder-save">
-              <span>Archive title</span>
-              <input maxLength={80} onChange={(event) => setArchiveTitle(event.target.value)} value={archiveTitle} />
-            </label>
-            <label className="token-builder-save token-builder-schedule">
-              <span>Daily date <i>optional</i></span>
-              <input onChange={(event) => setDailyDate(event.target.value)} type="date" value={dailyDate} />
-            </label>
-            <button disabled={!canPlayDraft} onClick={saveToArchive} type="button">Save to local archive</button>
-            <button disabled={!canPlayDraft} onClick={() => playableDraft && onPlayDraft(playableDraft)} type="button">{canPlayDraft ? `Play ${playableDraft?.stops.length} selected stops` : "Select a stop to play"} <span aria-hidden="true">→</span></button>
+            {onStudioPayload ? <button disabled={!canPlayDraft} onClick={useInStudio} type="button">Use {playableDraft?.stops.length ?? 0} stops in Studio</button> : <><label className="token-builder-save"><span>Archive title</span><input maxLength={80} onChange={(event) => setArchiveTitle(event.target.value)} value={archiveTitle} /></label><label className="token-builder-save token-builder-schedule"><span>Daily date <i>optional</i></span><input onChange={(event) => setDailyDate(event.target.value)} type="date" value={dailyDate} /></label><button disabled={!canPlayDraft} onClick={saveToArchive} type="button">Save to local archive</button><button disabled={!canPlayDraft} onClick={() => playableDraft && onPlayDraft?.(playableDraft)} type="button">{canPlayDraft ? `Play ${playableDraft?.stops.length} selected stops` : "Select a stop to play"} <span aria-hidden="true">→</span></button></>}
           </footer>
           {archiveMessage && <p className="token-builder-archive-message" role="status">{archiveMessage}</p>}
         </section>

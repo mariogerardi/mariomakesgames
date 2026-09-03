@@ -1,5 +1,7 @@
 "use client";
 
+import "./dual.css";
+
 import { useEffect, useMemo, useRef, useState, type ChangeEvent, type FormEvent } from "react";
 import { DUAL_AUTHORED_PUZZLES_KEY, parseAuthoredDualPuzzles, scheduleAuthoredDualPuzzle } from "./authored-puzzles.mjs";
 import {
@@ -30,6 +32,14 @@ type BuilderManifest = { version: number; builtAt: string; policy: Record<string
 type BuilderPool = { sequence: string; metrics: CandidateMetrics; entries: DualBuilderEntry[] };
 type Settings = { id: string; targetScore: number; minimumEnglish: number; minimumSpanish: number };
 type BuilderTab = (typeof TABS)[number][0];
+type DualBuilderStudioPayload = {
+  sequence: string;
+  corpusRevision: string;
+  settings: { targetScore: number; minimumEnglish: number; minimumSpanish: number };
+  overrides: DualBuilderOverrides;
+  familyOverrides: DualBuilderFamilyOverrides;
+  lexicon: ReturnType<typeof buildDualBuilderLexicon>;
+};
 
 function readStored(key: string): Record<string, unknown> {
   try { const value = JSON.parse(localStorage.getItem(key) ?? "{}"); return value && typeof value === "object" ? value : {}; }
@@ -58,7 +68,7 @@ function Playtest({ pool, overrides, familyOverrides, settings }: { pool: Builde
   return <section className="dual-builder-playtest"><header><span>Live playtest · current authored pool</span><b>{formatScore(progress.score)} / {formatScore(puzzle.targetScore)}</b></header><div><span>EN {progress.enFamilies} / {puzzle.minimumEnglish} families</span><strong>{pool.sequence}</strong><span>ES {progress.esFamilies} / {puzzle.minimumSpanish} families</span></div><form onSubmit={submit}><input aria-label="Playtest word" autoComplete="off" onChange={(event) => setEntry(event.target.value)} placeholder="test a word" value={entry} /><button type="submit">Enter</button></form><p>{feedback}</p></section>;
 }
 
-export function DualBuilder() {
+export function DualBuilder({ onStudioPayload }: { onStudioPayload?: (payload: DualBuilderStudioPayload) => void } = {}) {
   const [manifest, setManifest] = useState<BuilderManifest | null>(null);
   const [pool, setPool] = useState<BuilderPool | null>(null);
   const [selectedKey, setSelectedKey] = useState("");
@@ -154,6 +164,18 @@ export function DualBuilder() {
     const draft = payload(); if (!draft) return;
     localStorage.setItem(DRAFTS_KEY, JSON.stringify({ ...readStored(DRAFTS_KEY), [draft.puzzle.id]: draft })); setSaved(true); setDraftMessage("Exact authored state saved locally.");
   }
+  function useInStudio() {
+    if (!pool || !manifest) return;
+    onStudioPayload?.({
+      sequence: pool.sequence.toLocaleUpperCase(),
+      corpusRevision: String(manifest.version),
+      settings: { targetScore: settings.targetScore, minimumEnglish: settings.minimumEnglish, minimumSpanish: settings.minimumSpanish },
+      overrides,
+      familyOverrides,
+      lexicon: buildDualBuilderLexicon(pool.entries, overrides, familyOverrides),
+    });
+    setDraftMessage("Current lexical pool, family choices, and targets copied into this Studio puzzle.");
+  }
   function schedulePuzzle() {
     const draft = payload(); if (!draft || !scheduleDate) return setDraftMessage("Choose a date before assigning this puzzle.");
     try {
@@ -217,7 +239,7 @@ export function DualBuilder() {
             })}{entry.senses.map((sense, index) => { const senseFamiliarity = dualBuilderLanguageFamiliarity(entry, sense.language); return <div key={`${sense.language}:${sense.lemma}:${sense.familyId}:${index}`}><b>{sense.language.toLocaleUpperCase()} · {sense.lemma}</b><span>family {sense.familyId} · {sense.partOfSpeech} · {sense.formKind} · {sense.status} · {senseFamiliarity.tier}{Number.isFinite(sense.zipf) ? ` · Zipf ${sense.zipf?.toFixed(2)}` : " · no frequency"}</span><p>{sense.gloss || sense.reason || "No gloss supplied by source."}</p></div>; })}</div> : null}</article>;
         })}</div>
       </section>
-      <footer className="dual-builder-actions"><label>Assign to date<input aria-label="Assign puzzle to date" onChange={(event) => setScheduleDate(event.target.value)} type="date" value={scheduleDate} /></label><button disabled={!scheduleDate} onClick={schedulePuzzle} type="button">Assign local Daily</button><button onClick={saveDraft} type="button">{saved ? "Saved locally" : "Save local draft"}</button><button onClick={restoreLatest} type="button">Restore latest local draft</button><button onClick={() => fileInput.current?.click()} type="button">Load draft JSON</button><input accept="application/json,.json" hidden onChange={loadFile} ref={fileInput} type="file" /><button onClick={() => { const draft = payload(); if (draft) downloadJson(`dual-${pool.metrics.key}-draft.json`, draft); }} type="button">Download draft JSON</button><small>{draftMessage || "Assignments stay in this browser and replace the built-in Daily only for their chosen date."}</small></footer>
+      <footer className="dual-builder-actions">{onStudioPayload ? <button onClick={useInStudio} type="button">Use current puzzle in Studio</button> : <><label>Assign to date<input aria-label="Assign puzzle to date" onChange={(event) => setScheduleDate(event.target.value)} type="date" value={scheduleDate} /></label><button disabled={!scheduleDate} onClick={schedulePuzzle} type="button">Assign local Daily</button><button onClick={saveDraft} type="button">{saved ? "Saved locally" : "Save local draft"}</button><button onClick={restoreLatest} type="button">Restore latest local draft</button></>}<button onClick={() => fileInput.current?.click()} type="button">Load draft JSON</button><input accept="application/json,.json" hidden onChange={loadFile} ref={fileInput} type="file" /><button onClick={() => { const draft = payload(); if (draft) downloadJson(`dual-${pool.metrics.key}-draft.json`, draft); }} type="button">Download draft JSON</button><small>{draftMessage || (onStudioPayload ? "The Studio owns saving and date assignment." : "Assignments stay in this browser and replace the built-in Daily only for their chosen date.")}</small></footer>
     </main> : <main className="dual-builder-workbench dual-builder-state"><p>{selectedKey ? `Loading ${selectedKey.toLocaleUpperCase()}…` : "Your string comes first"}</p><h2>{selectedKey ? selectedKey.toLocaleUpperCase() : "Choose three letters"}</h2><span>{poolError || "Enter the exact string you want to explore. DUAL will analyze it without choosing for you."}</span></main>}
   </div></section>;
 }
