@@ -5,7 +5,7 @@ export type RarityPuzzle = {
   curatorName: string;
   source: "live" | "fallback";
 };
-export const RARITY_FALLBACK_START_DATE: "2026-02-01";
+export const RARITY_FALLBACK_START_DATE: "2026-09-01";
 export function loadRarityPuzzleCatalog(rawCatalog: unknown): RarityPuzzle[];
 export function selectFallbackRarityPuzzle(
   puzzles: RarityPuzzle[],

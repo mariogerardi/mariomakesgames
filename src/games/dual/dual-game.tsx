@@ -1,10 +1,10 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState, type CSSProperties, type FormEvent } from "react";
+import "./dual.css";
 import { GameLocalBar } from "../../app-shell/game-local-bar";
 import { gameStorageKey } from "../../platform/storage";
 import { DUAL_AUTHORED_PUZZLES_KEY, parseAuthoredDualPuzzles, type AuthoredDualPuzzleLibrary } from "./authored-puzzles.mjs";
-import { DualBuilder } from "./dual-builder";
 import {
   DUAL_DAILY_EPOCH,
   dualArchive,
@@ -39,11 +39,12 @@ import {
   type DualInterfaceLanguage,
 } from "./language.mjs";
 import { createDualLexicon, type DualLexicon } from "./lexicon.mjs";
+import { loadLocalStudioSlot } from "../../authoring/local-runtime";
 
 const DUAL_DAILY_KEY = gameStorageKey("dual", "daily");
 const DUAL_RUNS_KEY = gameStorageKey("dual", "runs");
 const DUAL_LANGUAGE_KEY = gameStorageKey("dual", "interface-language");
-const DUAL_VIEWS = ["menu", "daily", "archive", "how-to", "stats", "settings", "builder"] as const;
+const DUAL_VIEWS = ["menu", "daily", "archive", "how-to", "stats", "settings"] as const;
 type DualView = (typeof DUAL_VIEWS)[number];
 type FeedbackTone = "neutral" | "en" | "es" | "dual" | "error";
 type DualMilestone = "requirements" | "duals" | "words";
@@ -79,8 +80,6 @@ function neutralFeedback(): DualFeedback {
 function dualViewFromUrl(): DualView {
   if (typeof window === "undefined") return "menu";
   const candidate = new URL(window.location.href).searchParams.get("view");
-  const localBuilder = ["localhost", "127.0.0.1", "::1"].includes(window.location.hostname);
-  if (candidate === "builder" && !localBuilder) return "menu";
   return DUAL_VIEWS.includes(candidate as DualView) ? candidate as DualView : "menu";
 }
 
@@ -96,7 +95,7 @@ function writeDualViewUrl(view: DualView, dateKey?: string) {
 function DualWordmark({ compact = false }: { compact?: boolean }) {
   return (
     <span className={`dual-wordmark${compact ? " is-compact" : ""}`} aria-label="Dual">
-      <span>DU</span><i aria-hidden="true" /><b>AL</b>
+      <span>DU</span><b>AL</b>
     </span>
   );
 }
@@ -349,6 +348,30 @@ function localAuthoredPuzzles() {
   return parseAuthoredDualPuzzles(localStorage.getItem(DUAL_AUTHORED_PUZZLES_KEY));
 }
 
+async function authoredPuzzlesWithStudio(dateKey: string) {
+  const local = localAuthoredPuzzles();
+  const [published] = await loadLocalStudioSlot("dual", "daily", dateKey);
+  if (!published || published.gameId !== "dual") return local;
+  const payload = published.payload;
+  return parseAuthoredDualPuzzles({
+    ...local,
+    [dateKey]: {
+      version: 1,
+      dateKey,
+      createdAt: published.publishedAt,
+      puzzle: {
+        id: published.id,
+        sequence: payload.sequence,
+        targetScore: payload.targetScore,
+        minimumEnglish: payload.minimumEnglish,
+        minimumSpanish: payload.minimumSpanish,
+        dualCount: payload.dualCount,
+      },
+      lexicon: payload.lexicon,
+    },
+  });
+}
+
 function resolveDualRound(dateKey: string, fallbackDate: Date, authored: AuthoredDualPuzzleLibrary): { puzzle: DualPuzzle; lexicon: DualLexicon } {
   const scheduled = authored[dateKey];
   if (scheduled) return { puzzle: scheduled.puzzle, lexicon: createDualLexicon(scheduled.lexicon) };
@@ -530,7 +553,6 @@ export function DualGame() {
   const archive = useMemo(() => dualArchive(14, today), [today]);
   const inputRef = useRef<HTMLInputElement>(null);
   const [view, setView] = useState<DualView>("menu");
-  const [localBuilder, setLocalBuilder] = useState(false);
   const [archivePlaying, setArchivePlaying] = useState(false);
   const [roundDateKey, setRoundDateKey] = useState(todayKey);
   const [authoredPuzzles, setAuthoredPuzzles] = useState<AuthoredDualPuzzleLibrary>({});
@@ -602,10 +624,9 @@ export function DualGame() {
   }
 
   useEffect(() => {
-    queueMicrotask(() => setLocalBuilder(["localhost", "127.0.0.1", "::1"].includes(window.location.hostname)));
-    const syncView = () => {
+    const syncView = async () => {
       let library = parseDualRunLibrary(localStorage.getItem(DUAL_RUNS_KEY));
-      const authored = localAuthoredPuzzles();
+      const authored = await authoredPuzzlesWithStudio(todayKey);
       const legacyRaw = localStorage.getItem(DUAL_DAILY_KEY);
       if (legacyRaw) {
         try {
@@ -653,9 +674,10 @@ export function DualGame() {
         setArchivePlaying(false);
       }
     };
-    queueMicrotask(syncView);
-    window.addEventListener("popstate", syncView);
-    return () => window.removeEventListener("popstate", syncView);
+    queueMicrotask(() => { void syncView(); });
+    const handlePopState = () => { void syncView(); };
+    window.addEventListener("popstate", handlePopState);
+    return () => window.removeEventListener("popstate", handlePopState);
   }, [todayKey]);
 
   useEffect(() => {
@@ -684,9 +706,7 @@ export function DualGame() {
     setArchivePlaying(false);
     setMilestones([]);
     if (next === "daily") {
-      const authored = localAuthoredPuzzles();
-      setAuthoredPuzzles(authored);
-      loadRound(todayKey, runLibrary, authored);
+      loadRound(todayKey, runLibrary, authoredPuzzles);
     }
   }
 
@@ -694,9 +714,7 @@ export function DualGame() {
     writeDualViewUrl("archive", dateKey);
     setView("archive");
     setArchivePlaying(true);
-    const authored = localAuthoredPuzzles();
-    setAuthoredPuzzles(authored);
-    loadRound(dateKey, runLibrary, authored);
+    loadRound(dateKey, runLibrary, authoredPuzzles);
   }
 
   function closeArchiveRound() {
@@ -762,7 +780,6 @@ export function DualGame() {
           { label: localized(language, "How to play", "Cómo jugar", "es"), current: view === "how-to", onSelect: () => openView("how-to") },
           { label: localized(language, "Stats", "Estadísticas", "es"), current: view === "stats", onSelect: () => openView("stats") },
           { label: localized(language, "Settings", "Ajustes", "es"), current: view === "settings", onSelect: () => openView("settings") },
-          ...(localBuilder ? [{ label: localized(language, "Build", "Crear", "es"), current: view === "builder", onSelect: () => openView("builder") }] : []),
         ]}
         navigationAriaLabel={localized(language, "Dual navigation", "Navegación de Dual", "es")}
         onHome={() => openView("menu")}
@@ -783,8 +800,6 @@ export function DualGame() {
           onClear={clearProgress}
           onLanguageChange={changeLanguage}
         />
-      ) : view === "builder" && localBuilder ? (
-        <DualBuilder />
       ) : isPlayView ? (
         <section className="dual-play" data-dual-state={wordProgress.allWordsFound ? "all-words" : progress.allDualsFound ? "all-duals" : progress.isSolved ? "solved" : "playing"}>
           {view === "archive" ? (

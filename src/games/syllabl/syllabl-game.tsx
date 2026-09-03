@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState } from "react";
+import "./syllabl.css";
 import {
   createSyllablSession,
   evaluateSyllablAttempt,

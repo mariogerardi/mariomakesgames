@@ -1,5 +1,7 @@
+import { CURRENT_DAILY_EPOCH, dailyCatalogOffset } from "../../platform/daily-calendar.mjs";
+
 export const TOKEN_LIBRARY_SCHEMA_VERSION = 1;
-export const TOKEN_DAILY_EPOCH = "2026-08-29";
+export const TOKEN_DAILY_EPOCH = CURRENT_DAILY_EPOCH;
 
 const DATE_KEY = /^\d{4}-\d{2}-\d{2}$/;
 
@@ -45,9 +47,7 @@ export function tokenDateKey(value = new Date()) {
 }
 
 function daysSinceEpoch(dateKey, epoch = TOKEN_DAILY_EPOCH) {
-  const day = Date.parse(`${dateKey}T12:00:00Z`);
-  const start = Date.parse(`${epoch}T12:00:00Z`);
-  return Math.floor((day - start) / 86_400_000);
+  return dailyCatalogOffset(dateKey, epoch);
 }
 
 export function selectDailyTokenPuzzle(puzzles, { date = new Date(), difficulty }) {

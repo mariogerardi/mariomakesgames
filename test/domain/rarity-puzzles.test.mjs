@@ -27,22 +27,22 @@ test("the locked fallback contains classic Rarity only", () => {
   assert.equal(puzzles.some((puzzle) => "board" in puzzle), false);
 });
 
-test("fallback selection is stable and cycles across all 35 classics", () => {
+test("the historical fallback is remapped from September 1, 2026", () => {
   const puzzles = loadRarityPuzzleCatalog(catalog);
   assert.equal(
-    selectFallbackRarityPuzzle(puzzles, "2026-02-01").puzzleString,
+    selectFallbackRarityPuzzle(puzzles, "2026-09-01").puzzleString,
     "the",
   );
   assert.equal(
-    selectFallbackRarityPuzzle(puzzles, "2026-02-02").puzzleString,
+    selectFallbackRarityPuzzle(puzzles, "2026-09-02").puzzleString,
     "and",
   );
   assert.equal(
-    selectFallbackRarityPuzzle(puzzles, "2026-03-08").puzzleString,
+    selectFallbackRarityPuzzle(puzzles, "2026-10-06").puzzleString,
     "the",
   );
   assert.equal(
-    selectFallbackRarityPuzzle(puzzles, "2026-01-31").puzzleString,
+    selectFallbackRarityPuzzle(puzzles, "2026-08-31").puzzleString,
     "str",
   );
 });

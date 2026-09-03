@@ -1,0 +1,32 @@
+/* Shared local faces used by both the Hub and their owning games. */
+@font-face {
+  font-family: "Sansita Swashed";
+  src: url("/fonts/before-after/SansitaSwashed-Regular.ttf") format("truetype");
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Sansita Swashed";
+  src: url("/fonts/before-after/SansitaSwashed-SemiBold.ttf") format("truetype");
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Sansita Swashed";
+  src: url("/fonts/before-after/SansitaSwashed-Bold.ttf") format("truetype");
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Sansita Swashed";
+  src: url("/fonts/before-after/SansitaSwashed-Black.ttf") format("truetype");
+  font-style: normal;
+  font-weight: 900;
+  font-display: swap;
+}

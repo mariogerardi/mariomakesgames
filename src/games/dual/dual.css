@@ -1,0 +1,1157 @@
+/* DUAL game */
+/* DUAL — bilingual word board */
+.site-frame[data-game="dual"] {
+  --game-canvas: #dce9df;
+  background: #dce9df;
+}
+
+.game-canvas > .dual-game { min-height: var(--game-room-height); }
+
+.dual-game {
+  position: relative;
+  min-height: var(--game-room-height);
+  overflow: hidden;
+  color: #17242b;
+  background: #dce9df;
+  font-family: "Manrope", sans-serif;
+}
+
+.game-local-bar--dual {
+  --game-bar-bg: #17242b;
+  --game-bar-ink: #f7f4ed;
+  --game-bar-muted: #aebac0;
+  --game-bar-line: rgb(255 255 255 / 0.13);
+  --game-bar-accent: #f7f4ed;
+  --game-bar-active-ink: #17242b;
+  background: #17242b;
+}
+
+.game-local-bar--dual .dual-wordmark {
+  color: #f7f4ed;
+}
+
+.game-local-bar--dual nav button {
+  font-family: "Manrope", sans-serif;
+}
+
+.game-local-bar--dual nav button:hover:not(:disabled) {
+  color: #f7f4ed;
+  background: rgb(255 255 255 / 0.07);
+}
+
+.game-local-bar--dual nav button.is-current,
+.game-local-bar--dual nav button.is-current:hover:not(:disabled) {
+  color: #17242b;
+  background: #f7f4ed;
+}
+
+.dual-wordmark {
+  display: inline-grid;
+  align-items: center;
+  grid-template-columns: 1fr 1fr;
+  color: #17242b;
+  font-family: "IBM Plex Mono", "SFMono-Regular", Consolas, monospace;
+  font-size: 1.2rem;
+  font-weight: 850;
+  letter-spacing: 0.01em;
+}
+.dual-wordmark > span { justify-self: end; padding-right: 0.12em; }
+.dual-wordmark > b { justify-self: start; padding-left: 0.12em; font-weight: inherit; }
+.dual-wordmark.is-compact { font-size: 1rem; }
+
+.dual-localized-line { display: inline; }
+
+.dual-play {
+  position: relative;
+  isolation: isolate;
+  display: grid;
+  height: calc(var(--game-room-height) - 62px);
+  min-height: 560px;
+  grid-template-rows: auto auto auto minmax(95px, 1fr) auto;
+  overflow: hidden;
+  padding: clamp(22px, 3.4vh, 42px) clamp(22px, 5vw, 78px) clamp(18px, 3vh, 34px);
+}
+
+.dual-play::before,
+.dual-play::after,
+.dual-how::before,
+.dual-how::after {
+  position: absolute;
+  z-index: -2;
+  top: 0;
+  bottom: 0;
+  width: 50%;
+  content: "";
+}
+
+.dual-play::before,
+.dual-how::before { left: 0; background: #add1b5; }
+.dual-play::after,
+.dual-how::after { right: 0; background: #f2dda1; }
+
+.dual-play > *,
+.dual-how > * { position: relative; z-index: 1; }
+
+.dual-play::marker { display: none; }
+
+.dual-language-label {
+  position: absolute;
+  z-index: 2;
+  top: 22px;
+  display: flex;
+  align-items: baseline;
+  gap: 9px;
+  color: rgb(23 36 43 / 0.62);
+}
+
+.dual-language-label b { color: #17242b; font-size: 0.82rem; letter-spacing: 0.12em; }
+.dual-language-label span { font-size: 0.68rem; }
+.dual-language-label.is-en { left: clamp(22px, 5vw, 78px); }
+.dual-language-label.is-es { right: clamp(22px, 5vw, 78px); }
+
+.dual-puzzle-heading {
+  justify-self: center;
+  width: min(480px, 82vw);
+  text-align: center;
+}
+
+.dual-puzzle-heading p,
+.dual-puzzle-heading span {
+  display: block;
+  margin: 0;
+  color: rgb(23 36 43 / 0.68);
+  font-size: clamp(0.72rem, 1.3vw, 0.86rem);
+  font-weight: 650;
+}
+
+.dual-puzzle-heading p > small {
+  display: block;
+  margin-bottom: 3px;
+  font: 700 0.54rem "IBM Plex Mono", "SFMono-Regular", Consolas, monospace;
+  letter-spacing: 0.05em;
+}
+
+.dual-puzzle-heading h2 {
+  margin: -0.03em 0 -0.09em;
+  color: #17242b;
+  font-family: "IBM Plex Mono", "SFMono-Regular", Consolas, monospace;
+  font-size: clamp(4.4rem, 10vw, 8.6rem);
+  font-weight: 850;
+  letter-spacing: 0.02em;
+  line-height: 0.98;
+}
+
+.dual-scoreboard {
+  display: grid;
+  align-items: end;
+  width: min(670px, 92vw);
+  margin: clamp(13px, 2vh, 22px) auto 0;
+  grid-template-columns: 1fr minmax(130px, 0.8fr) 1fr;
+  border-top: 1px solid rgb(23 36 43 / 0.22);
+  border-bottom: 1px solid rgb(23 36 43 / 0.22);
+}
+
+.dual-scoreboard > div {
+  display: flex;
+  min-height: 54px;
+  align-items: baseline;
+  gap: 6px;
+  padding: 12px 0 10px;
+}
+
+.dual-scoreboard .is-en { justify-content: flex-start; }
+.dual-scoreboard .is-total { justify-content: center; border-inline: 1px solid rgb(23 36 43 / 0.18); }
+.dual-scoreboard .is-es { justify-content: flex-end; }
+.dual-scoreboard small { margin-right: 5px; font-size: 0.58rem; font-weight: 800; letter-spacing: 0.12em; }
+.dual-scoreboard strong { font-size: clamp(1.18rem, 2vw, 1.55rem); line-height: 1; }
+.dual-scoreboard span { color: rgb(23 36 43 / 0.52); font-size: 0.72rem; font-weight: 650; }
+
+.dual-dual-progress {
+  display: grid;
+  justify-self: center;
+  align-items: center;
+  grid-template-columns: auto auto;
+  gap: 2px 9px;
+  margin-top: 10px;
+  color: #17242b;
+  text-align: center;
+}
+
+.dual-dual-progress span { font-size: 0.58rem; font-weight: 850; letter-spacing: 0.13em; }
+.dual-dual-progress b { font-size: 0.8rem; }
+
+.dual-diamonds {
+  display: flex;
+  grid-column: 1 / -1;
+  justify-content: center;
+  gap: 7px;
+  min-height: 13px;
+  padding-top: 5px;
+}
+
+.dual-diamonds i {
+  display: block;
+  width: 8px;
+  height: 8px;
+  border: 1.5px solid #17242b;
+  background: transparent;
+  transform: rotate(45deg);
+  transition: background-color 220ms ease, transform 220ms ease;
+}
+
+.dual-diamonds i.is-found {
+  background: #17242b;
+  transform: rotate(45deg) scale(1.08);
+}
+
+.dual-diamonds.is-compact { gap: 5px; padding-top: 3px; }
+.dual-diamonds.is-compact i { width: 6px; height: 6px; border-width: 1px; }
+
+.dual-discoveries {
+  display: grid;
+  width: min(950px, 100%);
+  min-height: 0;
+  margin: clamp(12px, 2.2vh, 24px) auto 8px;
+  grid-template-columns: minmax(0, 1fr) clamp(112px, 15vw, 166px) minmax(0, 1fr);
+  overflow: hidden;
+}
+
+.dual-discoveries::before {
+  position: absolute;
+  z-index: -1;
+  top: -7px;
+  bottom: -5px;
+  left: 50%;
+  width: 1px;
+  background: rgb(23 36 43 / 0.2);
+  content: "";
+}
+
+.dual-discovery-column {
+  position: relative;
+  display: block;
+  min-height: 0;
+  overflow-x: auto;
+  overflow-y: hidden;
+  overscroll-behavior: contain;
+  scrollbar-width: none;
+}
+
+.dual-discovery-column::-webkit-scrollbar { display: none; }
+.dual-discovery-column.is-en { padding: 5px 24px 16px 18px; direction: rtl; mask-image: linear-gradient(90deg, transparent, #000 20%, #000 100%); text-align: right; }
+.dual-discovery-column.is-es { padding: 5px 18px 16px 24px; mask-image: linear-gradient(90deg, #000 0%, #000 80%, transparent); }
+.dual-discovery-column.is-dual {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 7px;
+  padding: 5px 10px 22px;
+  overflow-x: hidden;
+  overflow-y: auto;
+  mask-image: linear-gradient(180deg, #000 0%, #000 78%, transparent 100%);
+  text-align: center;
+}
+
+.dual-family-stream {
+  display: flex;
+  width: max-content;
+  min-width: 100%;
+  align-items: start;
+  gap: 12px;
+  direction: ltr;
+}
+
+.dual-discovery-column.is-en .dual-family-stream { flex-direction: row-reverse; }
+
+.dual-discovery-family {
+  display: grid;
+  width: max-content;
+  max-width: 210px;
+  flex: 0 0 auto;
+  align-content: start;
+  justify-items: start;
+  gap: 5px;
+  animation: dual-family-arrive 430ms cubic-bezier(0.2, 0.8, 0.2, 1) both;
+}
+
+.dual-discovery-column.is-en .dual-discovery-family { justify-items: end; }
+
+.dual-discovery-forms {
+  display: grid;
+  width: max-content;
+  max-width: 100%;
+  justify-items: start;
+  gap: 4px;
+}
+
+.dual-discovery-column.is-en .dual-discovery-forms { justify-items: end; }
+
+.dual-discovery-word {
+  position: relative;
+  display: flex;
+  width: max-content;
+  max-width: 100%;
+  min-width: 0;
+  align-items: baseline;
+  justify-content: flex-start;
+  gap: 4px;
+  padding: 8px 9px;
+  border: 1px solid rgb(23 36 43 / 0.22);
+  color: #17242b;
+  background: #fffdf8;
+  box-shadow: 0 7px 18px rgb(23 36 43 / 0.1);
+  font-size: clamp(0.82rem, 1.25vw, 1.02rem);
+  font-weight: 720;
+  letter-spacing: -0.03em;
+  animation: dual-word-settle 420ms cubic-bezier(0.2, 0.8, 0.2, 1) both;
+}
+
+.dual-discovery-word-text { min-width: 0; overflow-wrap: anywhere; }
+
+.dual-discovery-word mark,
+.dual-how-example mark {
+  color: inherit;
+  background: transparent;
+  text-decoration: underline;
+  text-decoration-thickness: 0.12em;
+  text-underline-offset: 0.12em;
+}
+
+.dual-discovery-word small {
+  flex: 0 0 auto;
+  margin-left: 7px;
+  color: rgb(23 36 43 / 0.48);
+  font-size: 0.5em;
+  font-weight: 800;
+}
+
+.dual-discovery-forms .dual-discovery-word {
+  padding: 5px 7px;
+  box-shadow: 0 4px 12px rgb(23 36 43 / 0.07);
+  font-size: clamp(0.64rem, 0.92vw, 0.76rem);
+  font-weight: 650;
+}
+
+.dual-discovery-forms .dual-discovery-word small { font-size: 0.62em; }
+
+.dual-discovery-column.is-dual .dual-discovery-word {
+  width: 100%;
+  justify-content: flex-start;
+  padding: 8px 9px;
+  border: 2px solid #17242b;
+  color: #fffdf8;
+  background: #17242b;
+  box-shadow: 0 8px 22px rgb(23 36 43 / 0.16);
+  font-size: clamp(0.78rem, 1.25vw, 0.98rem);
+}
+
+.dual-discovery-column.is-dual .dual-discovery-word::before {
+  width: 6px;
+  height: 6px;
+  flex: 0 0 auto;
+  align-self: center;
+  border: 1px solid #fffdf8;
+  background: #fffdf8;
+  content: "";
+  transform: rotate(45deg);
+}
+
+.dual-discovery-column.is-dual .dual-discovery-word-text { margin-left: 4px; }
+.dual-discovery-column.is-dual .dual-discovery-word small { margin-left: auto; color: rgb(255 253 248 / 0.68); }
+
+.dual-entry-zone {
+  display: grid;
+  justify-items: center;
+  width: min(610px, 92vw);
+  margin: 0 auto;
+}
+
+.dual-entry {
+  display: grid;
+  width: 100%;
+  grid-template-columns: 1fr auto;
+  border: 1px solid rgb(23 36 43 / 0.52);
+  background: #fffdf8;
+  box-shadow: 0 12px 34px rgb(23 36 43 / 0.12);
+}
+
+.dual-entry input {
+  min-width: 0;
+  height: 52px;
+  padding: 0 18px;
+  border: 0;
+  outline: 0;
+  color: #17242b;
+  background: transparent;
+  font: 700 1.04rem "Manrope", sans-serif;
+}
+
+.dual-entry input::placeholder { color: rgb(23 36 43 / 0.42); font-weight: 600; }
+.dual-entry input:focus { box-shadow: inset 0 0 0 2px #17242b; }
+
+.dual-entry button {
+  min-width: 82px;
+  border: 0;
+  color: #fffdf8;
+  background: #17242b;
+  font: 800 0.7rem "Manrope", sans-serif;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.dual-entry button:disabled,
+.dual-entry input:disabled { cursor: not-allowed; opacity: 0.58; }
+
+.dual-feedback {
+  width: 100%;
+  min-height: 18px;
+  margin: 8px 0 0;
+  color: rgb(23 36 43 / 0.65);
+  font-size: 0.68rem;
+  font-weight: 700;
+  text-align: center;
+}
+
+.dual-feedback > .is-en,
+.dual-feedback > .is-es {
+  display: block;
+  width: 50%;
+}
+
+.dual-feedback > .is-en { padding-right: 0.55em; text-align: right; }
+.dual-feedback > .is-es { margin-left: 50%; padding-left: 0.55em; text-align: left; }
+
+.dual-feedback.is-error { color: #8f3932; }
+.dual-feedback.is-dual { color: #17242b; font-weight: 900; letter-spacing: 0.05em; }
+.dual-completion-callout { margin: 0 0 8px; font-size: 0.62rem; font-weight: 850; letter-spacing: 0.1em; }
+.dual-completion-callout.is-all-duals { color: #fffdf8; background: #17242b; padding: 5px 9px; }
+
+.dual-finish {
+  margin-top: 3px;
+  padding: 4px 0;
+  border: 0;
+  border-bottom: 1px solid currentColor;
+  color: #17242b;
+  background: transparent;
+  font: 750 0.66rem "Manrope", sans-serif;
+}
+
+.dual-result-backdrop {
+  position: absolute;
+  z-index: 20;
+  inset: 62px 0 0;
+  display: grid;
+  place-items: center;
+  padding: 24px;
+  background: rgb(23 36 43 / 0.68);
+  backdrop-filter: blur(8px);
+}
+
+.dual-result {
+  width: min(470px, 100%);
+  padding: clamp(28px, 5vw, 48px);
+  border: 1px solid rgb(255 255 255 / 0.58);
+  color: #17242b;
+  background: linear-gradient(90deg, #add1b5 0 50%, #f2dda1 50% 100%);
+  box-shadow: 0 25px 80px rgb(9 18 23 / 0.3);
+  text-align: center;
+}
+
+.dual-result > p:first-child { margin: 0; font-size: 0.62rem; font-weight: 900; letter-spacing: 0.14em; }
+.dual-result > strong { display: block; margin: 10px 0 -3px; font: 850 clamp(3.5rem, 10vw, 5.7rem)/1 "IBM Plex Mono", "SFMono-Regular", Consolas, monospace; letter-spacing: 0.02em; }
+.dual-result h2 { margin: 0; font-size: 1.45rem; }
+.dual-result h2 > .dual-localized-line { font-size: 0.72rem; letter-spacing: 0.02em; }
+.dual-result-scores { display: grid; margin: 25px 0 15px; grid-template-columns: repeat(3, 1fr); border-block: 1px solid rgb(23 36 43 / 0.22); }
+.dual-result-scores span { display: grid; gap: 4px; padding: 13px 5px; }
+.dual-result-scores span + span { border-left: 1px solid rgb(23 36 43 / 0.18); }
+.dual-result-scores small { font-size: 0.54rem; font-weight: 850; letter-spacing: 0.1em; }
+.dual-result-scores b { font-size: 1rem; }
+.dual-result-scores .is-duals { align-content: center; }
+.dual-result-detail { margin: 0 0 22px; color: rgb(23 36 43 / 0.66); font-size: 0.72rem; }
+.dual-result > button,
+.dual-primary-action { padding: 13px 19px; border: 1px solid #17242b; color: #fffdf8; background: #17242b; font: 800 0.7rem "Manrope", sans-serif; }
+
+.dual-how {
+  position: relative;
+  isolation: isolate;
+  min-height: calc(var(--game-room-height) - 62px);
+  overflow-y: auto;
+  padding: clamp(38px, 7vh, 76px) 24px 54px;
+  color: #17242b;
+}
+
+.dual-how::after,
+.dual-how::before { position: fixed; top: auto; height: var(--game-room-height); }
+
+.dual-how > header,
+.dual-how-example,
+.dual-how-rules,
+.dual-how-inflection,
+.dual-how > .dual-primary-action {
+  width: min(760px, 100%);
+  margin-inline: auto;
+}
+
+.dual-how > header { text-align: center; }
+.dual-how > header > p:first-child { margin: 0 0 10px; font-size: 0.6rem; font-weight: 900; letter-spacing: 0.14em; text-transform: uppercase; }
+.dual-how > header h2 { margin: 0; font: 800 clamp(1.8rem, 4.6vw, 3.5rem)/1.05 "IBM Plex Mono", "SFMono-Regular", Consolas, monospace; letter-spacing: -0.04em; }
+
+.dual-how-example {
+  display: grid;
+  align-items: stretch;
+  margin-top: 36px;
+  grid-template-columns: 1fr minmax(130px, 0.72fr) 1fr;
+  border-block: 1px solid rgb(23 36 43 / 0.24);
+}
+
+.dual-how-example > div { display: grid; justify-items: center; gap: 4px; padding: 18px 8px; }
+.dual-how-example .is-dual { color: #fffdf8; background: #17242b; }
+.dual-how-example small { font-size: 0.54rem; font-weight: 900; letter-spacing: 0.12em; }
+.dual-how-example strong { font: 750 clamp(1.35rem, 3vw, 2rem) "IBM Plex Mono", "SFMono-Regular", Consolas, monospace; }
+.dual-how-example span { font-size: 0.63rem; font-weight: 800; }
+
+.dual-how-rules { display: grid; gap: 0; margin-top: 30px; padding: 0; list-style: none; counter-reset: dual-rule; }
+.dual-how-rules li { display: grid; grid-template-columns: minmax(145px, 0.48fr) 1fr; gap: 20px; padding: 13px 0; border-bottom: 1px solid rgb(23 36 43 / 0.17); counter-increment: dual-rule; }
+.dual-how-rules b { font-size: 0.8rem; }
+.dual-how-rules b::before { margin-right: 8px; color: rgb(23 36 43 / 0.45); content: counter(dual-rule, decimal-leading-zero); }
+.dual-how-rules span { color: rgb(23 36 43 / 0.7); font-size: 0.76rem; line-height: 1.5; }
+
+.dual-how-inflection { display: grid; align-items: center; margin-top: 28px; grid-template-columns: 1fr auto 1fr; gap: 13px; text-align: center; }
+.dual-how-inflection span { padding: 14px 8px; border-block: 1px solid rgb(23 36 43 / 0.23); font-size: 0.74rem; }
+.dual-how-inflection b { font-size: 1rem; }
+.dual-how-inflection i { font-style: normal; }
+.dual-how-inflection p { grid-column: 1 / -1; margin: -3px 0 0; color: rgb(23 36 43 / 0.62); font-size: 0.66rem; }
+.dual-how > .dual-primary-action { display: block; width: max-content; margin-top: 28px; }
+
+@keyframes dual-word-settle {
+  from { opacity: 0; transform: translateY(-8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes dual-family-arrive {
+  from { opacity: 0; transform: translateX(8px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+
+@media (max-width: 720px) {
+  .dual-play {
+    min-height: 510px;
+    padding: 18px 14px 15px;
+  }
+
+  .dual-language-label { top: 15px; }
+  .dual-language-label.is-en { left: 14px; }
+  .dual-language-label.is-es { right: 14px; }
+  .dual-language-label span { display: none; }
+  .dual-puzzle-heading h2 { font-size: clamp(4rem, 23vw, 6rem); }
+  .dual-scoreboard { width: 100%; grid-template-columns: 1fr minmax(102px, 0.8fr) 1fr; }
+  .dual-scoreboard > div { min-height: 47px; padding: 10px 0 8px; }
+  .dual-scoreboard small { margin-right: 1px; font-size: 0.5rem; }
+  .dual-scoreboard strong { font-size: 1rem; }
+  .dual-scoreboard span { font-size: 0.6rem; }
+  .dual-discoveries { grid-template-columns: minmax(0, 1fr) 88px minmax(0, 1fr); }
+  .dual-discovery-column { overflow-x: hidden; overflow-y: auto; mask-image: linear-gradient(180deg, #000 0%, #000 78%, transparent 100%) !important; }
+  .dual-discovery-column.is-en { padding: 5px 7px 22px 0; direction: ltr; }
+  .dual-discovery-column.is-es { padding: 5px 0 22px 7px; }
+  .dual-discovery-column.is-dual { padding: 5px 4px 22px; }
+  .dual-family-stream,
+  .dual-discovery-column.is-en .dual-family-stream { display: grid; width: 100%; min-width: 0; gap: 7px; }
+  .dual-family-stream { justify-items: start; }
+  .dual-discovery-column.is-en .dual-family-stream { justify-items: end; }
+  .dual-discovery-family { width: max-content; max-width: 100%; gap: 3px; }
+  .dual-discovery-word { padding: 6px 5px; font-size: clamp(0.64rem, 2.8vw, 0.82rem); }
+  .dual-discovery-forms .dual-discovery-word { padding: 4px 5px; font-size: clamp(0.54rem, 2.3vw, 0.68rem); }
+  .dual-discovery-column.is-dual .dual-discovery-word { padding: 6px 5px; font-size: clamp(0.58rem, 2.5vw, 0.74rem); }
+  .dual-discovery-column.is-dual .dual-discovery-word::before { width: 4px; height: 4px; }
+  .dual-entry-zone { width: 100%; }
+  .dual-entry input { height: 47px; padding-inline: 13px; font-size: 0.92rem; }
+  .dual-entry button { min-width: 68px; }
+  .dual-how { padding-inline: 17px; }
+  .dual-how-example { grid-template-columns: 1fr 94px 1fr; }
+  .dual-how-rules li { grid-template-columns: 1fr; gap: 5px; }
+  .dual-result-backdrop { padding: 15px; }
+}
+
+@media (max-height: 760px) and (min-width: 721px) {
+  .dual-play { padding-block: 15px 12px; }
+  .dual-puzzle-heading h2 { font-size: 4.7rem; }
+  .dual-scoreboard { margin-top: 9px; }
+  .dual-scoreboard > div { min-height: 45px; padding-block: 9px 7px; }
+  .dual-discoveries { margin-block: 6px; }
+  .dual-entry input { height: 46px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .dual-discovery-word,
+  .dual-discovery-family { animation: none; }
+}
+
+/* DUAL menu, archive, stats, and settings */
+.dual-menu,
+.dual-library-view {
+  min-height: calc(var(--game-room-height) - 62px);
+  overflow-y: auto;
+  padding: clamp(38px, 7vh, 74px) 24px 48px;
+  color: #17242b;
+  background: linear-gradient(90deg, #add1b5 0 50%, #f2dda1 50% 100%);
+}
+
+.dual-menu > header,
+.dual-library-view > header,
+.dual-menu-options,
+.dual-archive-list,
+.dual-stats-grid,
+.dual-stats-balance,
+.dual-settings-row,
+.dual-settings-note,
+.dual-empty-state {
+  width: min(820px, 100%);
+  margin-inline: auto;
+}
+
+.dual-menu > header,
+.dual-library-view > header {
+  text-align: center;
+}
+
+.dual-menu .dual-wordmark {
+  width: min(560px, 100%);
+  grid-template-columns: 1fr 1fr;
+  justify-content: stretch;
+  font-size: clamp(3.8rem, 9vw, 6.8rem);
+  line-height: 0.92;
+}
+
+.dual-menu > header h2,
+.dual-library-view > header h2 {
+  margin: 13px 0 0;
+  font-family: "IBM Plex Mono", "SFMono-Regular", Consolas, monospace;
+  font-size: clamp(1.65rem, 4vw, 2.8rem);
+  letter-spacing: -0.045em;
+  line-height: 1.05;
+}
+
+.dual-library-view > header span {
+  display: block;
+  max-width: 570px;
+  margin: 10px auto 0;
+  color: rgb(23 36 43 / 0.68);
+  font-size: clamp(0.76rem, 1.5vw, 0.9rem);
+  line-height: 1.5;
+}
+
+.dual-center-split {
+  display: grid;
+  width: 100%;
+  grid-template-columns: 1fr 1fr;
+}
+
+.dual-center-split > span:first-child {
+  padding-right: clamp(7px, 1vw, 14px);
+  text-align: right;
+}
+
+.dual-center-split > span:last-child {
+  padding-left: clamp(7px, 1vw, 14px);
+  text-align: left;
+}
+
+.dual-menu > header > .dual-center-split--body,
+.dual-how > header > .dual-center-split--body {
+  max-width: none;
+  margin: 12px 0 0;
+  color: rgb(23 36 43 / 0.68);
+  font-family: "Manrope", sans-serif;
+  font-size: clamp(0.72rem, 1.3vw, 0.86rem);
+  font-weight: 500;
+  letter-spacing: normal;
+  line-height: 1.5;
+  text-transform: none;
+}
+
+.dual-library-view > header > p {
+  margin: 0;
+  font-size: 0.6rem;
+  font-weight: 900;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.dual-menu-options { margin-top: clamp(28px, 5vh, 48px); }
+
+.dual-menu-options button,
+.dual-archive-list button {
+  color: #17242b;
+  font-family: "Manrope", sans-serif;
+}
+
+.dual-menu-options button:hover,
+.dual-menu-options button:focus-visible,
+.dual-menu-options button:hover b,
+.dual-menu-options button:hover span,
+.dual-menu-options button:hover small,
+.dual-menu-options button:hover i {
+  color: #17242b;
+}
+
+.dual-menu-daily {
+  display: grid;
+  width: 100%;
+  min-height: 126px;
+  align-items: center;
+  grid-template-columns: minmax(125px, 0.42fr) 1fr auto;
+  gap: 24px;
+  padding: 18px 24px;
+  border: 1px solid rgb(23 36 43 / 0.4);
+  background: rgb(255 253 248 / 0.76);
+  box-shadow: 0 18px 50px rgb(23 36 43 / 0.09);
+  text-align: left;
+}
+
+.dual-menu-daily > span:first-child {
+  display: grid;
+  justify-items: center;
+  padding-right: 24px;
+  border-right: 1px solid rgb(23 36 43 / 0.18);
+}
+
+.dual-menu-daily small,
+.dual-menu-secondary span,
+.dual-archive-list small,
+.dual-settings-row small {
+  color: rgb(23 36 43 / 0.6);
+  font-size: 0.62rem;
+  font-weight: 650;
+}
+
+.dual-menu-daily > span:first-child strong {
+  margin-top: -2px;
+  font-family: "IBM Plex Mono", "SFMono-Regular", Consolas, monospace;
+  font-size: clamp(2.4rem, 6vw, 4rem);
+  letter-spacing: 0.02em;
+  line-height: 1;
+}
+
+.dual-menu-daily > span:nth-child(2) { display: grid; gap: 5px; }
+.dual-menu-daily > span:nth-child(2) b { font-size: 1.2rem; }
+.dual-menu-daily > i,
+.dual-archive-list i { font-size: 1.2rem; font-style: normal; transition: transform 160ms ease; }
+.dual-menu-daily:hover > i,
+.dual-archive-list button:hover > i { transform: translateX(4px); }
+
+.dual-menu-secondary {
+  display: grid;
+  margin-top: 12px;
+  grid-template-columns: 1fr 1fr;
+  border-top: 1px solid rgb(23 36 43 / 0.28);
+  border-left: 1px solid rgb(23 36 43 / 0.28);
+}
+
+.dual-menu-secondary button {
+  display: grid;
+  min-height: 75px;
+  align-content: center;
+  gap: 4px;
+  padding: 14px 18px;
+  border: 0;
+  border-right: 1px solid rgb(23 36 43 / 0.28);
+  border-bottom: 1px solid rgb(23 36 43 / 0.28);
+  background: rgb(255 253 248 / 0.28);
+  text-align: left;
+}
+
+.dual-menu-secondary button:hover { background: rgb(255 253 248 / 0.57); }
+.dual-menu-secondary b { font-size: 0.84rem; }
+
+.dual-archive-list {
+  display: grid;
+  margin-top: 32px;
+  border-top: 1px solid rgb(23 36 43 / 0.27);
+}
+
+.dual-archive-list button {
+  display: grid;
+  min-height: 74px;
+  align-items: center;
+  grid-template-columns: minmax(120px, 0.36fr) 1fr auto;
+  gap: 20px;
+  padding: 10px 4px;
+  border: 0;
+  border-bottom: 1px solid rgb(23 36 43 / 0.24);
+  background: transparent;
+  text-align: left;
+}
+
+.dual-archive-list button:hover { padding-inline: 12px; background: rgb(255 253 248 / 0.34); }
+.dual-archive-list button > span { display: flex; align-items: baseline; gap: 13px; }
+.dual-archive-list button > span:first-child small { width: 52px; }
+.dual-archive-list strong { font: 750 1.65rem "IBM Plex Mono", "SFMono-Regular", Consolas, monospace; letter-spacing: 0.02em; }
+.dual-archive-list button > span:nth-child(2) { display: grid; gap: 3px; }
+.dual-archive-list button > span:nth-child(2) b { font-size: 0.76rem; }
+
+.dual-archive-back {
+  position: absolute;
+  z-index: 3;
+  top: 20px;
+  left: 50%;
+  padding: 3px 0;
+  border: 0;
+  border-bottom: 1px solid rgb(23 36 43 / 0.42);
+  color: rgb(23 36 43 / 0.72);
+  background: transparent;
+  font: 750 0.62rem "Manrope", sans-serif;
+  transform: translateX(-50%);
+}
+
+.dual-stats-grid {
+  display: grid;
+  margin-top: 36px;
+  grid-template-columns: repeat(4, 1fr);
+  border-block: 1px solid rgb(23 36 43 / 0.27);
+}
+
+.dual-stats-grid > div {
+  display: grid;
+  justify-items: center;
+  padding: 24px 12px;
+  text-align: center;
+}
+
+.dual-stats-grid > div + div { border-left: 1px solid rgb(23 36 43 / 0.2); }
+.dual-stats-grid small { color: rgb(23 36 43 / 0.58); font-size: 0.58rem; font-weight: 800; letter-spacing: 0.08em; text-transform: uppercase; }
+.dual-stats-grid strong { margin-top: 6px; font: 800 clamp(1.8rem, 4vw, 3rem)/1 "IBM Plex Mono", "SFMono-Regular", Consolas, monospace; letter-spacing: -0.03em; }
+.dual-stats-grid span { color: rgb(23 36 43 / 0.52); font-size: 0.67rem; }
+
+.dual-stats-balance {
+  display: grid;
+  gap: 18px;
+  margin-top: 32px;
+}
+
+.dual-stats-balance > div { display: grid; gap: 7px; }
+.dual-stats-balance span { display: flex; justify-content: space-between; font-size: 0.72rem; font-weight: 800; }
+.dual-stats-balance b { letter-spacing: 0.1em; }
+.dual-stats-balance i { display: block; width: 100%; height: 7px; background: rgb(23 36 43 / 0.12); }
+.dual-stats-balance i::before { display: block; width: var(--dual-balance); height: 100%; background: #17242b; content: ""; }
+.dual-stats-balance > div:last-child i::before { margin-left: auto; }
+.dual-empty-state { margin-top: 26px; color: rgb(23 36 43 / 0.6); font-size: 0.72rem; text-align: center; }
+
+.dual-settings-row {
+  display: flex;
+  min-height: 92px;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  margin-top: 38px;
+  padding-block: 18px;
+  border-block: 1px solid rgb(23 36 43 / 0.28);
+}
+
+.dual-settings-row + .dual-settings-row {
+  margin-top: 0;
+  border-top: 0;
+}
+
+.dual-settings-row > span:first-child { display: grid; gap: 5px; }
+.dual-settings-row > span:first-child b { font-size: 0.86rem; }
+.dual-settings-row button {
+  padding: 9px 13px;
+  border: 1px solid #17242b;
+  color: #17242b;
+  background: transparent;
+  font: 750 0.65rem "Manrope", sans-serif;
+}
+
+.dual-settings-row button:disabled { cursor: not-allowed; opacity: 0.4; }
+.dual-language-options { display: flex; gap: 6px; }
+.dual-language-options button {
+  min-width: 48px;
+  font-family: "IBM Plex Mono", "SFMono-Regular", Consolas, monospace;
+}
+.dual-language-options button.is-current {
+  color: #fffdf8;
+  background: #17242b;
+}
+.dual-settings-confirm { display: flex; gap: 7px; }
+.dual-settings-confirm button.is-danger { border-color: #7b2f2a; color: #fffdf8; background: #7b2f2a; }
+.dual-settings-note { margin-top: 17px; color: rgb(23 36 43 / 0.58); font-size: 0.68rem; line-height: 1.5; }
+
+/* DUAL local-only puzzle builder */
+.dual-builder {
+  min-height: calc(var(--game-room-height) - 62px);
+  overflow-y: auto;
+  padding: clamp(32px, 5vh, 58px) clamp(18px, 4vw, 54px) 60px;
+  color: #17242b;
+  background: #e7ecec;
+  font-family: "Manrope", sans-serif;
+}
+
+.dual-builder-header,
+.dual-builder-layout {
+  width: min(1280px, 100%);
+  margin-inline: auto;
+}
+
+.dual-builder-header > span,
+.dual-builder-header > small,
+.dual-builder-state > p {
+  font: 750 0.6rem "IBM Plex Mono", "SFMono-Regular", Consolas, monospace;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.dual-builder-header h2,
+.dual-builder-state h2 {
+  margin: 8px 0 0;
+  font: 800 clamp(2rem, 4.4vw, 3.6rem)/1 "IBM Plex Mono", "SFMono-Regular", Consolas, monospace;
+  letter-spacing: -0.055em;
+}
+
+.dual-builder-header p { margin: 10px 0 0; color: rgb(23 36 43 / 0.68); font-size: 0.82rem; }
+.dual-builder-header > small { display: block; margin-top: 15px; color: rgb(23 36 43 / 0.53); font-size: 0.52rem; letter-spacing: 0.04em; text-transform: none; }
+
+.dual-builder-layout {
+  display: grid;
+  align-items: start;
+  gap: 18px;
+  margin-top: 32px;
+  grid-template-columns: minmax(230px, 0.34fr) minmax(0, 1fr);
+}
+
+.dual-builder-candidates,
+.dual-builder-workbench {
+  border: 1px solid rgb(23 36 43 / 0.22);
+  background: rgb(255 253 248 / 0.7);
+  box-shadow: 0 16px 45px rgb(23 36 43 / 0.06);
+}
+
+.dual-builder-candidates {
+  position: sticky;
+  top: 18px;
+  max-height: calc(100vh - 110px);
+  overflow: hidden;
+}
+
+.dual-builder-candidates > form > label,
+.dual-builder-targets label,
+.dual-builder-pool > header input {
+  font-size: 0.58rem;
+  font-weight: 850;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.dual-builder-candidates > form > label {
+  display: grid;
+  gap: 8px;
+  padding: 16px;
+  border-bottom: 1px solid rgb(23 36 43 / 0.18);
+}
+
+.dual-builder-candidates input,
+.dual-builder-targets input,
+.dual-builder-pool > header input,
+.dual-builder-playtest input {
+  min-width: 0;
+  border: 1px solid rgb(23 36 43 / 0.3);
+  border-radius: 0;
+  outline: 0;
+  color: #17242b;
+  background: #fffdf8;
+  font-family: "IBM Plex Mono", "SFMono-Regular", Consolas, monospace;
+}
+
+.dual-builder-candidates input { height: 40px; padding: 0 11px; font-size: 0.9rem; text-transform: uppercase; }
+.dual-builder-candidates input:focus,
+.dual-builder-targets input:focus,
+.dual-builder-pool > header input:focus,
+.dual-builder-playtest input:focus { box-shadow: inset 0 0 0 1px #17242b; }
+
+.dual-builder-candidates > div { max-height: calc(100vh - 190px); overflow-y: auto; }
+.dual-builder-candidates button {
+  display: grid;
+  width: 100%;
+  min-height: 64px;
+  align-items: center;
+  gap: 9px;
+  padding: 10px 13px;
+  border: 0;
+  border-bottom: 1px solid rgb(23 36 43 / 0.13);
+  color: #17242b;
+  background: transparent;
+  grid-template-columns: 66px minmax(0, 1fr);
+  text-align: left;
+}
+
+.dual-builder-candidates button:hover { color: #17242b; background: #d7e7db; }
+.dual-builder-candidates button.is-current { color: #fffdf8; background: #17242b; }
+.dual-builder-candidates button > span { display: grid; gap: 2px; }
+.dual-builder-candidates button > span:first-child { grid-template-columns: 21px 1fr; align-items: baseline; }
+.dual-builder-candidates button strong { font: 800 1.35rem "IBM Plex Mono", "SFMono-Regular", Consolas, monospace; }
+.dual-builder-candidates button b { font-size: 0.66rem; }
+.dual-builder-candidates button small { color: inherit; font-size: 0.5rem; opacity: 0.65; }
+
+.dual-builder-candidates > form { display: grid; gap: 9px; padding: 16px; border-bottom: 1px solid rgb(23 36 43 / 0.18); }
+.dual-builder-candidates > form > label { padding: 0; border: 0; }
+.dual-builder-candidates > form > button {
+  display: block;
+  min-height: 40px;
+  padding: 0 12px;
+  border: 1px solid #17242b;
+  color: #fffdf8;
+  background: #17242b;
+  font: 800 0.62rem "Manrope", sans-serif;
+  text-align: center;
+  text-transform: uppercase;
+}
+.dual-builder-candidates > form > button:hover { color: #fffdf8; background: #253943; }
+.dual-builder-choice-note { display: grid; gap: 8px; padding: 18px 16px 22px; }
+.dual-builder-choice-note b { font-size: 0.74rem; }
+.dual-builder-choice-note p { margin: 0; color: rgb(23 36 43 / 0.65); font-size: 0.65rem; line-height: 1.5; }
+.dual-builder-choice-note small { color: rgb(23 36 43 / 0.5); font-size: 0.54rem; line-height: 1.45; }
+
+.dual-builder-workbench { min-width: 0; padding: clamp(18px, 3vw, 32px); }
+.dual-builder-workbench > header { display: grid; align-items: end; gap: 22px; grid-template-columns: auto 1fr; }
+.dual-builder-workbench > header > div { display: grid; justify-items: center; }
+.dual-builder-workbench > header > div small { font-size: 0.52rem; font-weight: 850; letter-spacing: 0.09em; text-transform: uppercase; }
+.dual-builder-workbench > header > div strong { font: 850 clamp(3.4rem, 7vw, 5.8rem)/0.9 "IBM Plex Mono", "SFMono-Regular", Consolas, monospace; letter-spacing: 0.02em; }
+.dual-builder-workbench dl { display: grid; margin: 0; grid-template-columns: repeat(5, 1fr); border-block: 1px solid rgb(23 36 43 / 0.2); }
+.dual-builder-workbench dl > div { display: grid; gap: 3px; padding: 11px 10px; }
+.dual-builder-workbench dl > div + div { border-left: 1px solid rgb(23 36 43 / 0.16); }
+.dual-builder-workbench dt { color: rgb(23 36 43 / 0.55); font-size: 0.5rem; font-weight: 800; text-transform: uppercase; }
+.dual-builder-workbench dd { margin: 0; font: 750 0.9rem "IBM Plex Mono", "SFMono-Regular", Consolas, monospace; }
+
+.dual-builder-warnings { margin-top: 22px; padding: 14px 16px; border-left: 3px solid #a46d55; background: #f0e1d8; }
+.dual-builder-warnings > b { font-size: 0.67rem; }
+.dual-builder-warnings ul { display: flex; flex-wrap: wrap; gap: 5px 22px; margin: 7px 0 0; padding-left: 17px; }
+.dual-builder-warnings li,
+.dual-builder-warnings p { margin: 0; color: rgb(23 36 43 / 0.68); font-size: 0.61rem; line-height: 1.45; }
+
+.dual-builder-targets { display: grid; gap: 9px; margin-top: 20px; grid-template-columns: 1.3fr repeat(3, minmax(85px, 0.62fr)); }
+.dual-builder-targets label { display: grid; gap: 6px; }
+.dual-builder-targets input { height: 38px; padding: 0 9px; font-size: 0.72rem; }
+.dual-builder-targets > button {
+  grid-column: 1 / -1;
+  justify-self: start;
+  padding: 7px 10px;
+  border: 1px solid rgb(23 36 43 / 0.3);
+  color: #17242b;
+  background: transparent;
+  font: 750 0.55rem "Manrope", sans-serif;
+}
+
+.dual-builder-playtest { margin-top: 20px; padding: 16px; color: #17242b; background: linear-gradient(90deg, #add1b5 0 50%, #f2dda1 50% 100%); }
+.dual-builder-playtest > header { display: flex; justify-content: space-between; font-size: 0.58rem; font-weight: 800; letter-spacing: 0.08em; text-transform: uppercase; }
+.dual-builder-playtest > div { display: grid; align-items: center; margin: 12px 0; grid-template-columns: 1fr auto 1fr; font-size: 0.6rem; font-weight: 800; }
+.dual-builder-playtest > div span:last-child { text-align: right; }
+.dual-builder-playtest > div strong { font: 850 2.7rem "IBM Plex Mono", "SFMono-Regular", Consolas, monospace; }
+.dual-builder-playtest form { display: grid; grid-template-columns: 1fr auto; }
+.dual-builder-playtest input { height: 42px; padding: 0 12px; font-size: 0.8rem; }
+.dual-builder-playtest button { min-width: 72px; border: 0; color: #fffdf8; background: #17242b; font-size: 0.62rem; font-weight: 800; text-transform: uppercase; }
+.dual-builder-playtest > p { min-height: 16px; margin: 7px 0 0; font-size: 0.6rem; font-weight: 700; text-align: center; }
+
+.dual-builder-pool { margin-top: 24px; border-top: 1px solid rgb(23 36 43 / 0.24); }
+.dual-builder-pool > header { display: flex; align-items: center; justify-content: space-between; gap: 14px; padding: 14px 0; }
+.dual-builder-pool > header > div { display: grid; gap: 2px; }
+.dual-builder-pool > header b { font-size: 0.75rem; }
+.dual-builder-pool > header span { color: rgb(23 36 43 / 0.57); font-size: 0.56rem; }
+.dual-builder-pool > header input { width: min(220px, 45%); height: 36px; padding: 0 10px; font-size: 0.64rem; text-transform: none; }
+.dual-builder-tabs,
+.dual-builder-filters,
+.dual-builder-bulk { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; }
+.dual-builder-tabs { border-block: 1px solid rgb(23 36 43 / 0.16); }
+.dual-builder-tabs button,
+.dual-builder-filters button,
+.dual-builder-bulk button {
+  border: 1px solid rgb(23 36 43 / 0.22);
+  color: #17242b;
+  background: transparent;
+  font: 750 0.54rem "Manrope", sans-serif;
+}
+.dual-builder-tabs button { padding: 10px 12px; border-block: 0; }
+.dual-builder-tabs button.is-active { color: #fffdf8; background: #17242b; }
+.dual-builder-tabs b { margin-left: 4px; font-family: "IBM Plex Mono", monospace; }
+.dual-builder-filters { padding: 10px 0; }
+.dual-builder-filters > span { margin-right: 3px; font-size: 0.5rem; font-weight: 850; letter-spacing: 0.08em; text-transform: uppercase; }
+.dual-builder-filters button { padding: 6px 8px; }
+.dual-builder-filters button.is-active { background: #add1b5; box-shadow: inset 0 0 0 1px #17242b; }
+.dual-builder-bulk { padding: 9px; background: rgb(23 36 43 / 0.06); }
+.dual-builder-bulk > span { flex: 1; }
+.dual-builder-bulk button { padding: 6px 8px; background: #fffdf8; }
+.dual-builder-bulk button:disabled { opacity: 0.35; }
+.dual-builder-entry-list { max-height: 560px; overflow-y: auto; border-top: 1px solid rgb(23 36 43 / 0.16); }
+.dual-builder-entry-list > article { border-bottom: 1px solid rgb(23 36 43 / 0.13); }
+.dual-builder-entry-list > article.needs-review { background: rgb(240 225 216 / 0.55); }
+.dual-builder-entry-list > article.is-excluded { color: rgb(23 36 43 / 0.58); background: rgb(23 36 43 / 0.04); }
+.dual-builder-entry-list > article.is-manual { box-shadow: inset 3px 0 #527a5d; }
+.dual-builder-entry-summary { display: grid; min-height: 56px; align-items: center; gap: 10px; padding: 8px 5px; grid-template-columns: 20px minmax(115px, 0.25fr) minmax(0, 1fr) 155px 98px 48px; }
+.dual-builder-entry-summary > input { accent-color: #17242b; }
+.dual-builder-entry-name { display: flex; align-items: baseline; gap: 7px; }
+.dual-builder-entry-list strong { font: 750 0.84rem "IBM Plex Mono", "SFMono-Regular", Consolas, monospace; }
+.dual-builder-entry-list small { color: rgb(23 36 43 / 0.55); font-size: 0.5rem; }
+.dual-builder-entry-meta { display: grid; min-width: 0; gap: 2px; }
+.dual-builder-entry-meta b { overflow: hidden; font-size: 0.57rem; text-overflow: ellipsis; white-space: nowrap; }
+.dual-builder-entry-meta small { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.dual-builder-entry-list select { height: 30px; border: 1px solid rgb(23 36 43 / 0.27); border-radius: 0; color: #17242b; background: #fffdf8; font: 650 0.57rem "Manrope", sans-serif; }
+.dual-builder-frequency { line-height: 1.4; text-align: right; }
+.dual-builder-disclosure { padding: 6px 5px; border: 0; color: #17242b; background: transparent; font-size: 0.52rem; font-weight: 800; text-decoration: underline; }
+.dual-builder-entry-details { display: grid; gap: 7px; padding: 12px 14px 15px 35px; border-top: 1px dashed rgb(23 36 43 / 0.18); background: rgb(255 253 248 / 0.58); }
+.dual-builder-entry-details > header { display: flex; justify-content: space-between; }
+.dual-builder-entry-details > header b { font-size: 0.58rem; text-transform: uppercase; }
+.dual-builder-entry-details > header span { font-size: 0.52rem; }
+.dual-builder-entry-details > div { display: grid; grid-template-columns: 145px 1fr; gap: 2px 10px; padding-top: 7px; border-top: 1px solid rgb(23 36 43 / 0.1); }
+.dual-builder-entry-details > div b { font: 700 0.58rem "IBM Plex Mono", monospace; }
+.dual-builder-entry-details > div span { font-size: 0.54rem; }
+.dual-builder-entry-details > div p { grid-column: 1 / -1; margin: 0; color: rgb(23 36 43 / 0.65); font-size: 0.55rem; line-height: 1.45; }
+.dual-builder-family-choice { display: grid; grid-template-columns: 145px minmax(180px, 280px); align-items: center; gap: 5px 10px; padding: 8px 0; border-top: 1px solid rgb(23 36 43 / 0.1); font-size: 0.56rem; font-weight: 800; }
+.dual-builder-family-choice small { grid-column: 2; color: rgb(23 36 43 / 0.58); font-size: 0.52rem; font-weight: 500; line-height: 1.35; }
+.dual-builder-family-choice select { width: 100%; }
+
+.dual-builder-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 9px; margin-top: 20px; }
+.dual-builder-actions button { padding: 10px 13px; border: 1px solid #17242b; color: #17242b; background: transparent; font: 750 0.62rem "Manrope", sans-serif; }
+.dual-builder-actions button:first-child { color: #fffdf8; background: #17242b; }
+.dual-builder-actions small { flex-basis: 100%; color: rgb(23 36 43 / 0.55); font-size: 0.56rem; }
+
+.dual-builder-state { display: grid; align-content: center; justify-items: center; min-height: calc(var(--game-room-height) - 62px); text-align: center; }
+.dual-builder-state > span { max-width: 520px; margin-top: 12px; color: rgb(23 36 43 / 0.65); font-size: 0.76rem; }
+.dual-builder-state code { margin-top: 24px; padding: 12px 16px; color: #fffdf8; background: #17242b; }
+.dual-builder-state > small { max-width: 450px; margin-top: 12px; color: rgb(23 36 43 / 0.55); font-size: 0.6rem; line-height: 1.5; }
+@media (max-width: 720px) {
+  .dual-menu,
+  .dual-library-view { padding: 34px 15px 42px; }
+  .dual-menu .dual-wordmark { font-size: clamp(3.5rem, 19vw, 5rem); }
+  .dual-menu-daily { min-height: 108px; grid-template-columns: 98px 1fr auto; gap: 13px; padding: 13px; }
+  .dual-menu-daily > span:first-child { padding-right: 13px; }
+  .dual-menu-daily > span:first-child small { font-size: 0.48rem; }
+  .dual-menu-secondary { grid-template-columns: 1fr; }
+  .dual-menu-secondary button { min-height: 65px; }
+  .dual-archive-list button { grid-template-columns: 96px 1fr auto; gap: 10px; }
+  .dual-archive-list button > span:first-child { gap: 6px; }
+  .dual-archive-list button > span:first-child small { width: 41px; font-size: 0.52rem; }
+  .dual-archive-list strong { font-size: 1.35rem; }
+  .dual-stats-grid { grid-template-columns: 1fr 1fr; }
+  .dual-stats-grid > div:nth-child(3) { border-left: 0; border-top: 1px solid rgb(23 36 43 / 0.2); }
+  .dual-stats-grid > div:nth-child(4) { border-top: 1px solid rgb(23 36 43 / 0.2); }
+  .dual-settings-row { display: grid; }
+  .dual-settings-confirm { display: grid; grid-template-columns: 1fr 1fr; }
+  .dual-archive-back { top: 15px; }
+  .dual-builder { padding: 28px 13px 42px; }
+  .dual-builder-layout { grid-template-columns: 1fr; }
+  .dual-builder-candidates { position: static; max-height: none; }
+  .dual-builder-candidates > div { display: flex; max-height: none; overflow-x: auto; }
+  .dual-builder-candidates > .dual-builder-choice-note { display: grid; overflow: visible; }
+  .dual-builder-candidates button { min-width: 210px; border-right: 1px solid rgb(23 36 43 / 0.13); }
+  .dual-builder-workbench { padding: 16px; }
+  .dual-builder-workbench > header { grid-template-columns: 1fr; }
+  .dual-builder-workbench dl { grid-template-columns: 1fr 1fr; }
+  .dual-builder-workbench dl > div:nth-child(3) { border-left: 0; border-top: 1px solid rgb(23 36 43 / 0.16); }
+  .dual-builder-workbench dl > div:nth-child(4) { border-top: 1px solid rgb(23 36 43 / 0.16); }
+  .dual-builder-targets { grid-template-columns: 1fr 1fr; }
+  .dual-builder-targets label:first-child { grid-column: 1 / -1; }
+  .dual-builder-entry-summary { grid-template-columns: 20px minmax(100px, 0.4fr) minmax(0, 1fr); }
+  .dual-builder-entry-meta { grid-column: 2 / -1; }
+  .dual-builder-frequency { display: none; }
+  .dual-builder-entry-list select { grid-column: 2 / 3; }
+  .dual-builder-disclosure { grid-column: 3; }
+  .dual-builder-entry-details { padding-left: 14px; }
+}

@@ -12,9 +12,19 @@ function read(relativePath) {
   return fs.readFileSync(path.join(repositoryRoot, relativePath), "utf8");
 }
 
+function readStyles(...relativePaths) {
+  return relativePaths.map(read).join("\n");
+}
+
 test("every launch game has an isolated module and an internal route", () => {
   const routeSource = read("app/games/[gameId]/page.tsx");
+  const globalStyles = read("app/globals.css");
   assert.match(routeSource, /generateStaticParams/);
+  assert.match(globalStyles, /styles\/base\.css/);
+  assert.match(globalStyles, /styles\/shell\.css/);
+  assert.match(globalStyles, /styles\/fonts\.css/);
+  assert.doesNotMatch(globalStyles, /styles\/hub\.css|games\/.+\.css/);
+  assert.match(read("app/styles/base.css"), /family=IBM\+Plex\+Mono/);
 
   for (const game of catalog.launch) {
     assert.ok(
@@ -23,12 +33,46 @@ test("every launch game has an isolated module and an internal route", () => {
       ),
       `missing module for ${game.id}`,
     );
+    assert.ok(
+      fs.existsSync(
+        path.join(repositoryRoot, "src", "games", game.id, `${game.id}.css`),
+      ),
+      `missing stylesheet for ${game.id}`,
+    );
+    assert.match(
+      read(`src/games/${game.id}/${game.id}-game.tsx`),
+      new RegExp(`\\./${game.id}\\.css`),
+    );
   }
+});
+
+test("game routes resolve their selected chunk during the server render", () => {
+  const loaderSource = read("src/games/game-loader.tsx");
+  assert.doesNotMatch(loaderSource, /use client|next\/dynamic/);
+  assert.match(loaderSource, /export async function GameLoader/);
+  assert.match(loaderSource, /await gameLoaders\[gameId\]\(\)/);
+});
+
+test("the Before & After face is available on a fresh Hub visit", () => {
+  const globalStyles = read("app/globals.css");
+  const sharedFonts = read("app/styles/fonts.css");
+  const gameStyles = read("src/games/before-after/before-after.css");
+  assert.match(globalStyles, /styles\/fonts\.css/);
+  assert.match(sharedFonts, /font-family: "Sansita Swashed"/);
+  assert.doesNotMatch(gameStyles, /@font-face/);
 });
 
 test("the home page routes into the hub rather than legacy deployments", () => {
   const homeSource = read("app/page.tsx");
-  const heroPreviewSource = read("src/app-shell/hero-game-previews.tsx");
+  const hubStyles = read("app/styles/hub.css");
+  const heroControllerSource = read("src/app-shell/hero-game-previews.tsx");
+  const heroPreviewSource = readStyles(
+    "src/games/syllabl/hub.tsx",
+    "src/games/rarity/hub.tsx",
+    "src/games/before-after/hub.tsx",
+    "src/games/decode/hub.tsx",
+  );
+  const hubRegistrySource = read("src/games/hub-registry.ts");
   const cardSource = read("src/app-shell/game-card.tsx");
   assert.match(cardSource, /href=\{`\/games\/\$\{game\.id\}`\}/);
   assert.doesNotMatch(homeSource, /mariogerardi\.github\.io/);
@@ -63,26 +107,46 @@ test("the home page routes into the hub rather than legacy deployments", () => {
   assert.match(heroPreviewSource, /is-answer-last/);
   assert.match(heroPreviewSource, /data-preview-game/);
   assert.match(heroPreviewSource, /data-preview-entry/);
-  assert.match(heroPreviewSource, /requestAnimationFrame\(checkPosition\)/);
-  assert.match(heroPreviewSource, /social-card-render__games/);
-  assert.match(heroPreviewSource, /activationRadius = galleryBounds\.width \* 0\.07/);
-  assert.match(heroPreviewSource, /galleryIsVisible/);
-  assert.match(heroPreviewSource, /hasRunRef/);
-  assert.match(heroPreviewSource, /activeCardCenterRef/);
-  assert.match(heroPreviewSource, /activeCardIsVisible/);
+  assert.match(heroControllerSource, /requestAnimationFrame\(checkPosition\)/);
+  assert.match(heroControllerSource, /social-card-render__games/);
+  assert.match(heroControllerSource, /activationRadius = galleryBounds\.width \* 0\.07/);
+  assert.match(heroControllerSource, /IntersectionObserver/);
+  assert.match(heroControllerSource, /new Map<string, HTMLDivElement>/);
+  assert.match(heroControllerSource, /previewKey\(gameId, instance\)/);
   assert.match(heroPreviewSource, /enter your word…/);
-  assert.doesNotMatch(heroPreviewSource, /setTimeout\(resetDemo, 2800\)/);
+  assert.doesNotMatch(heroControllerSource, /setTimeout\(resetDemo, 2800\)/);
   assert.doesNotMatch(heroPreviewSource, /daily #497|level 4 of 6/);
   assert.doesNotMatch(heroPreviewSource, /typedAnswer\.length/);
   assert.doesNotMatch(homeSource, /A game collection by Mario Gerardi/);
   assert.doesNotMatch(homeSource, /Three ready now\. Three more on the way\./);
   assert.doesNotMatch(homeSource, /preview-card-gridl/);
   assert.match(cardSource, /game\.hubStatus === "coming-soon"/);
-  assert.match(cardSource, /game\.id === "decode"/);
-  assert.match(cardSource, /decode-card-wordmark/);
+  assert.doesNotMatch(cardSource, /game\.id ===/);
+  assert.match(cardSource, /game\.presentation\.Wordmark/);
+  assert.match(hubRegistrySource, /DecodeHubWordmark/);
+  assert.match(hubRegistrySource, /temporarilyHiddenGridGames = new Set<GameId>\(\["gridl", "expl41n"\]\)/);
+  assert.match(homeSource, /hubGridGames\.map/);
+  assert.match(
+    hubStyles,
+    /\.game-card\[data-game="dual"\] \.dual-card-wordmark \{[\s\S]*?font-family: "IBM Plex Mono"/,
+  );
+  assert.doesNotMatch(read("src/games/dual/hub.tsx"), /aria-hidden="true" \/>/);
+  assert.doesNotMatch(read("src/games/dual/dual-game.tsx"), /<span>DU<\/span><i/);
+  assert.doesNotMatch(hubStyles, /\.dual-card-wordmark i/);
+  assert.doesNotMatch(read("src/games/dual/dual.css"), /\.dual-wordmark i/);
   assert.match(cardSource, /coming soon!/);
   assert.match(cardSource, /aria-disabled="true"/);
   assert.match(homeSource, /Challenge yourself<span className="hero-period">\.<\/span>/);
+  for (const animationName of [
+    "hero-marquee-scroll",
+    "preview-decode-correct",
+    "preview-rarity-result-in",
+  ]) {
+    assert.match(hubStyles, new RegExp(`animation: ${animationName}\\b`));
+    assert.match(hubStyles, new RegExp(`@keyframes ${animationName}\\b`));
+  }
+  assert.doesNotMatch(read("src/games/decode/decode.css"), /@keyframes preview-decode-correct/);
+  assert.doesNotMatch(read("src/games/rarity/rarity.css"), /@keyframes preview-rarity-result-in/);
 });
 
 test("the shared shell exposes accessible navigation and page landmarks", () => {
@@ -104,9 +168,9 @@ test("the application has no Sites-specific build or hosting coupling", () => {
 });
 
 test("the Syllabl route exposes the complete playable migration", () => {
-  const routeSource = read("app/games/[gameId]/page.tsx");
+  const loaderSource = read("src/games/game-loader.tsx");
   const gameSource = read("src/games/syllabl/syllabl-game.tsx");
-  assert.match(routeSource, /SyllablGame/);
+  assert.match(loaderSource, /module\.SyllablGame/);
   assert.match(gameSource, /handleSubmit/);
   assert.match(gameSource, /createSyllablWordValidator/);
   assert.match(gameSource, /syllablDailyStorageKey/);
@@ -127,7 +191,7 @@ test("the Syllabl route exposes the complete playable migration", () => {
 test("the Syllabl facelift keeps its core flow responsive and addressable", () => {
   const gameSource = read("src/games/syllabl/syllabl-game.tsx");
   const localBarSource = read("src/app-shell/game-local-bar.tsx");
-  const styles = read("app/globals.css");
+  const styles = read("src/games/syllabl/syllabl.css");
 
   for (const landmark of [
     "syllabl-menu-daily",
@@ -165,10 +229,10 @@ test("the Syllabl facelift keeps its core flow responsive and addressable", () =
 });
 
 test("the Rarity route exposes the complete playable migration", () => {
-  const routeSource = read("app/games/[gameId]/page.tsx");
+  const loaderSource = read("src/games/game-loader.tsx");
   const gameSource = read("src/games/rarity/rarity-game.tsx");
   const rarityStyles = read("src/games/rarity/rarity.module.css");
-  assert.match(routeSource, /RarityGame/);
+  assert.match(loaderSource, /module\.RarityGame/);
   assert.match(gameSource, /handleSubmit/);
   assert.match(gameSource, /validateRarityLocalRules/);
   assert.match(gameSource, /submitResultToLeaderboard/);
@@ -198,10 +262,10 @@ test("the Rarity route exposes the complete playable migration", () => {
 });
 
 test("the Gridl route exposes the complete playable campaign migration", () => {
-  const routeSource = read("app/games/[gameId]/page.tsx");
+  const loaderSource = read("src/games/game-loader.tsx");
   const gameSource = read("src/games/gridl/gridl-game.tsx");
   const rulesSource = read("src/games/gridl/engine/rules.mjs");
-  assert.match(routeSource, /GridlGame/);
+  assert.match(loaderSource, /module\.GridlGame/);
   assert.match(gameSource, /tryStagePlacement/);
   assert.match(gameSource, /tryStageRecall/);
   assert.match(gameSource, /getPortalOverlayText/);
@@ -225,10 +289,10 @@ test("the Gridl route exposes the complete playable campaign migration", () => {
 });
 
 test("the Expl41n route exposes its restored game room and all preserved modes", () => {
-  const routeSource = read("app/games/[gameId]/page.tsx");
+  const loaderSource = read("src/games/game-loader.tsx");
   const gameSource = read("src/games/expl41n/expl41n-game.tsx");
   const presentationSource = read("src/games/expl41n/presentation.mjs");
-  assert.match(routeSource, /Expl41nGame/);
+  assert.match(loaderSource, /module\.Expl41nGame/);
   assert.match(gameSource, /type Expl41nView/);
   assert.match(gameSource, /"home" \| "play" \| "archive" \| "custom" \| "how"/);
   assert.match(gameSource, /useState<Expl41nView>\("home"\)/);
@@ -274,29 +338,29 @@ test("the Expl41n route exposes its restored game room and all preserved modes",
 });
 
 test("the Before&After route exposes the complete bridge game", () => {
-  const routeSource = read("app/games/[gameId]/page.tsx");
+  const loaderSource = read("src/games/game-loader.tsx");
   const gameSource = read(
     "src/games/before-after/before-after-game.tsx",
   );
-  assert.match(routeSource, /BeforeAfterGame/);
-  assert.match(gameSource, /"daily", "packs", "archive", "custom", "stats"/);
+  assert.match(loaderSource, /module\.BeforeAfterGame/);
+  assert.match(gameSource, /"daily", "packs", "archive", "stats"/);
+  assert.doesNotMatch(gameSource, /CreatorView|CUSTOM_KEY|label: "Custom"|view === "custom"/);
   assert.match(gameSource, /BEFORE_AFTER_ANSWER_LIMIT/);
   assert.match(gameSource, /remainingBridgeSeconds/);
-  assert.match(gameSource, /validateCustomBridgePuzzle/);
   assert.match(gameSource, /PROGRESS_KEY/);
   assert.match(gameSource, /is-answer-first/);
   assert.match(gameSource, /is-answer-last/);
 });
 
 test("the DECODE route exposes all playable modes", () => {
-  const routeSource = read("app/games/[gameId]/page.tsx");
+  const loaderSource = read("src/games/game-loader.tsx");
   const gameSource = read("src/games/decode/decode-game.tsx");
-  assert.match(routeSource, /DecodeGame/);
+  assert.match(loaderSource, /module\.DecodeGame/);
   assert.match(gameSource, /"timed", "daily-5", "zen"/);
   assert.match(gameSource, /deriveDecodeFeedback/);
   assert.match(gameSource, /evaluateDecodeAttempt/);
   assert.match(gameSource, /tickDecodeClock/);
-  assert.match(gameSource, /decodeDailyPuzzles/);
+  assert.match(gameSource, /selectDailyDecodePuzzles/);
   assert.match(gameSource, /PROGRESS_KEY/);
   assert.match(gameSource, /One answer\./);
   assert.doesNotMatch(gameSource, /One word\./);
@@ -314,10 +378,10 @@ test("the DECODE route exposes all playable modes", () => {
 });
 
 test("the TOKEN route exposes the native prediction game", () => {
-  const routeSource = read("app/games/[gameId]/page.tsx");
+  const loaderSource = read("src/games/game-loader.tsx");
   const gameSource = read("src/games/token/token-game.tsx");
   const engineSource = read("src/games/token/engine.mjs");
-  assert.match(routeSource, /TokenGame/);
+  assert.match(loaderSource, /module\.TokenGame/);
   assert.match(gameSource, /Predict TOKEN’s next token/);
   assert.match(gameSource, /token-results/);
   assert.match(gameSource, /token-inspection/);
@@ -330,12 +394,12 @@ test("the TOKEN route exposes the native prediction game", () => {
 });
 
 test("the DUAL route exposes bilingual daily play and its lexical boundary", () => {
-  const routeSource = read("app/games/[gameId]/page.tsx");
+  const loaderSource = read("src/games/game-loader.tsx");
   const gameSource = read("src/games/dual/dual-game.tsx");
   const engineSource = read("src/games/dual/engine.mjs");
   const lexiconSource = read("src/games/dual/lexicon.mjs");
-  const cardSource = read("src/app-shell/game-card.tsx");
-  assert.match(routeSource, /DualGame/);
+  const cardSource = read("src/games/dual/hub.tsx");
+  assert.match(loaderSource, /module\.DualGame/);
   assert.match(gameSource, /GameLocalBar/);
   assert.match(gameSource, /ALL DUALS FOUND/);
   assert.match(gameSource, /gameStorageKey\("dual", "daily"\)/);
@@ -361,7 +425,12 @@ test("the DUAL route exposes bilingual daily play and its lexical boundary", () 
 test("game routes use the full-viewport shared play shell", () => {
   const routeSource = read("app/games/[gameId]/page.tsx");
   const backSource = read("src/app-shell/game-canvas-back.tsx");
-  const styles = read("app/globals.css");
+  const styles = readStyles(
+    "app/styles/shell.css",
+    "src/games/syllabl/syllabl.css",
+    "src/games/gridl/gridl.css",
+    "src/games/before-after/before-after.css",
+  );
   assert.doesNotMatch(routeSource, /game-route-bar|game-route-features|game-route-identity/);
   assert.match(routeSource, /GameCanvasBack/);
   assert.match(backSource, /className="game-canvas-back"/);
@@ -377,7 +446,14 @@ test("game routes use the full-viewport shared play shell", () => {
 
 test("every non-Expl41n game adopts the persistent local navigation bar", () => {
   const barSource = read("src/app-shell/game-local-bar.tsx");
-  const styles = read("app/globals.css");
+  const styles = readStyles(
+    "app/styles/shell.css",
+    "src/games/syllabl/syllabl.css",
+    "src/games/rarity/rarity.css",
+    "src/games/gridl/gridl.css",
+    "src/games/before-after/before-after.css",
+    "src/games/decode/decode.css",
+  );
   assert.match(barSource, /className={`game-local-bar \$\{className\}`}/);
   assert.match(barSource, /aria-current=\{item\.current \? "page" : undefined\}/);
   assert.match(styles, /padding: 10px 28px 10px 116px/);

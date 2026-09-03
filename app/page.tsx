@@ -1,12 +1,13 @@
 import Link from "next/link";
+import "./styles/hub.css";
 import { GameCard } from "../src/app-shell/game-card";
 import { HeroGamePreviews } from "../src/app-shell/hero-game-previews";
 import { SiteFooter } from "../src/app-shell/site-footer";
 import { SiteHeader } from "../src/app-shell/site-header";
-import { hubGames } from "../src/games/registry";
+import { hubDisplayGames, hubGridGames } from "../src/games/hub-registry";
 
 export default function Home() {
-  const flagship = hubGames[0];
+  const flagship = hubDisplayGames[0];
 
   return (
     <div className="site-frame">
@@ -46,7 +47,7 @@ export default function Home() {
           </div>
 
           <div className="game-grid">
-            {hubGames.map((game) => (
+            {hubGridGames.map((game) => (
               <GameCard game={game} key={game.id} />
             ))}
           </div>

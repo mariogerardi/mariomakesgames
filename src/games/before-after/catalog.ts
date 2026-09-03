@@ -1,6 +1,7 @@
 import allPuzzleData from "./data/all-puzzles.json" with { type: "json" };
 import minecraftData from "./data/minecraft.json" with { type: "json" };
 import type { BridgePuzzle } from "./engine.mjs";
+import { CURRENT_DAILY_EPOCH, dailyCatalogIndex, dailyCatalogOffset } from "../../platform/daily-calendar.mjs";
 
 export type BridgePack = {
   id: string;
@@ -61,8 +62,6 @@ export const bridgePacks: BridgePack[] = [
 
 export const allBridgePuzzles = bridgePacks.flatMap((pack) => pack.puzzles);
 
-const DAY_MS = 86_400_000;
-
 export function bridgeDateKey(date = new Date()) {
   const year = date.getFullYear();
   const month = String(date.getMonth() + 1).padStart(2, "0");
@@ -71,12 +70,7 @@ export function bridgeDateKey(date = new Date()) {
 }
 
 export function selectDailyBridgePuzzle(date = new Date()) {
-  const dayIndex = Math.floor(
-    Date.UTC(date.getFullYear(), date.getMonth(), date.getDate()) / DAY_MS,
-  );
-  const index =
-    ((dayIndex % allBridgePuzzles.length) + allBridgePuzzles.length) %
-    allBridgePuzzles.length;
+  const index = dailyCatalogIndex(date, allBridgePuzzles.length);
   return allBridgePuzzles[index];
 }
 
@@ -88,7 +82,7 @@ export function bridgeArchive(days = 30, date = new Date()) {
       date.getDate() - index,
       12,
     );
-    return {
+    return dailyCatalogOffset(entryDate) < 0 ? null : {
       date: bridgeDateKey(entryDate),
       label: new Intl.DateTimeFormat(undefined, {
         month: "short",
@@ -96,5 +90,7 @@ export function bridgeArchive(days = 30, date = new Date()) {
       }).format(entryDate),
       puzzle: selectDailyBridgePuzzle(entryDate),
     };
-  });
+  }).filter((entry): entry is NonNullable<typeof entry> => entry !== null);
 }
+
+export { CURRENT_DAILY_EPOCH as BEFORE_AFTER_DAILY_EPOCH };

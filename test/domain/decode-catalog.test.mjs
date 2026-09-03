@@ -3,9 +3,12 @@ import test from "node:test";
 import {
   allDecodePuzzles,
   decodeDailyPuzzles,
+  decodeModePuzzleBank,
   decodeSourceRevision,
   decodeTimedPuzzles,
   selectTimedDecodePuzzle,
+  selectDecodeModePuzzle,
+  selectDailyDecodePuzzles,
 } from "../../src/games/decode/catalog.ts";
 
 test("the production DECODE catalog preserves 118 unique authored puzzles", () => {
@@ -25,6 +28,12 @@ test("the production DECODE catalog preserves 118 unique authored puzzles", () =
   assert.equal(decodeDailyPuzzles.length, 5);
   assert.equal(allDecodePuzzles.length, 118);
   assert.equal(new Set(allDecodePuzzles.map((puzzle) => puzzle.id)).size, 118);
+});
+
+test("Timed and Zen can draw daily entries from the shared length banks", () => {
+  assert.ok(decodeModePuzzleBank(4).includes(decodeDailyPuzzles[0]));
+  assert.ok(decodeModePuzzleBank(7).includes(decodeDailyPuzzles.at(-1)));
+  assert.equal(selectDecodeModePuzzle(4, () => 0), decodeModePuzzleBank(4)[0]);
 });
 
 test("the exact duplicated COBALT to BALLOT record is removed", () => {
@@ -47,6 +56,10 @@ test("the original fixed Daily 5 stays in its authored order", () => {
     [4, 5, 6, 6, 7],
   );
   assert.equal(decodeDailyPuzzles.at(-1).theme, "Sea Creatures");
+});
+
+test("the historical Daily 5 is current from September 1, 2026", () => {
+  assert.deepEqual(selectDailyDecodePuzzles("2026-09-01"), decodeDailyPuzzles);
 });
 
 test("Timed selection draws from the requested difficulty pool", () => {

@@ -16,6 +16,7 @@
     "test:app": "node --test test/app/*.test.mjs",
     "test:contracts": "node --test test/contracts/*.test.mjs",
     "test:legacy": "node --test test/legacy/*.test.mjs",
+    "studio:promote": "node scripts/studio/promote.mjs",
     "dual:data:download": "node scripts/dual/download-kaikki.mjs",
     "dual:data:frequency": "node scripts/dual/prepare-wordfreq.mjs",
     "dual:data:build": "node --expose-gc --max-old-space-size=4096 scripts/dual/build-kaikki-index.mjs",
