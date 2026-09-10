@@ -3,8 +3,11 @@ import test from "node:test";
 import {
   bridgePhrases,
   createBridgeSession,
+  elapsedBridgeSeconds,
   hydrateBridgeSession,
-  remainingBridgeSeconds,
+  pauseBridgeSession,
+  revealBridgeAnswer,
+  resumeBridgeSession,
   serializeBridgeSession,
   submitBridgeAnswer,
   validateCustomBridgePuzzle,
@@ -72,7 +75,7 @@ test("empty and post-completion submissions are rejected without mutation", () =
   assert.equal(replay.state.attempts, 1);
 });
 
-test("Daily remains open for unlimited guesses until exactly 60 seconds", () => {
+test("Daily remains open for unlimited guesses while its stopwatch accrues", () => {
   let session = createBridgeSession({
     puzzle: beforePuzzle,
     mode: "daily",
@@ -82,10 +85,36 @@ test("Daily remains open for unlimited guesses until exactly 60 seconds", () => 
     session = submitBridgeAnswer(session, "wrong", 11_000 + index).state;
   }
   assert.equal(session.status, "active");
-  assert.equal(remainingBridgeSeconds(session, 69_999), 1);
-  const expired = submitBridgeAnswer(session, "last", 70_000);
-  assert.equal(expired.accepted, false);
-  assert.equal(expired.state.status, "expired");
+  assert.equal(elapsedBridgeSeconds(session, 69_999), 59);
+  const solved = submitBridgeAnswer(session, "last", 70_000);
+  assert.equal(solved.accepted, true);
+  assert.equal(solved.state.status, "solved");
+  assert.equal(elapsedBridgeSeconds(solved.state, 90_000), 60);
+});
+
+test("the stopwatch pauses away from play and resumes without resetting", () => {
+  const session = createBridgeSession({ puzzle: beforePuzzle, mode: "daily", startedAt: 10_000 });
+  const paused = pauseBridgeSession(session, 25_000);
+  assert.equal(elapsedBridgeSeconds(paused, 70_000), 15);
+  const restored = hydrateBridgeSession({ payload: serializeBridgeSession(paused), puzzle: beforePuzzle, mode: "daily", now: 70_000 });
+  assert.equal(elapsedBridgeSeconds(restored, 90_000), 15);
+  const resumed = resumeBridgeSession(restored, 90_000);
+  assert.equal(elapsedBridgeSeconds(resumed, 95_000), 20);
+  assert.equal(submitBridgeAnswer(resumed, "last", 100_000).state.durationMs, 25_000);
+});
+
+test("revealing an answer ends the attempt without marking it solved", () => {
+  const session = createBridgeSession({
+    puzzle: beforePuzzle,
+    mode: "archive",
+    startedAt: 1_000,
+  });
+  const revealed = revealBridgeAnswer(session, 6_000);
+  assert.equal(revealed.status, "revealed");
+  assert.equal(revealed.answerText, "last");
+  assert.equal(revealed.attempts, 0);
+  assert.equal(elapsedBridgeSeconds(revealed, 20_000), 5);
+  assert.equal(submitBridgeAnswer(revealed, "last", 7_000).accepted, false);
 });
 
 test("custom puzzles require one short answer and two unique clues", () => {
@@ -117,7 +146,7 @@ test("custom puzzles require one short answer and two unique clues", () => {
   assert.equal(valid.puzzle.answer, "last");
 });
 
-test("hydration restores only a matching session and expires stale Daily play", () => {
+test("hydration restores only a matching session and migrates expired Daily play", () => {
   const session = createBridgeSession({
     puzzle: beforePuzzle,
     mode: "daily",
@@ -132,8 +161,18 @@ test("hydration restores only a matching session and expires stale Daily play", 
     mode: "daily",
     now: 70_000,
   });
-  assert.equal(restored.status, "expired");
+  assert.equal(restored.status, "active");
   assert.equal(restored.attempts, 1);
+
+  const migrated = hydrateBridgeSession({
+    payload: { ...payload, status: "expired", completedAt: 70_000, durationMs: 60_000 },
+    puzzle: beforePuzzle,
+    mode: "daily",
+    now: 80_000,
+  });
+  assert.equal(migrated.status, "active");
+  assert.equal(migrated.startedAt, 80_000);
+  assert.equal(migrated.completedAt, null);
 
   const fresh = hydrateBridgeSession({
     payload,

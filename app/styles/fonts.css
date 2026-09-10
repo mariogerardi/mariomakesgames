@@ -1,5 +1,13 @@
 /* Shared local faces used by both the Hub and their owning games. */
 @font-face {
+  font-family: "Kalam";
+  src: url("https://fonts.gstatic.com/s/kalam/v18/YA9Qr0Wd4kDdMtDqHQLL.ttf") format("truetype");
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+}
+
+@font-face {
   font-family: "Sansita Swashed";
   src: url("/fonts/before-after/SansitaSwashed-Regular.ttf") format("truetype");
   font-style: normal;

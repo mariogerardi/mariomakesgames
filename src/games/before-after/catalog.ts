@@ -62,6 +62,44 @@ export const bridgePacks: BridgePack[] = [
 
 export const allBridgePuzzles = bridgePacks.flatMap((pack) => pack.puzzles);
 
+export const fundamentalBridgePacks: BridgePack[] = [
+  {
+    id: "before-101",
+    name: "Before 101",
+    description: "Put one bridge before both clue words.",
+    puzzles: bridgePacks[0].puzzles.slice(0, 10),
+  },
+  {
+    id: "after-101",
+    name: "After 101",
+    description: "Put one bridge after both clue words.",
+    puzzles: bridgePacks[1].puzzles.slice(0, 10),
+  },
+  {
+    id: "both-101",
+    name: "Before&After 101",
+    description: "Use the bridge on opposite sides.",
+    puzzles: bridgePacks[2].puzzles.slice(0, 10),
+  },
+];
+
+export const bridgePackCollections: Array<{ id: string; name: string; description: string; packs: BridgePack[] }> = [
+  {
+    id: "fundamentals",
+    name: "the fundamentals",
+    description: "Three focused ten-puzzle introductions to how bridges work.",
+    packs: fundamentalBridgePacks,
+  },
+  {
+    id: "worlds",
+    name: "worlds",
+    description: "Theme-specific bridges collected in their own sets.",
+    packs: [bridgePacks.find((pack) => pack.id === "minecraft")!],
+  },
+];
+
+export const playableBridgePacks = bridgePackCollections.flatMap((collection) => collection.packs);
+
 export function bridgeDateKey(date = new Date()) {
   const year = date.getFullYear();
   const month = String(date.getMonth() + 1).padStart(2, "0");
@@ -91,6 +129,10 @@ export function bridgeArchive(days = 30, date = new Date()) {
       puzzle: selectDailyBridgePuzzle(entryDate),
     };
   }).filter((entry): entry is NonNullable<typeof entry> => entry !== null);
+}
+
+export function bridgeCompleteArchive(date = new Date()) {
+  return bridgeArchive(Math.max(1, dailyCatalogOffset(date) + 1), date);
 }
 
 export { CURRENT_DAILY_EPOCH as BEFORE_AFTER_DAILY_EPOCH };

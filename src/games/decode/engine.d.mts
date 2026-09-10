@@ -49,3 +49,4 @@ export function tickDecodeClock(
 ): DecodeState;
 export function normalizeDecodeInput(value: unknown, length: number): string;
 export function formatDecodeTime(seconds: number): string;
+export function decodeDisplayAnswer(state: DecodeState | null, puzzleAnswer: string, draftAnswer: string): string;

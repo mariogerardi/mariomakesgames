@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { headers } from "next/headers";
 import { notFound } from "next/navigation";
 import { SiteHeader } from "../../src/app-shell/site-header";
+import { AdminGate } from "../../src/app-shell/admin-gate";
 import { isLocalStudioHost } from "../../src/authoring/studio-access";
 import { StudioDashboard } from "../../src/authoring/studio-dashboard";
 import "../styles/studio.css";
@@ -19,7 +20,7 @@ export default async function StudioPage() {
   return (
     <div className="site-frame studio-site-frame">
       <SiteHeader />
-      <StudioDashboard />
+      <AdminGate><StudioDashboard /></AdminGate>
     </div>
   );
 }

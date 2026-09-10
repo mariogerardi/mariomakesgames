@@ -11,8 +11,10 @@ Contracts capture the smallest pure statements of existing game behavior.
 - [Before&After](before-after/CONTRACT.md)
 - [DECODE](decode/CONTRACT.md)
 
-All six playable launch games have mechanics contracts and production
-regressions.
+These six documents preserve the imported legacy games. TOKEN and DUAL are
+native Hub games, so their behavior is covered by their production engines and
+regression tests rather than legacy-port preservation contracts. Public Hub
+availability is tracked separately from contract coverage.
 
 ## Contract rule
 

@@ -34,6 +34,7 @@ export function transitionTokenRun(run, phase) {
 }
 
 export function createTokenRun(puzzle) {
+  const startedAt = new Date().toISOString();
   return {
     puzzleId: puzzle.id,
     phase: TOKEN_PHASES.LOADING,
@@ -41,6 +42,8 @@ export function createTokenRun(puzzle) {
     stopCursor: 0,
     submissions: [],
     completed: false,
+    completedAt: null,
+    startedAt,
   };
 }
 
@@ -99,6 +102,12 @@ export function hydrateTokenRun(value, puzzle) {
       stopCursor: Math.max(0, Math.min(puzzle.stops.length, parsed.stopCursor)),
       submissions: parsed.submissions,
       completed: Boolean(parsed.completed),
+      completedAt: typeof parsed.completedAt === "string" && Number.isFinite(Date.parse(parsed.completedAt))
+        ? parsed.completedAt
+        : parsed.completed ? new Date().toISOString() : null,
+      startedAt: typeof parsed.startedAt === "string" && Number.isFinite(Date.parse(parsed.startedAt))
+        ? parsed.startedAt
+        : new Date().toISOString(),
     };
   } catch {
     return null;

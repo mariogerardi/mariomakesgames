@@ -19,3 +19,9 @@ export function formatDecodeTime(seconds) {
   const minutes = Math.floor(safeSeconds / 60);
   return `${minutes}:${String(safeSeconds % 60).padStart(2, "0")}`;
 }
+
+export function decodeDisplayAnswer(state, puzzleAnswer, draftAnswer) {
+  return state?.mode === "daily-5" && state.status === "complete"
+    ? normalizeDecodeInput(puzzleAnswer, String(puzzleAnswer ?? "").length)
+    : String(draftAnswer ?? "");
+}

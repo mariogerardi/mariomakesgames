@@ -48,9 +48,17 @@ test("every launch game has an isolated module and an internal route", () => {
 
 test("game routes resolve their selected chunk during the server render", () => {
   const loaderSource = read("src/games/game-loader.tsx");
+  const routeSource = read("app/games/[gameId]/page.tsx");
+  const routeStateSource = read("src/games/route-state.ts");
   assert.doesNotMatch(loaderSource, /use client|next\/dynamic/);
   assert.match(loaderSource, /export async function GameLoader/);
   assert.match(loaderSource, /await gameLoaders\[gameId\]\(\)/);
+  assert.match(routeSource, /resolveGameRouteState\(game\.id, query\)/);
+  assert.match(routeSource, /initialRoute=\{initialRoute\}/);
+  for (const game of ["syllabl", "rarity", "before-after", "dual"]) assert.match(routeStateSource, new RegExp(`(?:"${game}"|${game}): \\[`));
+  assert.match(routeStateSource, /gameId === "dual" && view === "archive"/);
+  assert.match(routeStateSource, /gameId === "syllabl" && view === "daily"/);
+  assert.match(loaderSource, /DUAL_INTERFACE_LANGUAGE_COOKIE/);
 });
 
 test("the Before & After face is available on a fresh Hub visit", () => {
@@ -71,6 +79,7 @@ test("the home page routes into the hub rather than legacy deployments", () => {
     "src/games/rarity/hub.tsx",
     "src/games/before-after/hub.tsx",
     "src/games/decode/hub.tsx",
+    "src/games/dual/hub.tsx",
   );
   const hubRegistrySource = read("src/games/hub-registry.ts");
   const cardSource = read("src/app-shell/game-card.tsx");
@@ -88,19 +97,22 @@ test("the home page routes into the hub rather than legacy deployments", () => {
   assert.match(heroPreviewSource, /preview-card-before-after/);
   assert.match(heroPreviewSource, /preview-card-decode/);
   assert.match(heroPreviewSource, /data-preview-game="decode"/);
+  assert.match(heroPreviewSource, /data-preview-game="dual"/);
+  assert.match(heroPreviewSource, /dualHubPreviewAnswer = "once"/);
+  assert.match(heroPreviewSource, /Dual found/);
   assert.match(heroPreviewSource, /preview-before-after-phrases/);
-  assert.match(heroPreviewSource, /preview-before-after-input/);
+  assert.doesNotMatch(heroPreviewSource, /preview-before-after-input/);
   assert.match(heroPreviewSource, /procrastinator/);
   assert.match(heroPreviewSource, /begins with PRO/);
   assert.doesNotMatch(heroPreviewSource, /fully contains PRO/);
   assert.match(heroPreviewSource, /5 syllables/);
   assert.match(heroPreviewSource, /bejeweled/);
   assert.match(heroPreviewSource, />WEL</);
-  assert.match(heroPreviewSource, /one valid guess\. make it count\./);
+  assert.match(heroPreviewSource, /one valid word\. make it as rare as you can\./);
   assert.match(heroPreviewSource, /preview-rarity-result/);
   assert.match(heroPreviewSource, /beje<mark>wel<\/mark>ed/);
   assert.match(heroPreviewSource, /decorated or adorned with jewels\./);
-  assert.match(heroPreviewSource, /a genuinely rare find/);
+  assert.match(heroPreviewSource, /rare territory\. an impressive pull\./);
   assert.match(heroPreviewSource, /79\.91765/);
   assert.match(heroPreviewSource, /data-preview-score/);
   assert.match(heroPreviewSource, /is-answer-first/);
@@ -113,6 +125,8 @@ test("the home page routes into the hub rather than legacy deployments", () => {
   assert.match(heroControllerSource, /IntersectionObserver/);
   assert.match(heroControllerSource, /new Map<string, HTMLDivElement>/);
   assert.match(heroControllerSource, /previewKey\(gameId, instance\)/);
+  assert.match(heroControllerSource, /const visibleGames = new Set<GameId>\(\)/);
+  assert.match(heroControllerSource, /return states\[gameId\] \?\? idlePreview/);
   assert.match(heroPreviewSource, /enter your word…/);
   assert.doesNotMatch(heroControllerSource, /setTimeout\(resetDemo, 2800\)/);
   assert.doesNotMatch(heroPreviewSource, /daily #497|level 4 of 6/);
@@ -140,6 +154,7 @@ test("the home page routes into the hub rather than legacy deployments", () => {
   for (const animationName of [
     "hero-marquee-scroll",
     "preview-decode-correct",
+    "preview-decode-letter-in",
     "preview-rarity-result-in",
   ]) {
     assert.match(hubStyles, new RegExp(`animation: ${animationName}\\b`));
@@ -147,6 +162,9 @@ test("the home page routes into the hub rather than legacy deployments", () => {
   }
   assert.doesNotMatch(read("src/games/decode/decode.css"), /@keyframes preview-decode-correct/);
   assert.doesNotMatch(read("src/games/rarity/rarity.css"), /@keyframes preview-rarity-result-in/);
+  assert.match(read("src/games/decode/hub.tsx"), /CLAMP[\s\S]*CAMEO|CAMEO[\s\S]*CLAMP/);
+  assert.match(hubStyles, /preview-decode-clue > span\.is-correct \{ background: color-mix\(in srgb, #14a44d 84%, #0d1511\); \}/);
+  assert.match(hubStyles, /span:nth-child\(5\) \{ animation-delay: 320ms; \}/);
 });
 
 test("the shared shell exposes accessible navigation and page landmarks", () => {
@@ -178,11 +196,12 @@ test("the Syllabl route exposes the complete playable migration", () => {
   assert.match(gameSource, /six for six/);
   assert.match(gameSource, /data-syllabl-theme/);
   assert.match(gameSource, /syllabl-play-primary/);
-  assert.match(gameSource, /syllabl-current-level-summary/);
+  assert.match(gameSource, /syllabl-step-progress-segment/);
   assert.doesNotMatch(gameSource, /syllabl-play-sidebar/);
   assert.match(gameSource, /"light", name: "light"/);
   assert.match(gameSource, /"peachy", name: "peachy"/);
-  assert.match(gameSource, /"menu" \| "daily" \| "how-to" \| "themes" \| "about"/);
+  assert.match(gameSource, /"menu" \| "daily" \| "archive" \| "how-to" \| "themes"/);
+  assert.doesNotMatch(gameSource, /syllabl-about|view === "about"|label: "about"/);
   assert.doesNotMatch(gameSource, /syllabl-menu-stats|view === "stats"/);
   assert.doesNotMatch(gameSource, /shuffle|all-puzzles|create-puzzle/i);
   assert.doesNotMatch(gameSource, /frequency|Rarity score/);
@@ -197,18 +216,20 @@ test("the Syllabl facelift keeps its core flow responsive and addressable", () =
     "syllabl-menu-daily",
     "syllabl-menu-secondary",
     "syllabl-step-progress",
+    "syllabl-step-progress-segment",
     "syllabl-play-card",
     "syllabl-complete-answers",
-    "syllabl-how-layout",
-    "syllabl-worked-example",
-    "syllabl-stage-story",
+    "syllabl-how-heading",
+    "syllabl-how-board",
+    "syllabl-position-grid",
+    "syllabl-how-sound-example",
     "syllabl-theme-preview",
-    "syllabl-about-layout",
-    "syllabl-about-loop",
     "syllabl-view-frame",
   ]) {
     assert.match(gameSource, new RegExp(landmark), `missing Syllabl facelift landmark: ${landmark}`);
   }
+
+  assert.match(gameSource, /enteredGuess\.syllableList\.join\("·"\)/);
 
   assert.match(gameSource, /searchParams\.set\("view", nextView\)/);
   assert.match(gameSource, /addEventListener\("popstate", syncView\)/);
@@ -219,10 +240,17 @@ test("the Syllabl facelift keeps its core flow responsive and addressable", () =
   assert.match(styles, /\.syllabl-game-card \.syllabl-entry button \{[\s\S]*?display: inline-flex/);
   assert.match(styles, /@keyframes syllabl-screen-out/);
   assert.match(styles, /@keyframes syllabl-word-bounce/);
+  assert.match(styles, /@keyframes syllabl-progress-word-bounce/);
+  assert.match(styles, /game-local-bar--syllabl \.syllabl-wordmark\.is-compact \{[\s\S]*?font-family: "Fredoka"/);
   assert.match(styles, /@keyframes syllabl-token-flip/);
   assert.match(styles, /@keyframes syllabl-answer-pop/);
   assert.match(styles, /prefers-reduced-motion: reduce/);
   assert.match(gameSource, /behavior: "instant"/);
+  assert.match(gameSource, /createDailySetup/);
+  assert.match(gameSource, /open today’s puzzle/);
+  assert.match(styles, /syllabl-menu-status-in/);
+  assert.match(styles, /grid-template-columns: repeat\(6, minmax\(0, 1fr\)\)/);
+  assert.doesNotMatch(gameSource, /completedStages \/ 6/);
   assert.match(localBarSource, /nav\.scrollTo/);
   assert.doesNotMatch(localBarSource, /scrollIntoView/);
   assert.match(styles, /@keyframes syllabl-token-flip \{\s*from[\s\S]*?to[\s\S]*?\}/);
@@ -238,11 +266,15 @@ test("the Rarity route exposes the complete playable migration", () => {
   assert.match(gameSource, /submitResultToLeaderboard/);
   assert.match(gameSource, /rarityDailyStorageKey/);
   assert.match(gameSource, /handleShare/);
-  assert.match(gameSource, /first valid word locks/i);
+  assert.match(gameSource, /lock it in/);
+  assert.match(gameSource, /commitPendingSubmission/);
   assert.match(gameSource, /data-rarity-theme/);
-  assert.match(gameSource, /"home" \| "daily" \| "how-to" \| "themes" \| "about" \| "insights"/);
-  assert.match(gameSource, /daily insights/i);
-  assert.match(gameSource, /rarity-insight-panel/);
+  assert.match(gameSource, /"home" \| "daily" \| "archive" \| "how-to" \| "themes" \| "settings"/);
+  assert.doesNotMatch(gameSource, /label: "about"/);
+  assert.doesNotMatch(gameSource, /label: "insights"/);
+  assert.match(gameSource, /rarity-archive-grid/);
+  assert.match(gameSource, /RaritySupportHeader/);
+  assert.doesNotMatch(gameSource, /rarity-insight-panel/);
   assert.match(gameSource, /rarity-keyboard/);
   assert.match(gameSource, /name: "alloy"/);
   assert.match(gameSource, /name: "oasis"/);
@@ -251,13 +283,15 @@ test("the Rarity route exposes the complete playable migration", () => {
   assert.match(gameSource, /rarityViewFromUrl/);
   assert.match(gameSource, /searchParams\.set\("view", nextView\)/);
   assert.match(gameSource, /addEventListener\("popstate"/);
-  assert.match(gameSource, /history\.replaceState/);
+  assert.match(gameSource, /history\.pushState/);
   assert.doesNotMatch(gameSource, /rarity-side-panel/);
   assert.match(rarityStyles, /--rarity-score-fill/);
-  assert.match(rarityStyles, /@keyframes rarity-word-type/);
+  assert.match(gameSource, /rarity-result-word/);
+  assert.match(gameSource, /--letter-delay/);
+  assert.match(rarityStyles, /@keyframes rarity-result-letter-in/);
   assert.match(rarityStyles, /prefers-reduced-motion: reduce/);
-  assert.match(gameSource, /\/rarity\/logo\.png/);
-  assert.ok(fs.existsSync(path.join(repositoryRoot, "public", "rarity", "logo.png")));
+  assert.match(gameSource, /\/hub\/rarity-gem\.png/);
+  assert.ok(fs.existsSync(path.join(repositoryRoot, "public", "hub", "rarity-gem.png")));
   assert.doesNotMatch(gameSource, /rarity-off|vault|friends|badges/i);
 });
 
@@ -343,10 +377,15 @@ test("the Before&After route exposes the complete bridge game", () => {
     "src/games/before-after/before-after-game.tsx",
   );
   assert.match(loaderSource, /module\.BeforeAfterGame/);
-  assert.match(gameSource, /"daily", "packs", "archive", "stats"/);
+  assert.match(gameSource, /"daily", "packs", "archive"/);
+  assert.match(gameSource, /"themes", "how-to", "settings"/);
+  assert.doesNotMatch(gameSource, /label: "Stats"|view === "stats"/);
   assert.doesNotMatch(gameSource, /CreatorView|CUSTOM_KEY|label: "Custom"|view === "custom"/);
   assert.match(gameSource, /BEFORE_AFTER_ANSWER_LIMIT/);
-  assert.match(gameSource, /remainingBridgeSeconds/);
+  assert.match(gameSource, /elapsedBridgeSeconds/);
+  assert.match(gameSource, /revealBridgeAnswer/);
+  assert.match(gameSource, /pauseBridgeSession/);
+  assert.doesNotMatch(gameSource, /view insights|view === "insights"/i);
   assert.match(gameSource, /PROGRESS_KEY/);
   assert.match(gameSource, /is-answer-first/);
   assert.match(gameSource, /is-answer-last/);
@@ -356,7 +395,18 @@ test("the DECODE route exposes all playable modes", () => {
   const loaderSource = read("src/games/game-loader.tsx");
   const gameSource = read("src/games/decode/decode-game.tsx");
   assert.match(loaderSource, /module\.DecodeGame/);
-  assert.match(gameSource, /"timed", "daily-5", "zen"/);
+  assert.match(gameSource, /"daily-5", "timed", "zen"/);
+  assert.match(gameSource, /"home", "daily-5", "timed", "zen", "how-to"/);
+  assert.match(gameSource, /decode-mode-landing/);
+  assert.match(gameSource, /decode-how-page/);
+  assert.match(gameSource, /Abandon this Timed run\?/);
+  assert.doesNotMatch(gameSource, /Resume your Daily 5\?/);
+  assert.match(gameSource, /resume today’s sequence/);
+  assert.match(gameSource, /localDateKey/);
+  assert.match(gameSource, /window\.addEventListener\("beforeunload"/);
+  assert.match(gameSource, /window\.addEventListener\("pagehide"/);
+  assert.doesNotMatch(gameSource, /decode-how-modes/);
+  assert.doesNotMatch(gameSource, /decode-zen-selector/);
   assert.match(gameSource, /deriveDecodeFeedback/);
   assert.match(gameSource, /evaluateDecodeAttempt/);
   assert.match(gameSource, /tickDecodeClock/);
@@ -407,7 +457,8 @@ test("the DUAL route exposes bilingual daily play and its lexical boundary", () 
   assert.match(gameSource, /gameStorageKey\("dual", "interface-language"\)/);
   assert.match(gameSource, /DualMenu/);
   assert.match(gameSource, /DualArchive/);
-  assert.match(gameSource, /DualStats/);
+  assert.match(gameSource, /DualThemes/);
+  assert.doesNotMatch(gameSource, /DualStats|view === "stats"|label: localized\(language, "Stats"/);
   assert.match(gameSource, /DualSettings/);
   assert.match(gameSource, /DEFAULT_DUAL_INTERFACE_LANGUAGE/);
   assert.match(gameSource, /data-interface-language=\{language\}/);
@@ -424,7 +475,6 @@ test("the DUAL route exposes bilingual daily play and its lexical boundary", () 
 
 test("game routes use the full-viewport shared play shell", () => {
   const routeSource = read("app/games/[gameId]/page.tsx");
-  const backSource = read("src/app-shell/game-canvas-back.tsx");
   const styles = readStyles(
     "app/styles/shell.css",
     "src/games/syllabl/syllabl.css",
@@ -432,16 +482,17 @@ test("game routes use the full-viewport shared play shell", () => {
     "src/games/before-after/before-after.css",
   );
   assert.doesNotMatch(routeSource, /game-route-bar|game-route-features|game-route-identity/);
-  assert.match(routeSource, /GameCanvasBack/);
-  assert.match(backSource, /className="game-canvas-back"/);
-  assert.match(backSource, /dualLanguage === "es"/);
+  assert.doesNotMatch(routeSource, /GameCanvasBack|game-canvas-back/);
   assert.match(routeSource, /className="game-canvas"/);
   assert.doesNotMatch(routeSource, /className="room-grid"/);
   assert.doesNotMatch(routeSource, /<SiteFooter/);
   assert.match(styles, /\.game-canvas > \.syllabl-game-card/);
-  assert.match(styles, /--game-room-height: calc\(100dvh - 66px\)/);
-  assert.match(styles, /--game-canvas: #ffca3a/);
-  assert.match(styles, /--game-canvas: #73d4ec/);
+  assert.match(styles, /--site-header-height: 57px/);
+  assert.match(styles, /--game-local-bar-height: 62px/);
+  assert.match(styles, /--game-room-height: calc\(100dvh - var\(--site-header-height\)\)/);
+  assert.match(styles, /--game-screen-height: calc\(var\(--game-room-height\) - var\(--game-local-bar-height\)\)/);
+  assert.match(styles, /--game-canvas: #e6e6e6/);
+  assert.match(styles, /--game-canvas:var\(--ba-bg,#f2f2f7\)/);
 });
 
 test("every non-Expl41n game adopts the persistent local navigation bar", () => {
@@ -456,7 +507,8 @@ test("every non-Expl41n game adopts the persistent local navigation bar", () => 
   );
   assert.match(barSource, /className={`game-local-bar \$\{className\}`}/);
   assert.match(barSource, /aria-current=\{item\.current \? "page" : undefined\}/);
-  assert.match(styles, /padding: 10px 28px 10px 116px/);
+  assert.match(styles, /padding: 10px 28px/);
+  assert.match(styles, /button\.is-current \{[\s\S]*?box-shadow: none/);
   assert.match(styles, /\.game-local-bar--syllabl/);
   assert.match(styles, /\.game-local-bar--rarity/);
   assert.match(styles, /\.game-local-bar--gridl/);

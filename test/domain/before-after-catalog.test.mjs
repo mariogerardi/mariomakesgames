@@ -3,7 +3,10 @@ import test from "node:test";
 import {
   allBridgePuzzles,
   bridgeArchive,
+  bridgeCompleteArchive,
   bridgePacks,
+  bridgePackCollections,
+  fundamentalBridgePacks,
   selectDailyBridgePuzzle,
 } from "../../src/games/before-after/catalog.ts";
 
@@ -17,7 +20,15 @@ test("the Before&After catalog includes every authored, non-placeholder puzzle",
       ["minecraft", 10],
     ],
   );
+  assert.deepEqual(bridgePackCollections.map((collection) => [collection.id, collection.packs.map((pack) => pack.id)]), [
+    ["fundamentals", ["before-101", "after-101", "both-101"]],
+    ["worlds", ["minecraft"]],
+  ]);
   assert.equal(allBridgePuzzles.length, 204);
+  assert.deepEqual(
+    fundamentalBridgePacks.map((pack) => [pack.id, pack.puzzles.length]),
+    [["before-101", 10], ["after-101", 10], ["both-101", 10]],
+  );
   assert.equal(
     allBridgePuzzles.some(
       (puzzle) =>
@@ -43,4 +54,11 @@ test("the archive begins at the shared September 1 epoch", () => {
   assert.equal(entries.length, 3);
   assert.equal(entries[0].date, "2026-09-03");
   assert.equal(entries.at(-1).date, "2026-09-01");
+});
+
+test("the complete archive grows from the shared epoch instead of dropping older days", () => {
+  const entries = bridgeCompleteArchive(new Date(2026, 9, 15, 12));
+  assert.equal(entries[0].date, "2026-10-15");
+  assert.equal(entries.at(-1).date, "2026-09-01");
+  assert.equal(entries.length, 45);
 });

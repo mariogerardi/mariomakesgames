@@ -1,0 +1,49 @@
+/* Shared outer boundaries, not a shared puzzle design. Backgrounds stay full bleed.
+   Extra scope keeps these rules authoritative over source-game layout rules. */
+.site-frame[data-game] .game-canvas .game-local-bar {
+  width: 100%;
+  max-width: none;
+  margin-inline: 0;
+  padding-inline: var(--site-edge);
+}
+
+.site-frame[data-game] .game-canvas .game-local-bar nav {
+  min-width: 0;
+  overflow-x: auto;
+  overscroll-behavior-inline: contain;
+  scrollbar-width: none;
+}
+.site-frame[data-game] .game-canvas .game-local-bar nav::-webkit-scrollbar { display: none; }
+
+/* TOKEN's formerly absolute centered logo could collide with constrained nav. */
+.site-frame[data-game="token"] .game-canvas .game-local-bar__brand {
+  position: relative;
+  left: auto;
+  transform: none;
+}
+
+/* Full-width views retain their theme fields; only their content is inset. */
+.site-frame[data-game="syllabl"] .game-canvas :is(.syllabl-home, .syllabl-info-view),
+.site-frame[data-game="token"] .game-canvas :is(.token-home, .token-how),
+.site-frame[data-game="dual"] .game-canvas :is(.dual-menu, .dual-library-view, .dual-how, .dual-play) {
+  padding-inline: var(--site-edge);
+}
+
+.site-frame[data-game="dual"] .game-canvas .dual-language-label.is-en { left: var(--site-edge); }
+.site-frame[data-game="dual"] .game-canvas .dual-language-label.is-es { right: var(--site-edge); }
+
+/* Cap view frames without stretching their intentionally narrower boards. */
+.site-frame[data-game="syllabl"] .game-canvas :is(.syllabl-play-stage, .syllabl-step-progress-track),
+.site-frame[data-game="rarity"] .game-canvas :is(.rarity-home, .rarity-daily, .rarity-info-view, .rarity-insights-shell),
+.site-frame[data-game="before-after"] .game-canvas :is(.ba-menu, .ba-view, .ba-play),
+.site-frame[data-game="decode"] .game-canvas :is(.decode-welcome, .decode-play-layout, .decode-run-rail, .decode-footer),
+.site-frame[data-game="token"] .game-canvas .token-surface {
+  max-width: var(--site-content-width);
+  margin-inline: auto;
+}
+
+@media (max-width: 760px) {
+  .site-frame[data-game] .game-canvas .game-local-bar {
+    padding-inline: var(--site-edge);
+  }
+}

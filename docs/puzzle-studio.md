@@ -83,11 +83,11 @@ Create includes date, mode, and multi-puzzle position controls. **Save & schedul
 
 Before save, publish, or scheduling, Studio compares game-specific content identities across drafts, shipped catalogs, published revisions, and scheduled dates. Exact duplicates are blocked; meaningful overlaps such as a repeated DECODE answer with a different clue word require author confirmation.
 
-Run `npm run studio:promote` to validate every scheduled reference and generate `src/authoring/data/promoted-puzzles.json`. That tracked artifact is the explicit promotion boundary from local authoring into shipped builds. A future authenticated store should implement the same draft, immutable-publication, and schedule contracts; cloud storage and user roles are intentionally not coupled to the current UI.
+Run `npm run studio:promote` to validate every scheduled reference and generate `src/authoring/data/promoted-puzzles.json`. That tracked artifact is the explicit promotion boundary from local authoring into shipped builds. Player identity and progress are cloud-capable, and the Studio route is administrator-gated, but Studio drafts, publications, and schedules intentionally remain local. A future cloud authoring store should implement the same draft, immutable-publication, and schedule contracts without coupling author records to player progress.
 
-## Step 3: Save, Import, Export, and Duplicate for all six
+## Draft persistence, import, export, and duplication
 
-Create a single `PuzzleDraftRepository` interface used by every editor:
+All editors use one `PuzzleDraftRepository` interface:
 
 ```ts
 interface PuzzleDraftRepository {
@@ -103,7 +103,7 @@ interface PuzzleDraftRepository {
 
 The first implementation is a local, file-backed Vite development API. Browser `localStorage` holds crash-recovery autosaves, but it is not the durable source of authored work. Explicit saves live under `.local/puzzle-studio/drafts`; timestamped replacement and deletion backups live under `.local/puzzle-studio/backups`. The entire `.local` directory remains Git-ignored.
 
-Required behavior:
+Implemented behavior:
 
 - Save performs structural validation and uses atomic file replacement.
 - Autosave is clearly distinguished from an explicit saved draft.
@@ -116,9 +116,10 @@ Required behavior:
 
 The same repository contract and user-facing actions now work for all six editors. Imports cannot overwrite an existing ID, duplicates receive a fresh identity and workflow state, and disk replacement is atomic.
 
-## Step 4: catalog library and actual-engine playtests
+## Catalog library and production-engine playtests
 
-The first Step 4 slice is implemented. The Studio now ingests the shipped catalogs for all six games into one searchable, filterable, read-only library:
+Studio ingests the shipped catalogs for all six games into searchable,
+filterable, read-only game libraries:
 
 - 125 Syllabl puzzles
 - 35 classic Rarity fallback strings
@@ -131,13 +132,19 @@ Opening a catalog item shows its provenance, modes or collections, published pay
 
 Every preview calls the production engine function for its game. Syllabl and Rarity use their production word services; Before&After, DECODE, TOKEN, and DUAL execute their production evaluators locally. Preview progress is React state only: the preview code has no access to `localStorage`, Daily persistence, statistics, schedules, or catalog mutation. Desktop and compact widths can be checked from the same preview frame.
 
-This is intentionally an engine-faithful Studio presentation rather than embedding each entire player page shell. The next visual refinement can extract reusable production play-room presentation components from the game pages without changing the engine adapter or isolated persistence boundary.
+This is intentionally an engine-faithful Studio presentation rather than an
+embedding of each entire player page shell. Further visual convergence can use
+reusable production play-room presentation components without changing the
+engine adapter or isolated persistence boundary.
 
 ### Implemented adapter boundary
 
-Add a shared preview frame whose only responsibilities are selecting a viewport, resetting a run, reporting validation state, and containing game styling. Each game adapter must compile its draft into the exact input consumed by its production engine. Preview code must not update daily progress, statistics, catalogs, or published schedules.
+The shared preview frame selects a viewport, resets a run, reports validation
+state, and contains game styling. Each game adapter compiles its draft into the
+exact input consumed by its production engine. Preview code cannot update Daily
+progress, statistics, catalogs, or published schedules.
 
-The implementation needs two layers:
+The implementation has two layers:
 
 1. Pure `compileDraft` adapters convert each structurally valid draft into a preview puzzle and return blocking errors plus non-blocking author warnings.
 2. Small production play-room components accept an injected puzzle, mode, and storage policy. The existing player routes use normal persistence; Studio supplies an in-memory no-op persistence adapter.

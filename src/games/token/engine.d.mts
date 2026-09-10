@@ -7,6 +7,8 @@ export function createTokenRun(puzzle: { id: string }): {
   stopCursor: number;
   submissions: unknown[];
   completed: boolean;
+  completedAt: string | null;
+  startedAt: string;
 };
 export function findTokenCandidate(stop: { candidates: readonly { token: string; score: number }[] }, token: string): { token: string; score: number } | null;
 export function scoreTokenEntry(stop: { token: string; candidates: readonly { token: string; score: number }[] }, rawEntry: unknown, entryLimit?: number): {

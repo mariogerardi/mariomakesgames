@@ -17,11 +17,11 @@ const launchIds = catalog.launch.map((game) => game.id);
 assert.equal(new Set(launchIds).size, launchIds.length);
 assert.deepEqual(launchIds, [
   "syllabl",
+  "dual",
   "rarity",
   "before-after",
   "decode",
   "token",
-  "dual",
   "expl41n",
   "gridl",
 ]);

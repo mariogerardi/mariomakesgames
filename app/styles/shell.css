@@ -1,4 +1,13 @@
 /* Shared site and game shell */
+:root {
+  --site-content-max: 1180px;
+  --site-gutter: 24px;
+  --site-content-width: min(var(--site-content-max), calc(100% - 2 * var(--site-gutter)));
+  --site-edge: max(var(--site-gutter), calc((100% - var(--site-content-max)) / 2));
+  --site-header-height: 57px;
+  --game-local-bar-height: 62px;
+}
+
 a:focus-visible,
 button:focus-visible {
   outline: 3px solid var(--accent);
@@ -11,7 +20,7 @@ button:focus-visible {
 }
 
 .page-width {
-  width: min(1180px, calc(100% - 48px));
+  width: var(--site-content-width);
   margin-inline: auto;
 }
 
@@ -19,7 +28,6 @@ button:focus-visible {
   position: sticky;
   top: 0;
   z-index: 40;
-  border-top: 4px solid var(--ink);
   border-bottom: 1px solid #dedede;
   color: #17191d;
   background: #fff;
@@ -31,7 +39,7 @@ button:focus-visible {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  min-height: 62px;
+  min-height: 56px;
 }
 
 .wordmark {
@@ -42,8 +50,8 @@ button:focus-visible {
 
 .wordmark-monogram {
   display: inline-grid;
-  width: 34px;
-  height: 34px;
+  width: 31px;
+  height: 31px;
   place-items: center;
   border-radius: 9px;
   color: var(--paper);
@@ -55,7 +63,7 @@ button:focus-visible {
 
 .wordmark-name {
   font-family: "Manrope", var(--sans);
-  font-size: 1.35rem;
+  font-size: 1.25rem;
   font-weight: 750;
   letter-spacing: -0.04em;
   white-space: nowrap;
@@ -66,9 +74,269 @@ button:focus-visible {
   gap: clamp(20px, 4vw, 42px);
   align-items: center;
   color: #4e4c48;
-  font-size: 0.82rem;
+  font-size: 0.78rem;
   font-weight: 700;
   letter-spacing: 0.02em;
+}
+
+.header-actions,
+.account-control--guest,
+.account-control--authenticated,
+.account-button {
+  display: flex;
+  align-items: center;
+}
+
+.header-actions {
+  gap: clamp(20px, 3vw, 34px);
+}
+
+.account-control {
+  position: relative;
+  font-family: "Manrope", var(--sans);
+}
+
+.account-control--guest {
+  gap: 18px;
+}
+
+.account-control--authenticated {
+  gap: 18px;
+}
+
+.account-link,
+.account-button,
+.account-menu button {
+  border: 0;
+  font: inherit;
+  font-weight: 750;
+  cursor: pointer;
+}
+
+.account-link {
+  position: relative;
+  padding: 10px 0;
+  color: #4e4c48;
+  background: transparent;
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+}
+
+.account-link::after,
+.account-studio-link::after {
+  position: absolute;
+  right: 0;
+  bottom: 5px;
+  left: 0;
+  height: 1px;
+  background: currentColor;
+  content: "";
+  transform: scaleX(0);
+  transform-origin: right;
+  transition: transform 180ms ease;
+}
+
+.account-link:hover::after,
+.account-studio-link:hover::after {
+  transform: scaleX(1);
+  transform-origin: left;
+}
+
+.account-button {
+  gap: 8px;
+  min-height: 34px;
+  padding: 0 14px;
+  border-radius: 999px;
+  color: #fff;
+  background: var(--ink);
+  font-size: 0.78rem;
+}
+
+.account-studio-link {
+  position: relative;
+  padding-block: 10px;
+  color: #4e4c48;
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+}
+
+.account-button--signed-in {
+  padding-left: 5px;
+}
+
+.account-avatar {
+  display: grid;
+  width: 27px;
+  height: 27px;
+  place-items: center;
+  border-radius: 50%;
+  color: var(--ink);
+  background: #fff;
+  font-size: 0.68rem;
+}
+
+.account-menu {
+  position: absolute;
+  top: calc(100% + 9px);
+  right: 0;
+  width: 230px;
+  padding: 12px;
+  border: 1px solid #dedede;
+  border-radius: 12px;
+  background: #fff;
+  box-shadow: 0 16px 42px rgb(23 25 29 / 0.16);
+}
+
+.account-menu p {
+  overflow: hidden;
+  margin: 0;
+  color: #4e4c48;
+  font-size: 0.72rem;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.account-menu small {
+  display: block;
+  overflow: hidden;
+  margin-top: 3px;
+  color: #7a7f85;
+  font-size: 0.64rem;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.account-menu span {
+  display: inline-block;
+  margin-top: 8px;
+  padding: 3px 7px;
+  border-radius: 999px;
+  color: #fff;
+  background: var(--ink);
+  font-size: 0.58rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.account-menu button,
+.account-menu a {
+  width: 100%;
+  margin-top: 12px;
+  padding: 9px 10px;
+  border-radius: 8px;
+  color: var(--ink);
+  background: #f1f3f4;
+  font-size: 0.75rem;
+  font-weight: 750;
+  text-align: left;
+}
+
+.account-menu a {
+  display: block;
+}
+
+.account-control--loading {
+  visibility: hidden;
+  pointer-events: none;
+}
+
+.account-control--pending .account-button:disabled {
+  opacity: 1;
+  cursor: default;
+}
+
+.auth-callback {
+  display: grid;
+  min-height: 100dvh;
+  padding: 24px;
+  place-items: center;
+  color: var(--ink);
+  background: #f3f5f7;
+  font-family: "Manrope", var(--sans);
+}
+
+.auth-callback section {
+  width: min(100%, 480px);
+  padding: clamp(30px, 6vw, 54px);
+  border: 1px solid #d9dee4;
+  border-radius: 20px;
+  background: #fff;
+  text-align: center;
+}
+
+.auth-callback .wordmark-monogram {
+  margin-inline: auto;
+}
+
+.auth-callback h1 {
+  margin: 24px 0 10px;
+  font-size: clamp(2rem, 6vw, 3rem);
+  letter-spacing: -0.05em;
+}
+
+.auth-callback p {
+  margin: 0;
+  color: #666d76;
+  line-height: 1.55;
+}
+
+.auth-callback a {
+  display: inline-block;
+  margin-top: 24px;
+  padding-bottom: 3px;
+  border-bottom: 1px solid currentColor;
+  font-weight: 750;
+}
+
+.access-panel {
+  display: grid;
+  min-height: calc(100dvh - 57px);
+  padding: 24px;
+  place-items: center;
+  color: #17191d;
+  background: #f3f5f7;
+  font-family: "Manrope", var(--sans);
+}
+
+.access-panel section {
+  width: min(100%, 560px);
+  padding: clamp(30px, 6vw, 54px);
+  border: 1px solid #d9dee4;
+  border-radius: 20px;
+  background: #fff;
+  text-align: center;
+}
+
+.access-panel .wordmark-monogram {
+  margin-inline: auto;
+}
+
+.access-panel h1 {
+  margin: 24px 0 10px;
+  font-size: clamp(2rem, 5vw, 3rem);
+  letter-spacing: -0.05em;
+}
+
+.access-panel p {
+  margin: 0;
+  color: #666d76;
+}
+
+.access-panel button {
+  min-height: 42px;
+  margin-top: 24px;
+  padding-inline: 18px;
+  border: 0;
+  border-radius: 10px;
+  color: #fff;
+  background: #20201f;
+  font: inherit;
+  font-weight: 750;
+  cursor: pointer;
 }
 
 .site-header nav a {
@@ -101,11 +369,11 @@ button:focus-visible {
 
 /* Cooler, quieter hub frame; game rooms retain their own visual systems. */
 .site-frame:not([data-game]) {
-  --hub-canvas: #f3f5f7;
-  --hub-panel: #fafbfc;
-  --hub-ink: #17191d;
-  --hub-muted: #666d76;
-  --hub-line: #d9dee4;
+  --hub-canvas: #171a20;
+  --hub-panel: #20242b;
+  --hub-ink: #f5f7f9;
+  --hub-muted: #aeb5be;
+  --hub-line: #343a43;
   color: var(--hub-ink);
   background: var(--hub-canvas);
   font-family: "Manrope", var(--sans);
@@ -295,12 +563,10 @@ button:focus-visible {
 }
 
 @media (max-width: 720px) {
-  .page-width {
-    width: min(100% - 30px, 1180px);
-  }
+  :root { --site-gutter: 15px; }
 
   .header-inner {
-    min-height: 58px;
+    min-height: 52px;
   }
 
   .site-header nav {
@@ -310,6 +576,25 @@ button:focus-visible {
 
   .site-header nav a:last-child {
     display: none;
+  }
+
+  .header-actions {
+    gap: 13px;
+  }
+
+  .account-control--guest .account-link,
+  .account-studio-link,
+  .account-button--signed-in > span:last-child {
+    display: none;
+  }
+
+  .account-button {
+    padding-inline: 11px;
+    white-space: nowrap;
+  }
+
+  .account-button--signed-in {
+    padding-inline: 5px;
   }
 
   .wordmark-name {
@@ -352,6 +637,10 @@ button:focus-visible {
   .site-header .wordmark-name {
     font-size: 1rem;
   }
+
+  .site-header nav {
+    display: none;
+  }
 }
 
 /* The original game moved in phrases: a quick exit, then staggered arrivals. */
@@ -363,36 +652,13 @@ button:focus-visible {
 }
 
 .game-page {
-  min-height: calc(100dvh - 66px);
+  min-height: calc(100dvh - var(--site-header-height));
 }
 
 .game-canvas {
   position: relative;
-  min-height: calc(100dvh - 128px);
+  min-height: var(--game-room-height);
   background: var(--game-canvas, #f2f2ef);
-}
-
-.game-canvas-back {
-  position: absolute;
-  z-index: 35;
-  top: 14px;
-  left: 14px;
-  display: inline-flex;
-  gap: 7px;
-  align-items: center;
-  min-height: 34px;
-  padding: 0 13px;
-  border: 1px solid rgb(30 30 29 / 0.16);
-  border-radius: 999px;
-  color: #242422;
-  background: rgb(255 255 255 / 0.9);
-  box-shadow: 0 5px 18px rgb(0 0 0 / 0.14);
-  backdrop-filter: blur(12px);
-  font-size: 0.62rem;
-  font-weight: 850;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  transition: background-color 160ms ease, box-shadow 160ms ease, transform 160ms ease;
 }
 
 .game-canvas-title {
@@ -406,17 +672,6 @@ button:focus-visible {
   white-space: nowrap;
 }
 
-.game-canvas-back:hover {
-  background: #fff;
-  box-shadow: 0 8px 22px rgb(0 0 0 / 0.18);
-  transform: translateY(-1px);
-}
-
-.game-canvas-back:focus-visible {
-  outline: 3px solid #242422;
-  outline-offset: 3px;
-}
-
 .game-canvas > .syllabl-game-card,
 .game-canvas > .rarity-game-card,
 .game-canvas > .gridl-game-card,
@@ -426,7 +681,7 @@ button:focus-visible {
 .game-canvas > .before-after-game-card,
 .game-canvas > .decode-game-card {
   width: 100%;
-  min-height: calc(100dvh - 128px);
+  min-height: var(--game-room-height);
   border: 0;
   border-radius: 0;
   box-shadow: none;
@@ -442,7 +697,7 @@ button:focus-visible {
 
 @media (max-width: 720px) {
   .game-page {
-    min-height: calc(100dvh - 62px);
+    min-height: var(--game-room-height);
   }
 
   .game-canvas,
@@ -454,14 +709,7 @@ button:focus-visible {
   .game-canvas > .expl41n-game-loading,
   .game-canvas > .before-after-game-card,
   .game-canvas > .decode-game-card {
-    min-height: calc(100dvh - 118px);
-  }
-
-  .game-canvas-back {
-    top: 10px;
-    left: 10px;
-    min-height: 32px;
-    padding-inline: 11px;
+    min-height: var(--game-room-height);
   }
 
   .syllabl-current-rule,
@@ -493,7 +741,8 @@ button:focus-visible {
 
 /* Game rooms begin immediately below the shared hub header. */
 .site-frame[data-game] {
-  --game-room-height: calc(100dvh - 66px);
+  --game-room-height: calc(100dvh - var(--site-header-height));
+  --game-screen-height: calc(var(--game-room-height) - var(--game-local-bar-height));
 }
 
 .game-page,
@@ -518,16 +767,16 @@ button:focus-visible {
 .rarity-daily,
 .rarity-info-view,
 .rarity-insights-view {
-  min-height: var(--game-room-height);
+  min-height: var(--game-screen-height);
 }
 
 @media (max-width: 720px) {
   .site-frame[data-game] {
-    --game-room-height: calc(100dvh - 62px);
+    --site-header-height: 53px;
   }
 }
 
-/* Shared in-game navigation — preserves the floating Games control lane. */
+/* Shared in-game navigation. */
 .game-local-bar {
   --game-bar-bg: rgb(255 255 255 / 0.78);
   --game-bar-ink: #202020;
@@ -541,7 +790,7 @@ button:focus-visible {
   gap: 28px;
   align-items: center;
   min-height: 62px;
-  padding: 10px 28px 10px 116px;
+  padding: 10px 28px;
   border-bottom: 1px solid var(--game-bar-line);
   color: var(--game-bar-ink);
   background: var(--game-bar-bg);
@@ -586,17 +835,17 @@ button:focus-visible {
   transition: color 150ms ease, background-color 150ms ease, border-color 150ms ease, transform 150ms ease;
 }
 
-.game-local-bar nav button:hover:not(:disabled) {
+.game-local-bar nav button:hover:not(:disabled):not(.is-current) {
   border-color: var(--game-bar-line);
   color: var(--game-bar-ink);
-  transform: translateY(-1px);
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--game-bar-ink) 8%, transparent);
 }
 
 .game-local-bar nav button.is-current {
   border-color: transparent;
   color: var(--game-bar-active-ink);
   background: var(--game-bar-accent);
-  box-shadow: 0 6px 16px color-mix(in srgb, var(--game-bar-accent) 24%, transparent);
+  box-shadow: none;
 }
 
 .game-local-bar nav button:disabled {
@@ -620,7 +869,7 @@ button:focus-visible {
 .game-local-bar + .ba-menu,
 .game-local-bar + .ba-play,
 .game-local-bar + .ba-view {
-  min-height: calc(var(--game-room-height) - 62px);
+  min-height: var(--game-screen-height);
 }
 
 @media (max-width: 980px) {
@@ -641,6 +890,10 @@ button:focus-visible {
 }
 
 @media (max-width: 760px) {
+  .site-frame[data-game] {
+    --game-local-bar-height: 100px;
+  }
+
   .game-local-bar {
     display: block;
     min-height: 100px;
@@ -675,6 +928,44 @@ button:focus-visible {
   .game-local-bar + .ba-play,
   .game-local-bar + .ba-view,
   .game-local-bar--gridl + .gridl-view {
-    min-height: calc(var(--game-room-height) - 100px);
+    min-height: var(--game-screen-height);
   }
+}
+/* These colors must exist before the lazy game stylesheet or account restore arrives. */
+.site-frame[data-game="syllabl"] { --game-canvas: #e6e6e6; }
+.site-frame[data-game="rarity"] { --game-canvas: #f4ede5; }
+.site-frame[data-game="decode"] { --game-canvas: #090b10; }
+.site-frame[data-game="dual"] {
+  --game-canvas: linear-gradient(90deg, #add1b5 0 50%, #f2dda1 50% 100%);
+  background: linear-gradient(90deg, #add1b5 0 50%, #f2dda1 50% 100%);
+}
+html:has(.site-frame[data-game]) { scroll-behavior: auto; }
+.game-canvas { display: flow-root; overflow-anchor: none; }
+.game-resume-loading {
+  display: grid;
+  min-height: var(--game-room-height);
+  margin: 0;
+  padding: 5rem 1.5rem;
+  box-sizing: border-box;
+  place-items: center;
+  text-align: center;
+  color: #40474a;
+  font: 1rem/1.5 var(--sans);
+}
+.site-frame[data-game="decode"] .game-resume-loading { color: #a6adbb; }
+.game-save-status { position: fixed; bottom: .35rem; right: .75rem; z-index: 40; display: flex; align-items: center; gap: .5rem; max-width: calc(100vw - 1.5rem); padding: .25rem .55rem; border-radius: .4rem; background: #fffef5ed; color: #243a36; font: 11px/1.4 system-ui, sans-serif; }
+.game-save-status button { flex-shrink: 0; min-width: 28px; min-height: 28px; padding: 0; border: 0; color: inherit; background: transparent; font: inherit; font-size: 18px; cursor: pointer; }
+.game-sync-conflict { width: min(30rem, calc(100vw - 2rem)); margin: auto; padding: 1.5rem; background: #fffef8; color: #14252b; border: 2px solid currentColor; border-radius: 1rem; }
+.game-sync-conflict::backdrop { background: #14252bb3; }
+.game-sync-conflict button { margin: .5rem .5rem 0 0; padding: .7rem 1rem; border-radius: 2rem; background: #14252b; color: white; border: 1px solid #14252b; cursor: pointer; }
+/* Only legacy localStorage migrations need a first-load palette handoff.
+   Keep layout stable; ordinary cookie-backed visits render their real theme. */
+html[data-theme-bootstrap~="syllabl"] .syllabl-game-card[data-theme-restored="false"],
+html[data-theme-bootstrap~="rarity"] [data-rarity-theme][data-theme-restored="false"],
+html[data-theme-bootstrap~="before-after"] .before-after-game-card[data-theme-restored="false"] {
+  visibility: hidden;
+}
+[data-theme-restored]:not([data-theme-restored="true"]),
+[data-theme-restored]:not([data-theme-restored="true"]) * {
+  transition: none !important;
 }

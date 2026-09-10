@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { headers } from "next/headers";
 import { notFound } from "next/navigation";
 import { SiteHeader } from "../../../src/app-shell/site-header";
+import { AdminGate } from "../../../src/app-shell/admin-gate";
 import { isLocalStudioHost } from "../../../src/authoring/studio-access";
 import { isAuthorableGameId, STUDIO_GAME_BY_ID } from "../../../src/authoring/studio-games";
 import { PuzzleStudio } from "../../../src/authoring/puzzle-studio";
@@ -25,7 +26,7 @@ export default async function StudioGamePage({ params }: { params: Promise<{ gam
   return (
     <div className="site-frame studio-site-frame">
       <SiteHeader />
-      <PuzzleStudio gameId={gameId} key={gameId} />
+      <AdminGate><PuzzleStudio gameId={gameId} key={gameId} /></AdminGate>
     </div>
   );
 }

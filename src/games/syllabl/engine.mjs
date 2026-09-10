@@ -15,7 +15,12 @@ export function validateSyllablPlacement(word, puzzleLetters, placementCode) {
   if (placementCode === 1) return ends;
   if (placementCode === 2) return begins;
   if (placementCode === 3) {
-    return candidate.includes(token) && !begins && !ends;
+    let occurrence = candidate.indexOf(token);
+    while (occurrence !== -1) {
+      if (occurrence > 0 && occurrence + token.length < candidate.length) return true;
+      occurrence = candidate.indexOf(token, occurrence + 1);
+    }
+    return false;
   }
   if (placementCode === 4) return begins && ends;
   return false;

@@ -8,7 +8,7 @@ A collection of original browser games by Mario Gerardi.
 
 The hub gives each game its own visual identity and rules while keeping them
 under one shared, responsive home. Syllabl, Rarity, Before&After, and DECODE
-are live; TOKEN and DUAL are available as playtest previews; Expl41n and Gridl
+are live; DUAL and TOKEN are available as playtest previews; Expl41n and Gridl
 have playable internal routes but remain locked on the public collection.
 
 ## Games
@@ -16,11 +16,11 @@ have playable internal routes but remain locked on the public collection.
 | Game | The idea |
 | --- | --- |
 | **Syllabl** | Find six words that satisfy changing letter-placement and syllable rules. |
+| **DUAL** | Find English and Spanish words containing the same letter string. |
 | **Rarity** | Submit one valid word containing the daily string and make it count. |
 | **Before&After** | Find the word that belongs before, after, or between two clues. |
 | **DECODE** | Transform one word into another using color, position, and a crossword-style hint. |
 | **TOKEN** | Predict the next token in a frozen AI response. |
-| **DUAL** | Find English and Spanish words containing the same letter string. |
 | **Expl41n** | Give an AI just enough of a clue to guess the secret word. |
 | **Gridl** | Route word fragments across a map of crossings, blockers, recalls, and portals. |
 
@@ -35,16 +35,25 @@ npm run dev
 
 Open [http://localhost:3000](http://localhost:3000).
 
-DUAL has a local-only authoring view. To download the English and Spanish
-Kaikki source snapshots and build its review index:
+Puzzle Studio is the shared, administrator-gated authoring surface for Syllabl,
+Rarity, Before&After, DECODE, TOKEN, and DUAL. Drafts, immutable published
+revisions, and schedules remain local to the development workspace until they
+are explicitly promoted into the shipped catalog.
+
+To download the English and Spanish Kaikki source snapshots used by DUAL's
+Studio editor and build its review index:
 
 ```bash
 npm run dual:data
 ```
 
 The roughly 4 GB source download, SQLite review database, and browser-facing
-candidate pools are Git-ignored. Once built, the **Build** destination appears
-only on DUAL pages served from localhost.
+candidate pools are Git-ignored and available only to the local Studio.
+
+The shared account foundation supports device-local guest progress and
+account-scoped cloud progress for authenticated players. Puzzle Studio access
+additionally requires the administrator role; its authoring records are not
+stored in the player cloud.
 
 Some games use externally hosted word-validation, scoring, or guessing
 services. Those integrations are isolated behind service modules so the game
@@ -66,7 +75,8 @@ comparisons in a standalone checkout.
 - `app/` — shared hub routes, metadata, and global presentation
 - `src/app-shell/` — shared navigation, cards, branding, and hero previews
 - `src/games/` — isolated game UIs, engines, services, and authored catalogs
-- `src/platform/` — shared daily, storage, sharing, analytics, and result boundaries
+- `src/platform/` — shared identity, progress, daily, storage, sharing, and result boundaries
+- `src/authoring/` — Puzzle Studio contracts, adapters, local repositories, and promoted data
 - `test/` — application, domain, contract, and historical parity coverage
 - `docs/` — architecture decisions and migration records
 - `.local/dual-kaikki/` — ignored DUAL source data and authoring database

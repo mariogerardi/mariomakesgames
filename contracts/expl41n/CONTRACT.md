@@ -60,5 +60,10 @@ archive restore locally. The legacy leaderboard remains a best-score boundary;
 the local result stays authoritative if that service is unavailable.
 
 Legacy theme skins and their achievement-gated unlocks are presentation-layer
-systems, not gameplay rules. They are superseded by the shared hub identity;
-shared achievements and identity remain H11 scope.
+systems, not gameplay rules.
+
+## Current production boundary
+
+Shared Hub identity now exists at the application-shell level, but Expl41n run
+progress and leaderboard behavior remain local and are not yet connected to the
+cloud progress repository. Shared achievements remain future work.

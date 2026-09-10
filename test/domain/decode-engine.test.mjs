@@ -2,6 +2,7 @@ import assert from "node:assert/strict";
 import test from "node:test";
 import {
   createDecodeState,
+  decodeDisplayAnswer,
   deriveDecodeFeedback,
   evaluateDecodeAttempt,
   formatDecodeTime,
@@ -30,6 +31,13 @@ test("the production DECODE engine uses duplicate-aware derived feedback", () =>
 test("DECODE input accepts letters only, uppercases, and respects length", () => {
   assert.equal(normalizeDecodeInput(" a-b3cdef ", 4), "ABCD");
   assert.equal(normalizeDecodeInput("squid", 5), "SQUID");
+});
+
+test("completed Daily boards display the solved answer after the editable draft is cleared", () => {
+  const completedDaily = { ...createDecodeState("daily-5"), status: "complete", score: 5, dailyIndex: 5 };
+  assert.equal(decodeDisplayAnswer(completedDaily, "program", ""), "PROGRAM");
+  assert.equal(decodeDisplayAnswer(createDecodeState("daily-5"), "program", "PRO"), "PRO");
+  assert.equal(decodeDisplayAnswer({ ...createDecodeState("timed"), status: "complete" }, "program", ""), "");
 });
 
 test("incorrect production guesses do not mutate the run", () => {

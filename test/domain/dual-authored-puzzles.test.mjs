@@ -6,8 +6,9 @@ import {
   scheduleAuthoredDualPuzzle,
 } from "../../src/games/dual/authored-puzzles.mjs";
 
-function draft(id = "rug-local") {
+function draft(id = "rug-local", revision) {
   return {
+    revision,
     puzzle: {
       id,
       sequence: "RUG",
@@ -26,12 +27,20 @@ function draft(id = "rug-local") {
 
 test("schedules an authored puzzle with its exact lexicon and replaces an existing date", () => {
   const first = scheduleAuthoredDualPuzzle({}, "2026-09-01", draft(), "2026-08-30T12:00:00.000Z");
-  const replaced = scheduleAuthoredDualPuzzle(first, "2026-09-01", draft("rug-revised"), "2026-08-30T13:00:00.000Z");
+  const replaced = scheduleAuthoredDualPuzzle(first, "2026-09-01", draft("rug-revised", 3), "2026-08-30T13:00:00.000Z");
 
   assert.deepEqual(Object.keys(replaced), ["2026-09-01"]);
   assert.equal(replaced["2026-09-01"].puzzle.id, "rug-revised");
   assert.equal(replaced["2026-09-01"].puzzle.sequence, "RUG");
+  assert.equal(replaced["2026-09-01"].revision, 3);
   assert.equal(replaced["2026-09-01"].lexicon[0].surface, "rug");
+});
+
+test("defaults legacy authored assignments to revision one", () => {
+  const scheduled = scheduleAuthoredDualPuzzle({}, "2026-09-01", draft());
+  const { revision, ...legacy } = scheduled["2026-09-01"];
+  void revision;
+  assert.equal(parseAuthoredDualPuzzles({ "2026-09-01": legacy })["2026-09-01"].revision, 1);
 });
 
 test("ignores corrupt saved assignments and lets an assignment be removed", () => {

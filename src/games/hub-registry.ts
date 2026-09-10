@@ -1,7 +1,7 @@
 import type { HubPresentation } from "../app-shell/hub-presentation";
 import { BeforeAfterHubMark, BeforeAfterHubPreview, BeforeAfterHubWordmark, beforeAfterHubPreviewAnswer } from "./before-after/hub";
 import { DecodeHubMark, DecodeHubPreview, DecodeHubWordmark, decodeHubPreviewAnswer } from "./decode/hub";
-import { DualHubMark, DualHubWordmark } from "./dual/hub";
+import { DualHubMark, DualHubPreview, DualHubWordmark, dualHubPreviewAnswer } from "./dual/hub";
 import { Expl41nHubMark, Expl41nHubWordmark } from "./expl41n/hub";
 import { GridlHubMark, GridlHubWordmark } from "./gridl/hub";
 import { RarityHubMark, RarityHubPreview, RarityHubWordmark, rarityHubPreviewAnswer } from "./rarity/hub";
@@ -18,7 +18,7 @@ const presentations: Record<GameId, HubPresentation> = {
   "before-after": { Mark: BeforeAfterHubMark, Wordmark: BeforeAfterHubWordmark, Preview: BeforeAfterHubPreview, previewAnswer: beforeAfterHubPreviewAnswer },
   decode: { Mark: DecodeHubMark, Wordmark: DecodeHubWordmark, Preview: DecodeHubPreview, previewAnswer: decodeHubPreviewAnswer },
   token: { Mark: TokenHubMark, Wordmark: TokenHubWordmark },
-  dual: { Mark: DualHubMark, Wordmark: DualHubWordmark },
+  dual: { Mark: DualHubMark, Wordmark: DualHubWordmark, Preview: DualHubPreview, previewAnswer: dualHubPreviewAnswer },
 };
 
 export type HubDisplayGame = HubGame & { presentation: HubPresentation };

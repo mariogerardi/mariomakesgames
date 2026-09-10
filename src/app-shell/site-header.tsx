@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { siteBrand } from "./site-brand";
+import { AccountControl } from "./account-control";
 
 export function SiteHeader() {
   return (
@@ -9,10 +10,13 @@ export function SiteHeader() {
           <span className="wordmark-monogram" aria-hidden="true">{siteBrand.mark}</span>
           <span className="wordmark-name">{siteBrand.name}</span>
         </Link>
-        <nav aria-label="Primary navigation">
-          <Link href="/#games">All games</Link>
-          <Link href="/#about">About</Link>
-        </nav>
+        <div className="header-actions">
+          <nav aria-label="Primary navigation">
+            <Link href="/#games">All Games</Link>
+            <Link href="/#about">About</Link>
+          </nav>
+          <AccountControl />
+        </div>
       </div>
     </header>
   );

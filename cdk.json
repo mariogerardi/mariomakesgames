@@ -1,0 +1,7 @@
+{
+  "app": "npx tsx infra/bin/mariomakesgames.ts",
+  "context": {
+    "stage": "dev",
+    "siteUrl": "http://localhost:3000"
+  }
+}

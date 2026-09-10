@@ -5,11 +5,11 @@
 | Priority | Game | Canonical repository | Implementation | Hub status |
 |---:|---|---|---|---|
 | 1 | Syllabl | `mariogerardi/playsyllabl` | Migrated and playable | Live |
-| 2 | Rarity | `mariogerardi/rarity` | Migrated and playable | Live |
-| 3 | Before&After | `mariogerardi/before-after` | Migrated and playable | Live |
-| 4 | DECODE | `mariogerardi/mariogerardi.github.io` | Migrated and playable | Live |
-| 5 | TOKEN | `mariogerardi/games-hub` | Native prototype | Live preview |
-| 6 | DUAL | `mariogerardi/games-hub` | Native prototype | Live preview |
+| 2 | DUAL | `mariogerardi/games-hub` | Native prototype | Live preview |
+| 3 | Rarity | `mariogerardi/rarity` | Migrated and playable | Live |
+| 4 | Before&After | `mariogerardi/before-after` | Migrated and playable | Live |
+| 5 | DECODE | `mariogerardi/mariogerardi.github.io` | Migrated and playable | Live |
+| 6 | TOKEN | `mariogerardi/games-hub` | Native prototype | Live preview |
 | 7 | Expl41n | `mariogerardi/explain-game` | Migrated and playable | Coming soon |
 | 8 | Gridl | `mariogerardi/wordgrid` | Migrated and playable | Coming soon |
 
@@ -38,8 +38,11 @@ when a dated puzzle exists and otherwise rotates through 35 bundled classics.
 ### Before&After
 
 The association game. Players bridge two clues with a shared word appearing
-before, after, or on opposite sides. Four packs provide 204 authored puzzles,
-alongside Daily, Archive, Custom, Stats, Themes, and Settings views.
+before, after, or on opposite sides. The 204-puzzle authored corpus supplies
+Daily and Archive, while The Fundamentals introduces the rules through three
+ten-puzzle packs. Themes and Settings remain player-facing; aggregate
+statistics are reserved for the future hub-wide insights flow. Puzzle creation
+is an administrator-only Puzzle Studio tool, not a player-facing mode.
 
 ### DECODE
 
@@ -52,7 +55,7 @@ Zen modes.
 The prediction game. Players guess selected words or raw model tokens in a
 frozen AI response and receive probability-based partial credit. The checked-in
 catalog currently contains two Easy and two Hard puzzles. Its OpenAI-assisted
-Builder is intentionally local-only.
+builder lives in the administrator-only, local-backed Puzzle Studio.
 
 ### DUAL
 
@@ -60,6 +63,8 @@ The bilingual word hunt. English and Spanish words share one three-letter
 string, with distinct-family scoring and extra credit for Duals valid in both
 languages. The checked-in runtime currently contains two curated fixture
 puzzles; its full lexical authoring corpus remains local and Git-ignored.
+Its corpus review and puzzle builder live in the administrator-only,
+local-backed Puzzle Studio.
 
 ### Expl41n
 

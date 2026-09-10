@@ -25,6 +25,7 @@ function normalizeScheduledPuzzle(value) {
     !Array.isArray(value.lexicon) || value.lexicon.length === 0 || !value.lexicon.every(isLexiconEntry)) return null;
   return {
     version: 1,
+    revision: Number.isInteger(value.revision) && value.revision > 0 ? value.revision : 1,
     dateKey: value.dateKey,
     createdAt: typeof value.createdAt === "string" ? value.createdAt : "",
     puzzle: {
@@ -53,6 +54,7 @@ export function scheduleAuthoredDualPuzzle(library, dateKey, draft, createdAt = 
   const scheduled = normalizeScheduledPuzzle({
     dateKey,
     createdAt,
+    revision: draft?.revision,
     puzzle: draft?.puzzle,
     lexicon: draft?.lexicon,
   });

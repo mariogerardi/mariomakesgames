@@ -1365,6 +1365,16 @@
 .studio-overflow-menu > div button { width: 100%; padding: 9px 11px; border-color: transparent; color: var(--studio-ink); background: transparent; text-align: left; }
 .studio-overflow-menu > div button:hover { background: #eef1f2; }
 .studio-overflow-menu > div button.is-danger { color: #a33c33; }
+.studio-json-paste { position: fixed; z-index: 50; inset: 0; width: min(620px, calc(100vw - 32px)); max-height: calc(100vh - 32px); margin: auto; padding: 22px; border: 1px solid var(--studio-line); border-radius: 12px; color: var(--studio-ink); background: #fff; box-shadow: 0 20px 60px rgba(20,35,41,.22); }
+.studio-json-paste::backdrop { background: rgba(20,35,41,.28); }
+.studio-json-paste form { display: grid; gap: 12px; }
+.studio-json-paste h2, .studio-json-paste p { margin: 0; }
+.studio-json-paste p { color: var(--studio-muted); font-size: .82rem; }
+.studio-json-paste textarea { min-height: 260px; resize: vertical; padding: 12px; border: 1px solid var(--studio-line); border-radius: 8px; color: var(--studio-ink); background: #f7f9f9; font: .78rem/1.45 ui-monospace, SFMono-Regular, Menlo, monospace; }
+.studio-json-paste form > div { display: flex; justify-content: flex-end; gap: 8px; }
+.studio-json-paste button { padding: 9px 13px; border: 1px solid var(--studio-line); border-radius: 8px; color: var(--studio-ink); background: #fff; cursor: pointer; }
+.studio-json-paste button[type="submit"] { border-color: var(--studio-ink); color: #fff; background: var(--studio-ink); }
+.studio-json-paste button:disabled { cursor: not-allowed; opacity: .5; }
 .studio-schedule-menu label { display: grid; gap: 5px; color: var(--studio-muted); font-size: .62rem; font-weight: 850; letter-spacing: .08em; text-transform: uppercase; }
 .studio-schedule-menu button { min-height: 40px; padding: 8px 11px; }
 

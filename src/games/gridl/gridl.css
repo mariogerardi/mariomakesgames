@@ -654,7 +654,7 @@
   --gridl-accent-shadow: 0 3px 12px rgb(49 91 204 / 0.28);
   position: relative;
   width: 100%;
-  min-height: calc(100dvh - 128px);
+  min-height: var(--game-room-height);
   overflow: hidden;
   border: 0;
   border-radius: 0;
@@ -844,7 +844,7 @@
 }
 
 .gridl-view {
-  min-height: calc(100dvh - 180px);
+  min-height: var(--game-screen-height);
   padding: clamp(20px, 3vw, 36px) clamp(16px, 4vw, 48px) 38px;
   animation: gridl-view-in 320ms ease both;
 }
@@ -1977,7 +1977,7 @@
   }
 
   .gridl-view {
-    min-height: calc(100dvh - 166px);
+    min-height: var(--game-screen-height);
     padding: 19px 12px 30px;
   }
 
@@ -2230,12 +2230,12 @@
 }
 
 .gridl-view {
-  min-height: calc(var(--game-room-height) - 52px);
+  min-height: var(--game-screen-height);
 }
 
 @media (max-width: 640px) {
   .gridl-view {
-    min-height: calc(var(--game-room-height) - 48px);
+    min-height: var(--game-screen-height);
   }
 }
 
@@ -2257,5 +2257,5 @@
 }
 
 .game-local-bar--gridl + .gridl-view {
-  min-height: calc(var(--game-room-height) - 62px);
+  min-height: var(--game-screen-height);
 }
