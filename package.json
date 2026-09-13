@@ -36,25 +36,25 @@
     "react-dom": "19.2.8"
   },
   "devDependencies": {
-    "@cloudflare/vite-plugin": "1.54.0",
+    "@cloudflare/vite-plugin": "1.54.6",
     "@types/aws-lambda": "^8.10.163",
-    "@types/node": "26.3.0",
+    "@types/node": "26.5.1",
     "@types/react": "19.2.18",
     "@types/react-dom": "19.2.5",
-    "@vitejs/plugin-react": "6.1.0",
+    "@vitejs/plugin-react": "6.1.1",
     "@vitejs/plugin-rsc": "0.5.34",
-    "aws-cdk": "^2.1139.0",
+    "aws-cdk": "^2.1141.0",
     "aws-cdk-lib": "^2.268.0",
     "constructs": "^10.8.1",
     "esbuild": "^0.28.2",
-  "eslint": "10.9.1",
-  "eslint-config-next": "16.3.3",
-    "react-server-dom-webpack": "19.2.8",
+  "eslint": "10.10.0",
+  "eslint-config-next": "16.3.4",
+    "react-server-dom-webpack": "19.3.0",
     "sst": "^4.17.1",
     "tsx": "^4.23.13",
   "typescript": "7.0.2",
-    "vinext": "1.0.0-beta.8",
+    "vinext": "1.0.0-beta.9",
     "vite": "8.2.2",
-    "wrangler": "4.126.0"
+    "wrangler": "4.130.0"
   }
 }
