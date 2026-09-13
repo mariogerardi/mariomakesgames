@@ -706,17 +706,6 @@
   overflow-x: clip;
 }
 
-.site-frame[data-game="expl41n"] .game-canvas-back {
-  border-color: rgb(255 255 255 / 0.14);
-  color: #f8f6ff;
-  background: rgb(19 19 42 / 0.88);
-  box-shadow: 0 8px 28px rgb(0 0 0 / 0.28);
-}
-
-.site-frame[data-game="expl41n"] .game-canvas-back:hover {
-  background: #25204f;
-}
-
 .game-canvas > .expl41n-game-card {
   --expl41n-bg: #080815;
   --expl41n-surface: #121229;
@@ -830,7 +819,7 @@
 }
 
 .expl41n-shell {
-  min-height: calc(var(--game-room-height) - 62px);
+  min-height: var(--game-screen-height);
 }
 
 .expl41n-kicker {
@@ -884,7 +873,7 @@
   gap: clamp(28px, 4vw, 66px);
   align-items: center;
   width: min(1380px, calc(100% - 64px));
-  min-height: calc(var(--game-room-height) - 62px);
+  min-height: var(--game-screen-height);
   margin: 0 auto;
   padding: 44px 0;
 }
@@ -1103,7 +1092,7 @@
 .expl41n-screen,
 .expl41n-play-screen {
   width: min(1240px, calc(100% - 64px));
-  min-height: calc(var(--game-room-height) - 62px);
+  min-height: var(--game-screen-height);
   margin: 0 auto;
   padding: 40px 0 54px;
 }
@@ -2070,13 +2059,13 @@
   }
 
   .expl41n-shell {
-    min-height: calc(var(--game-room-height) - 100px);
+    min-height: var(--game-screen-height);
   }
 
   .expl41n-home,
   .expl41n-screen,
   .expl41n-play-screen {
-    min-height: calc(var(--game-room-height) - 100px);
+    min-height: var(--game-screen-height);
   }
 
   .expl41n-home-hero h1 {

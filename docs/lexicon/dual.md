@@ -50,13 +50,16 @@ The Git-ignored `public/dual-builder-local/` directory contains a small
 manifest and lazily loaded per-string pools for the browser Builder. Neither
 location is part of a production checkout.
 
-The Build destination appears only on localhost. The author enters the exact
-three-letter string to analyze; the tool never selects or recommends a puzzle
-string. For each chosen pool it exposes English/Spanish balance, score capacity, Dual count,
-family concentration, homographs, accent collisions, low-frequency flags, and
-words held for usage or loanword review. An author can explicitly include or exclude any surface,
-edit the three puzzle goals, playtest the exact resulting lexicon, save a draft
-to local storage, and download a complete review JSON file.
+The DUAL authoring workbench lives inside the administrator-only Puzzle Studio;
+it is not a destination in the player shell. The author enters the exact
+three-letter string to analyze, and the tool never selects or recommends a
+puzzle string. For each chosen pool it exposes English/Spanish balance, score
+capacity, Dual count, family concentration, homographs, accent collisions,
+low-frequency flags, and words held for usage or loanword review. An author can
+explicitly include or exclude any surface, edit the three puzzle goals, and
+playtest the exact resulting lexicon. Studio owns draft recovery, explicit
+file-backed saves, immutable local publication, and Daily scheduling; the
+generated corpus and working artifacts remain local and Git-ignored.
 
 The `wordfreq` familiarity layer ranks and flags candidates for review. It is
 never a validity gate and cannot silently remove a dictionary candidate.
@@ -87,7 +90,7 @@ Puzzle strings are selected from their answer pools, not generated blindly.
 Before adding a puzzle, validate its available English and Spanish families,
 achievable score, morphological concentration, and exact Dual count. A first
 family on either language side earns `+1`; later inflected forms in that family
-earn `+0.1`. A fresh Dual therefore earns `+2`, one point per language. EN/ES
+earn `+0.25`. A fresh Dual therefore earns `+2`, one point per language. EN/ES
 minimums count distinct families, while inflections contribute only to the
 overall score. Generated capacities and initial targets use these same rules.
 

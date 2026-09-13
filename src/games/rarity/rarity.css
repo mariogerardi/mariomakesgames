@@ -717,11 +717,9 @@
 
 .rarity-home {
   display: grid;
-  grid-template-columns: minmax(0, 1.2fr) minmax(310px, 0.8fr);
-  gap: clamp(28px, 5vw, 64px);
-  align-items: center;
-  width: min(1100px, calc(100% - 48px));
-  min-height: calc(100dvh - 128px);
+  place-items: center;
+  width: min(820px, calc(100% - 48px));
+  min-height: var(--game-screen-height);
   margin: 0 auto;
   padding: 34px 0;
 }
@@ -731,10 +729,6 @@
   justify-items: center;
   min-width: 0;
   padding: 42px clamp(24px, 5vw, 54px);
-  border: 1px solid color-mix(in srgb, var(--rarity-accent) 34%, var(--rarity-border));
-  border-radius: 24px;
-  background: color-mix(in srgb, var(--rarity-card) 94%, var(--rarity-bg));
-  box-shadow: 0 18px 36px rgb(10 20 35 / 0.14);
   text-align: center;
   animation: rarity-rise 420ms both;
 }
@@ -1008,6 +1002,32 @@
 .rarity-game-card .rarity-feedback.is-error { color: var(--rarity-error); animation: rarity-shake 330ms; }
 .rarity-game-card .rarity-feedback.is-success { color: var(--rarity-success); }
 
+.rarity-lock-confirmation {
+  display: grid;
+  justify-items: center;
+  width: min(590px, 100%);
+  margin-top: 24px;
+  padding: 24px 20px;
+  border-block: 1px solid color-mix(in srgb, var(--rarity-accent) 44%, var(--rarity-border));
+  animation: rarity-rise 240ms ease-out both;
+}
+
+.rarity-lock-confirmation h3 {
+  margin: 10px 0 0;
+  color: var(--rarity-text);
+  font-size: clamp(1.9rem, 4vw, 2.8rem);
+  font-weight: 600;
+  letter-spacing: 0.08em;
+}
+
+.rarity-lock-confirmation > p:not(.rarity-panel-kicker) {
+  margin: 10px 0 0;
+  color: var(--rarity-muted);
+  font-size: 0.82rem;
+}
+
+.rarity-lock-confirmation > div { display: flex; gap: 10px; margin-top: 20px; }
+
 .rarity-side-panel {
   padding: 28px 24px;
 }
@@ -1113,7 +1133,7 @@
 .rarity-insights-view,
 .rarity-info-view,
 .rarity-daily {
-  min-height: calc(100dvh - 128px);
+  min-height: var(--game-screen-height);
 }
 
 .rarity-insights-shell {
@@ -1352,7 +1372,7 @@
   .rarity-home,
   .rarity-daily,
   .rarity-info-view,
-  .rarity-insights-view { min-height: calc(100dvh - 118px); }
+  .rarity-insights-view { min-height: var(--game-screen-height); }
   .rarity-home { width: calc(100% - 28px); padding: 20px 0; }
   .rarity-home-hero { padding: 28px 18px; border-radius: 18px; }
   .rarity-home-actions { grid-template-columns: 1fr; }
@@ -1390,12 +1410,12 @@
 }
 
 .site-frame[data-game="rarity"] {
-  --game-canvas: #bba6ff;
+  --game-canvas: #f4ede5;
 }
 
 .game-canvas > .rarity-game-card,
 .game-canvas > .rarity-game-loading {
-  background: #bba6ff;
+  background: var(--rarity-bg, #f4ede5);
 }
 
 .rarity-prompt,

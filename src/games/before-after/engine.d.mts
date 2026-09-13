@@ -13,13 +13,14 @@ export type BridgeSession = {
   mode: BridgeMode;
   answerText: string;
   attempts: number;
-  status: "active" | "solved" | "expired";
+  status: "active" | "solved" | "revealed";
   startedAt: number;
+  activeElapsedMs: number;
+  resumedAt: number | null;
   completedAt: number | null;
   durationMs: number | null;
 };
 export const BEFORE_AFTER_ANSWER_LIMIT: 15;
-export const BEFORE_AFTER_DAILY_SECONDS: 60;
 export function normalizeBridgeAnswer(value: unknown): string;
 export function createBridgeSession(input: {
   puzzle: BridgePuzzle;
@@ -35,11 +36,13 @@ export function submitBridgeAnswer(
   correct: boolean;
   state: BridgeSession;
 };
-export function expireBridgeSession(
+export function revealBridgeAnswer(
   session: BridgeSession,
   now?: number,
 ): BridgeSession;
-export function remainingBridgeSeconds(
+export function pauseBridgeSession(session: BridgeSession, now?: number): BridgeSession;
+export function resumeBridgeSession(session: BridgeSession, now?: number): BridgeSession;
+export function elapsedBridgeSeconds(
   session: BridgeSession,
   now?: number,
 ): number;

@@ -1,4 +1,5 @@
 import { dualEntryFamily, foldDualAccents, normalizeDualInput } from "./lexicon.mjs";
+import { DUAL_ADDITIONAL_FORM_POINTS } from "./engine.mjs";
 
 export const DUAL_BUILDER_ASSIGNMENTS = Object.freeze([
   "default", "en", "es", "both", "review", "exclude",
@@ -406,18 +407,18 @@ export function calculateDualBuilderMetrics(entries, overrides = {}, familyOverr
 
   function summarize(language) {
     const groups = [...familySurfaces[language].values()];
-    const capacity = groups.reduce((sum, forms) => sum + 1 + Math.max(0, forms.size - 1) * 0.1, 0);
+    const capacity = groups.reduce((sum, forms) => sum + 1 + Math.max(0, forms.size - 1) * DUAL_ADDITIONAL_FORM_POINTS, 0);
     return {
       surfaces: surfaceCounts[language],
       families: groups.length,
-      capacity: Math.round(capacity * 10) / 10,
+      capacity: Math.round(capacity * 100) / 100,
       largestFamily: groups.reduce((largest, forms) => Math.max(largest, forms.size), 0),
     };
   }
 
   const en = summarize("en");
   const es = summarize("es");
-  const totalCapacity = Math.round((en.capacity + es.capacity) * 10) / 10;
+  const totalCapacity = Math.round((en.capacity + es.capacity) * 100) / 100;
   const smaller = Math.min(en.families, es.families);
   const larger = Math.max(en.families, es.families, 1);
   const minimumEnglish = en.families ? clamp(1, Math.round(en.families * 0.34), 8) : 0;

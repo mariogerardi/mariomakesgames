@@ -15,6 +15,17 @@
     },
     {
       "priority": 2,
+      "id": "dual",
+      "name": "DUAL",
+      "repository": "mariogerardi/games-hub",
+      "sourceStatus": "authored",
+      "migrationStatus": "native",
+      "hubStatus": "live-preview",
+      "role": "bilingual-wordplay",
+      "session": "find English and Spanish words sharing one string"
+    },
+    {
+      "priority": 3,
       "id": "rarity",
       "name": "Rarity",
       "repository": "mariogerardi/rarity",
@@ -25,7 +36,7 @@
       "session": "one accepted rarity-scored word"
     },
     {
-      "priority": 3,
+      "priority": 4,
       "id": "before-after",
       "name": "Before&After",
       "repository": "mariogerardi/before-after",
@@ -36,7 +47,7 @@
       "session": "bridge two clues with a shared word"
     },
     {
-      "priority": 4,
+      "priority": 5,
       "id": "decode",
       "name": "DECODE",
       "repository": "mariogerardi/mariogerardi.github.io",
@@ -48,7 +59,7 @@
       "session": "decode a transformed word using positional colors and a definition"
     },
     {
-      "priority": 5,
+      "priority": 6,
       "id": "token",
       "name": "TOKEN",
       "repository": "mariogerardi/games-hub",
@@ -57,17 +68,6 @@
       "hubStatus": "live-preview",
       "role": "prediction",
       "session": "predict the next token in a frozen AI response"
-    },
-    {
-      "priority": 6,
-      "id": "dual",
-      "name": "DUAL",
-      "repository": "mariogerardi/games-hub",
-      "sourceStatus": "authored",
-      "migrationStatus": "native",
-      "hubStatus": "live-preview",
-      "role": "bilingual-wordplay",
-      "session": "find English and Spanish words sharing one string"
     },
     {
       "priority": 7,

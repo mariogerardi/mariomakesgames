@@ -3,10 +3,10 @@
 import Image from "next/image";
 import { useEffect, useMemo, useRef, useState } from "react";
 import "./rarity.css";
+import { useGameTheme } from "../../platform/game-theme-provider";
 import { rarityClassicPuzzles } from "./catalog";
 import {
   createRaritySession,
-  determineRarityTier,
   evaluateRarityAttempt,
   formatRarityScore,
   hydrateRaritySession,
@@ -23,16 +23,18 @@ import {
 } from "./puzzle-loader.mjs";
 import {
   createRarityServices,
-  type RarityServices,
   type RarityWordInfo,
 } from "./services.mjs";
-import { gameStorageKey } from "../../platform/storage";
 import { GameLocalBar } from "../../app-shell/game-local-bar";
+import { dailyRunId, useGameRunPersistence } from "../../platform/game-run-persistence";
+import { useGameRestoration, useProgressStorage } from "../../platform/game-progress-provider";
+import type { DeviceStore } from "../../platform/storage";
+import type { GameRun } from "../../platform/runs.mjs";
+import { loadLocalStudioSlot } from "../../authoring/local-runtime";
 import styles from "./rarity.module.css";
 
 const API_ROOT =
   "https://rminygbqxd.execute-api.us-east-1.amazonaws.com";
-const RARITY_THEME_KEY = gameStorageKey("rarity", "theme");
 
 const rarityThemes = [
   { id: "light", name: "light", accent: "#7b4eb2", accent2: "#c95483", background: "#f4ede5", surface: "#fffaf4", input: "#fffdf8", border: "#d5c2c7", text: "#2f2434", muted: "#746775", tiers: ["#2f8f83", "#4776b8", "#6a60c8", "#8d52b5", "#b6467a", "#d94f52"] },
@@ -53,7 +55,7 @@ const rarityTierColors = [
   "var(--rarity-tier-5)",
   "var(--rarity-tier-6)",
 ];
-const insightTitles = ["your word", "the field", "word weather", "score spread", "one more thing"] as const;
+const rarityTierRanges = ["0–29%", "30–49%", "50–69%", "70–89%", "90–96%", "97%+"];
 const keyboardRows = [
   ["q", "w", "e", "r", "t", "y", "u", "i", "o", "p"],
   ["a", "s", "d", "f", "g", "h", "j", "k", "l"],
@@ -61,10 +63,19 @@ const keyboardRows = [
 ] as const;
 
 type RarityTheme = (typeof rarityThemes)[number]["id"];
-type RarityView = "home" | "daily" | "how-to" | "themes" | "about" | "insights";
-type LeaderboardEntry = Record<string, unknown>;
+type RarityView = "home" | "daily" | "archive" | "how-to" | "themes" | "settings";
+type PendingRaritySubmission = { state: RaritySession; submission: RaritySubmission };
 
-const rarityViews: RarityView[] = ["home", "daily", "how-to", "themes", "about", "insights"];
+const rarityViews: RarityView[] = ["home", "daily", "archive", "how-to", "themes", "settings"];
+
+function RarityRouteRestoring({ message }: { message: string }) {
+  return (
+    <div className="rarity-daily rarity-route-restoring is-daily" aria-busy="true" aria-label="Preparing daily Rarity">
+      <main className="rarity-play-layout" aria-hidden="true" />
+      <span className="rarity-route-status" role="status">{message}</span>
+    </div>
+  );
+}
 
 function rarityViewFromUrl() {
   if (typeof window === "undefined") return "home";
@@ -74,89 +85,27 @@ function rarityViewFromUrl() {
     : "home";
 }
 
-function rarityUrlForView(nextView: RarityView) {
+function rarityUrlForView(nextView: RarityView, dateKey?: string) {
   const url = new URL(window.location.href);
   if (nextView === "home") url.searchParams.delete("view");
   else url.searchParams.set("view", nextView);
+  if (nextView === "daily" && dateKey) url.searchParams.set("date", dateKey);
+  else url.searchParams.delete("date");
   return url;
-}
-
-type RarityInsights = {
-  entries: number;
-  percentile: number | null;
-  averageScore: number | null;
-  bestScore: number | null;
-  bestWord: string | null;
-  distinctWords: number;
-  mostCommonWord: string | null;
-  mostCommonCount: number;
-  longestWord: string | null;
-  averageLength: number | null;
-  yourWordCount: number;
-  tierCounts: number[];
-};
-
-function entryWord(entry: LeaderboardEntry) {
-  const raw = entry.word;
-  if (typeof raw === "string") return raw.trim().toLowerCase();
-  if (raw && typeof raw === "object" && "word" in raw) {
-    const nested = (raw as { word?: unknown }).word;
-    return typeof nested === "string" ? nested.trim().toLowerCase() : "";
-  }
-  return "";
-}
-
-function buildInsights(entries: LeaderboardEntry[], submission: RaritySubmission): RarityInsights {
-  const normalized = entries
-    .map((entry) => {
-      const word = entryWord(entry);
-      const score = Number(entry.exactScore ?? entry.rarityScore);
-      if (!word || !Number.isFinite(score)) return null;
-      return { word, score, tier: determineRarityTier(score) };
-    })
-    .filter((entry): entry is { word: string; score: number; tier: number } => Boolean(entry));
-  const scores = normalized.map((entry) => entry.score);
-  const averageScore = scores.length
-    ? scores.reduce((sum, score) => sum + score, 0) / scores.length
-    : null;
-  const best = normalized.reduce<(typeof normalized)[number] | null>(
-    (current, entry) => (!current || entry.score > current.score ? entry : current),
-    null,
-  );
-  const counts = new Map<string, number>();
-  normalized.forEach((entry) => counts.set(entry.word, (counts.get(entry.word) ?? 0) + 1));
-  const mostCommon = [...counts.entries()].sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]))[0];
-  const longest = normalized.reduce<string | null>(
-    (current, entry) => (!current || entry.word.length > current.length ? entry.word : current),
-    null,
-  );
-  const tierCounts = Array.from({ length: 6 }, () => 0);
-  normalized.forEach((entry) => {
-    tierCounts[Math.max(1, Math.min(6, entry.tier)) - 1] += 1;
-  });
-  const below = normalized.filter((entry) => entry.score < submission.exactScore).length;
-  return {
-    entries: normalized.length,
-    percentile: normalized.length ? Math.round((below / normalized.length) * 100) : null,
-    averageScore,
-    bestScore: best?.score ?? null,
-    bestWord: best?.word ?? null,
-    distinctWords: counts.size,
-    mostCommonWord: mostCommon?.[0] ?? null,
-    mostCommonCount: mostCommon?.[1] ?? 0,
-    longestWord: longest,
-    averageLength: normalized.length
-      ? normalized.reduce((sum, entry) => sum + entry.word.length, 0) / normalized.length
-      : null,
-    yourWordCount: counts.get(submission.word.toLowerCase()) ?? 0,
-    tierCounts,
-  };
 }
 
 function RarityGem({ small = false }: { small?: boolean }) {
   return (
     <span className={`rarity-gem${small ? " is-small" : ""}`} aria-hidden="true">
-      <Image alt="" height={600} src="/rarity/logo.png" width={600} />
+      <Image
+        alt=""
+        decoding="sync"
+        height={160}
+        priority
+        src="/hub/rarity-gem.png"
+        unoptimized
+        width={160}
+      />
     </span>
   );
 }
@@ -170,14 +119,18 @@ function RarityBrand({ compact = false }: { compact?: boolean }) {
   );
 }
 
-const tierDescriptions: Record<number, string> = {
-  1: "everyday language",
-  2: "a little less expected",
-  3: "outside the usual rotation",
-  4: "a genuinely rare find",
-  5: "top-shelf vocabulary",
-  6: "once-in-a-blue-moon territory",
-};
+function RaritySupportHeader({ title, description, headingRef }: {
+  title: string;
+  description?: string;
+  headingRef: React.RefObject<HTMLHeadingElement | null>;
+}) {
+  return (
+    <header className="rarity-support-header">
+      <h2 ref={headingRef} tabIndex={-1}>{title}</h2>
+      {description ? <span>{description}</span> : null}
+    </header>
+  );
+}
 
 const tierFeedback: Record<number, string> = {
   1: "a familiar find. there is always tomorrow to reach farther.",
@@ -195,8 +148,21 @@ function localDateKey(date = new Date()) {
   return `${year}-${month}-${day}`;
 }
 
-function readStoredSubmission(dateKey: string) {
-  const raw = localStorage.getItem(rarityDailyStorageKey(dateKey));
+function rarityArchiveDateKeys(today = new Date(), count = 14) {
+  return Array.from({ length: count }, (_, index) => {
+    const date = new Date(today.getFullYear(), today.getMonth(), today.getDate() - index, 12);
+    return localDateKey(date);
+  });
+}
+
+function rarityDisplayDate(dateKey: string, compact = false) {
+  return new Intl.DateTimeFormat(undefined, compact
+    ? { month: "short", day: "numeric" }
+    : { month: "long", day: "numeric", year: "numeric" }).format(new Date(`${dateKey}T12:00:00`));
+}
+
+function readStoredSubmission(dateKey: string, storage: DeviceStore) {
+  const raw = storage.getItem(rarityDailyStorageKey(dateKey));
   if (!raw) return null;
   try {
     return JSON.parse(raw) as Record<string, unknown>;
@@ -239,19 +205,41 @@ function rejectionMessage(
 
 function HighlightedWord({
   word,
-  token,
 }: {
   word: string;
   token: string;
 }) {
-  const index = word.toLowerCase().indexOf(token.toLowerCase());
-  if (index < 0) return word;
+  return word;
+}
+
+function AnimatedResultWord({ word }: { word: string }) {
   return (
-    <>
-      {word.slice(0, index)}
-      <mark>{word.slice(index, index + token.length)}</mark>
-      {word.slice(index + token.length)}
-    </>
+    <span className="rarity-result-word" aria-label={word}>
+      <span aria-hidden="true">
+        {Array.from(word).map((character, index) => (
+          <span
+            key={`${character}-${index}`}
+            style={{ "--letter-delay": `${80 + index * 46}ms` } as React.CSSProperties}
+          >
+            {character}
+          </span>
+        ))}
+      </span>
+    </span>
+  );
+}
+
+function RarityTierRating({ tier }: { tier: number }) {
+  return (
+    <span className="rarity-tier-gems" aria-label={`${tier} of 6 rarity gems`}>
+      {rarityTierColors.map((color, index) => (
+        <span
+          className={index < tier ? "is-earned" : ""}
+          key={color}
+          style={{ "--tier-color": color } as React.CSSProperties}
+        />
+      ))}
+    </span>
   );
 }
 
@@ -268,21 +256,39 @@ function buildShareText(
   ].join("\n");
 }
 
-async function loadLeaderboardData(
-  services: RarityServices,
-  dateKey: string,
-) {
-  try {
-    return (await services.fetchDailyLeaderboard(dateKey)) as LeaderboardEntry[];
-  } catch {
-    return [] as LeaderboardEntry[];
-  }
+function RaritySettings({ hasProgress, onClear }: {
+  hasProgress: boolean;
+  onClear: () => void;
+}) {
+  const [confirming, setConfirming] = useState(false);
+  return (
+    <div className="rarity-settings">
+      <section className="rarity-settings-row">
+        <span><b>puzzle history</b><small>remove saved Daily and Archive results from this browser.</small></span>
+        {!confirming ? (
+          <button className="rarity-settings-action" disabled={!hasProgress} onClick={() => setConfirming(true)} type="button">clear history</button>
+        ) : (
+          <span className="rarity-settings-confirm">
+            <button onClick={() => setConfirming(false)} type="button">cancel</button>
+            <button className="is-danger" onClick={() => { onClear(); setConfirming(false); }} type="button">clear results</button>
+          </span>
+        )}
+      </section>
+      <aside className="rarity-settings-note">
+        <b>about your data</b>
+        <p>guest saves stay on this device. signed-in progress is account-scoped, while dictionary and comparison requests contain only the information needed to evaluate your word.</p>
+      </aside>
+    </div>
+  );
 }
 
-export function RarityGame() {
+export function RarityGame({ initialRoute }: { initialRoute?: { view?: string } }) {
+  const progressStorage = useProgressStorage();
+  const restoration = useGameRestoration();
   const inputRef = useRef<HTMLInputElement>(null);
   const formRef = useRef<HTMLFormElement>(null);
   const viewHeadingRef = useRef<HTMLHeadingElement>(null);
+  const refocusAfterValidation = useRef(false);
   const services = useMemo(
     () =>
       createRarityServices({
@@ -293,8 +299,20 @@ export function RarityGame() {
       }),
     [],
   );
-  const [session, setSession] = useState<RaritySession | null>(null);
-  const [displayDate, setDisplayDate] = useState("");
+  const [savedSession, setSession] = useState<RaritySession | null>(null);
+  const [hydratedRevision, setHydratedRevision] = useState<typeof restoration.revision | undefined>(undefined);
+  const [daily, setDaily] = useState<{ puzzle: RarityPuzzle; dateKey: string } | null>(null);
+  const [todayKey, setTodayKey] = useState(() => localDateKey());
+  const [archivePuzzles, setArchivePuzzles] = useState<Record<string, RarityPuzzle>>({});
+  const [loadError, setLoadError] = useState("");
+  const [showLoading, setShowLoading] = useState(false);
+  const validationGeneration = useRef(0);
+  const session = restoration.ready
+    && hydratedRevision === restoration.revision
+    && savedSession?.puzzleDate === daily?.dateKey
+    ? savedSession
+    : null;
+  const [displayDate, setDisplayDate] = useState(() => rarityDisplayDate(localDateKey()));
   const [guess, setGuess] = useState("");
   const [feedback, setFeedback] = useState(
     "one valid word. make it as rare as you can.",
@@ -304,113 +322,136 @@ export function RarityGame() {
   >("neutral");
   const [isChecking, setIsChecking] = useState(false);
   const [shareStatus, setShareStatus] = useState("");
-  const [leaderboardEntries, setLeaderboardEntries] = useState<LeaderboardEntry[]>([]);
-  const [view, setView] = useState<RarityView>("home");
-  const [theme, setTheme] = useState<RarityTheme>("light");
-  const [insightIndex, setInsightIndex] = useState(0);
+  const [view, setView] = useState<RarityView>(() => rarityViews.includes(initialRoute?.view as RarityView)
+    ? initialRoute!.view as RarityView
+    : "home");
+  const [theme, setTheme, themeRestored] = useGameTheme<RarityTheme>("rarity", "light");
   const [displayScore, setDisplayScore] = useState(0);
-  const [isRevealing, setIsRevealing] = useState(false);
-  const insights = useMemo(
-    () => session?.submission ? buildInsights(leaderboardEntries, session.submission) : null,
-    [leaderboardEntries, session],
-  );
+  const [isRevealing, setIsRevealing] = useState(() => initialRoute?.view === "daily");
+  const [pendingSubmission, setPendingSubmission] = useState<PendingRaritySubmission | null>(null);
 
   useEffect(() => {
     let cancelled = false;
     queueMicrotask(async () => {
-      const dateKey = localDateKey();
-      const fallback = selectFallbackRarityPuzzle(
-        rarityClassicPuzzles,
-        dateKey,
-      );
-      let puzzle: RarityPuzzle = fallback;
-      try {
-        puzzle = (await services.fetchDailyPuzzle(dateKey)) ?? fallback;
-      } catch {
-        puzzle = fallback;
-      }
       if (cancelled) return;
+      const dateKey = localDateKey();
+      const dateKeys = rarityArchiveDateKeys(new Date());
+      const catalog = Object.fromEntries(dateKeys.map((key) => [
+        key,
+        selectFallbackRarityPuzzle(rarityClassicPuzzles, key),
+      ])) as Record<string, RarityPuzzle>;
+      try {
+        const slots = await Promise.all(dateKeys.map(async (key) => {
+          const [scheduled] = await loadLocalStudioSlot("rarity", "daily", key);
+          return scheduled?.gameId === "rarity"
+            ? [key, { ...scheduled.payload, difficulty: scheduled.payload.difficulty ?? 0, date: key, source: "live" } as RarityPuzzle] as const
+            : null;
+        }));
+        slots.forEach((slot) => { if (slot) catalog[slot[0]] = slot[1]; });
+        if (!slots[0]) catalog[dateKey] = (await services.fetchDailyPuzzle(dateKey)) ?? catalog[dateKey];
+      } catch { /* The dated fallback catalog remains playable. */ }
+      if (cancelled) return;
+      const requestedDate = new URL(window.location.href).searchParams.get("date");
+      const activeDate = rarityViewFromUrl() === "daily" && requestedDate && catalog[requestedDate]
+        ? requestedDate
+        : dateKey;
+      setTodayKey(dateKey);
+      setArchivePuzzles(catalog);
+      setDisplayDate(rarityDisplayDate(activeDate));
+      setDaily({ puzzle: catalog[activeDate], dateKey: activeDate });
+    });
+    return () => { cancelled = true; };
+  }, [services]);
 
-      const stored = readStoredSubmission(dateKey);
-      const storedTheme = localStorage.getItem(RARITY_THEME_KEY);
-      if (rarityThemes.some((choice) => choice.id === storedTheme)) {
-        setTheme(storedTheme as RarityTheme);
-      }
-      const nextSession = stored
-        ? hydrateRaritySession({
-            payload: stored,
-            puzzle,
-            puzzleDate: dateKey,
-          })
-        : createRaritySession({ puzzle, puzzleDate: dateKey });
-
-      setDisplayDate(
-        new Intl.DateTimeFormat(undefined, {
-          month: "long",
-          day: "numeric",
-          year: "numeric",
-        }).format(new Date()),
-      );
-      setSession(nextSession);
-      setFeedback(
-        nextSession.hasSubmitted
-          ? "today’s word is locked in."
-          : "one valid word. make it as rare as you can.",
-      );
-
-      if (nextSession.submission) {
-        const entries = await loadLeaderboardData(services, dateKey);
-        if (!cancelled) {
-          setLeaderboardEntries(entries);
-        }
+  useEffect(() => {
+    let cancelled = false;
+    if (restoration.ready && daily) queueMicrotask(async () => {
+      if (cancelled) return;
+      try {
+        const { puzzle, dateKey } = daily;
+        let stored = null;
+        try { stored = readStoredSubmission(dateKey, progressStorage); } catch { /* Storage may be unavailable. */ }
+        const nextSession = stored
+          ? hydrateRaritySession({ payload: stored, puzzle, puzzleDate: dateKey })
+          : createRaritySession({ puzzle, puzzleDate: dateKey });
+        setSession(nextSession);
+        setDisplayScore(0);
+        setHydratedRevision(restoration.revision);
+        setGuess("");
+        setPendingSubmission(null);
+        setIsChecking(false);
+        setIsRevealing(rarityViewFromUrl() === "daily" && Boolean(nextSession.submission));
+        setLoadError("");
+        setFeedbackTone("neutral");
+        setFeedback(nextSession.hasSubmitted ? "today’s word is locked in." : "one valid word. make it as rare as you can.");
+      } catch {
+        if (!cancelled) setLoadError("today’s puzzle couldn’t be restored. please refresh to try again.");
       }
     });
-
     return () => {
       cancelled = true;
+      validationGeneration.current += 1;
     };
-  }, [services]);
+  }, [restoration.ready, restoration.revision, daily, progressStorage, services]);
+
+  useEffect(() => {
+    const timer = window.setTimeout(() => setShowLoading(true), 700);
+    return () => window.clearTimeout(timer);
+  }, []);
 
   const sessionReady = session !== null;
   const hasSubmission = Boolean(session?.submission);
+  const platformRun = useMemo<GameRun<"rarity"> | null>(() => session ? ({
+    schemaVersion: 1,
+    runId: dailyRunId("rarity", "daily", session.puzzleDate),
+    playerId: null,
+    gameId: "rarity",
+    mode: "daily",
+    puzzle: { id: `${session.puzzleDate}-${session.puzzle.puzzleString}`, revision: 1, date: session.puzzleDate },
+    startedAt: new Date(`${session.puzzleDate}T00:00:00`).toISOString(),
+    completedAt: session.submission?.timestamp ?? null,
+    outcome: hasSubmission ? "completed" : "in-progress",
+    score: session.submission?.exactScore,
+    checkpoint: { version: 1, state: { native: session.submission ? serializeRaritySubmission(session.puzzle.puzzleString, session.submission) : {} } },
+    result: { submission: session.submission },
+  }) : null, [hasSubmission, session]);
+  useGameRunPersistence(platformRun, hasSubmission);
 
   useEffect(() => {
     const syncView = () => {
       const requestedView = rarityViewFromUrl();
-      if (requestedView === "insights" && !hasSubmission) {
-        setView("home");
-        if (sessionReady) {
-          window.history.replaceState({}, "", rarityUrlForView("home"));
-        }
-      } else {
-        if (requestedView === "daily" && hasSubmission) {
-          setDisplayScore(0);
-          setIsRevealing(false);
-        } else if (requestedView !== "daily") {
-          setIsRevealing(false);
-        }
-        setView(requestedView);
-        setShareStatus("");
-        if (requestedView === "insights") setInsightIndex(0);
+      const requestedDate = new URL(window.location.href).searchParams.get("date");
+      if (requestedView === "daily" && requestedDate && archivePuzzles[requestedDate] && requestedDate !== daily?.dateKey) {
+        setDisplayDate(rarityDisplayDate(requestedDate));
+        setDaily({ puzzle: archivePuzzles[requestedDate], dateKey: requestedDate });
       }
-      window.scrollTo({ top: 0, behavior: "instant" });
+      setDisplayScore(0);
+      setIsRevealing(requestedView === "daily" && Boolean(session?.submission));
+      setView(requestedView);
+      setShareStatus("");
     };
 
     syncView();
     window.addEventListener("popstate", syncView);
     return () => window.removeEventListener("popstate", syncView);
-  }, [hasSubmission, sessionReady]);
+  }, [archivePuzzles, daily?.dateKey, hasSubmission, session?.submission, sessionReady]);
 
   useEffect(() => {
     const animationFrame = requestAnimationFrame(() => {
-      if (view === "daily" && !session?.hasSubmitted) {
-        inputRef.current?.focus();
+      if (view === "daily" && sessionReady && !hasSubmission) {
+        inputRef.current?.focus({ preventScroll: true });
       } else {
-        viewHeadingRef.current?.focus();
+        viewHeadingRef.current?.focus({ preventScroll: true });
       }
     });
     return () => cancelAnimationFrame(animationFrame);
-  }, [session?.hasSubmitted, view]);
+  }, [hasSubmission, sessionReady, view]);
+
+  useEffect(() => {
+    if (isChecking || !refocusAfterValidation.current) return;
+    refocusAfterValidation.current = false;
+    inputRef.current?.focus({ preventScroll: true });
+  }, [isChecking]);
 
   useEffect(() => {
     const submission = session?.submission;
@@ -441,7 +482,9 @@ export function RarityGame() {
       };
 
       animationFrame = requestAnimationFrame(step);
-      revealTimer = window.setTimeout(() => setIsRevealing(false), 1900);
+      revealTimer = window.setTimeout(() => {
+        setIsRevealing(false);
+      }, 1900);
     });
 
     return () => {
@@ -452,25 +495,37 @@ export function RarityGame() {
 
   function chooseTheme(nextTheme: RarityTheme) {
     setTheme(nextTheme);
-    try {
-      localStorage.setItem(RARITY_THEME_KEY, nextTheme);
-    } catch {
-      // Theme selection remains available when device storage is unavailable.
-    }
   }
 
   function openView(nextView: RarityView) {
-    if (nextView === "insights" && !session?.submission) return;
     if (nextView === view) return;
-    window.history.pushState({}, "", rarityUrlForView(nextView));
-    if (nextView !== "daily") setIsRevealing(false);
-    if (nextView === "daily" && session?.submission) {
-      setDisplayScore(0);
-      setIsRevealing(false);
+    const resetToToday = nextView === "home" || nextView === "daily";
+    if (resetToToday && todayKey && daily?.dateKey !== todayKey && archivePuzzles[todayKey]) {
+      setDaily({ puzzle: archivePuzzles[todayKey], dateKey: todayKey });
+      setDisplayDate(rarityDisplayDate(todayKey));
     }
+    window.history.pushState({}, "", rarityUrlForView(nextView, nextView === "daily" ? todayKey : undefined));
+    setDisplayScore(0);
+    setIsRevealing(nextView === "daily" && Boolean(session?.submission));
     setView(nextView);
+    setPendingSubmission(null);
     setShareStatus("");
-    if (nextView === "insights") setInsightIndex(0);
+    window.scrollTo({ top: 0, behavior: "instant" });
+  }
+
+  function openArchiveRound(dateKey: string) {
+    const puzzle = archivePuzzles[dateKey];
+    if (!puzzle) return;
+    // Clear the previous result field before the next puzzle can enter the
+    // daily view. Hydration will opt a completed archive round back into its
+    // own reveal once its matching session is ready.
+    setIsRevealing(false);
+    setDisplayScore(0);
+    setDaily({ puzzle, dateKey });
+    setDisplayDate(rarityDisplayDate(dateKey));
+    setPendingSubmission(null);
+    setView("daily");
+    window.history.pushState({}, "", rarityUrlForView("daily", dateKey));
     window.scrollTo({ top: 0, behavior: "instant" });
   }
 
@@ -509,10 +564,8 @@ export function RarityGame() {
         timestamp: submission.timestamp,
       };
       await services.submitDailyResult(payload);
-      const entries = await loadLeaderboardData(services, activeSession.puzzleDate);
-      setLeaderboardEntries(entries);
     } catch {
-      setLeaderboardEntries([]);
+      // Comparison submission remains best-effort until the shared hub service replaces it.
     }
   }
 
@@ -535,6 +588,7 @@ export function RarityGame() {
     }
 
     setIsChecking(true);
+    const generation = validationGeneration.current;
     setFeedback(`Checking ${candidate}…`);
     setFeedbackTone("neutral");
 
@@ -561,6 +615,7 @@ export function RarityGame() {
       };
     }
 
+    if (generation !== validationGeneration.current) return;
     const result = evaluateRarityAttempt({
       state: session,
       puzzleString: session.puzzle.puzzleString,
@@ -568,9 +623,9 @@ export function RarityGame() {
       wordInfo,
       timestamp: new Date().toISOString(),
     });
-    setIsChecking(false);
-
     if (!result.accepted) {
+      refocusAfterValidation.current = true;
+      setIsChecking(false);
       setFeedback(
         rejectionMessage(
           result.reason,
@@ -579,30 +634,64 @@ export function RarityGame() {
         ),
       );
       setFeedbackTone("error");
-      inputRef.current?.focus();
       return;
     }
 
-    setSession(result.state);
+    setIsChecking(false);
+    setPendingSubmission({ state: result.state, submission: result.submission });
+    setFeedback("valid word. lock it in when you’re ready.");
+    setFeedbackTone("neutral");
+  }
+
+  function cancelPendingSubmission() {
+    setPendingSubmission(null);
+    setFeedback("one valid word. make it as rare as you can.");
+    setFeedbackTone("neutral");
+    requestAnimationFrame(() => inputRef.current?.focus({ preventScroll: true }));
+  }
+
+  function commitPendingSubmission() {
+    if (!pendingSubmission) return;
+    const { state: nextSession, submission: nextSubmission } = pendingSubmission;
+    setPendingSubmission(null);
+    setDisplayScore(0);
+    setIsRevealing(true);
+    setSession(nextSession);
     setGuess("");
-    setFeedback(
-      tierFeedback[result.submission.tier],
-    );
+    setFeedback(tierFeedback[nextSubmission.tier]);
     setFeedbackTone("success");
     try {
-      localStorage.setItem(
-        rarityDailyStorageKey(session.puzzleDate),
+      progressStorage.setItem(
+        rarityDailyStorageKey(nextSession.puzzleDate),
         JSON.stringify(
           serializeRaritySubmission(
-            session.puzzle.puzzleString,
-            result.submission,
+            nextSession.puzzle.puzzleString,
+            nextSubmission,
           ),
         ),
       );
     } catch {
       // The accepted result remains visible if browser storage is unavailable.
     }
-    void submitResultToLeaderboard(result.state, result.submission);
+    void submitResultToLeaderboard(nextSession, nextSubmission);
+  }
+
+  function clearRarityHistory() {
+    for (const dateKey of Object.keys(archivePuzzles)) {
+      try { progressStorage.removeItem(rarityDailyStorageKey(dateKey)); } catch { /* Continue clearing the available history. */ }
+    }
+    try { localStorage.removeItem("rarity_user_id"); } catch { /* The local comparison identity is best-effort. */ }
+    if (daily) {
+      setSession(createRaritySession({ puzzle: daily.puzzle, puzzleDate: daily.dateKey }));
+      setHydratedRevision(restoration.revision);
+    }
+    setGuess("");
+    setPendingSubmission(null);
+    setDisplayScore(0);
+    setIsRevealing(false);
+    setFeedback("one valid word. make it as rare as you can.");
+    setFeedbackTone("neutral");
+    setShareStatus("");
   }
 
   async function handleShare() {
@@ -627,19 +716,22 @@ export function RarityGame() {
     }
   }
 
-  if (!session) {
-    return (
-      <div className="rarity-game-card rarity-game-loading" aria-busy="true">
-        preparing today’s string…
-      </div>
-    );
-  }
-
-  const token = session.puzzle.puzzleString.toUpperCase();
-  const submission = session.submission;
+  const loadingMessage = loadError || (restoration.conflict ? "choose which save to continue." : showLoading ? "getting your daily ready…" : "");
+  const token = session?.puzzle.puzzleString.toUpperCase() ?? "";
+  const submission = session?.submission;
   const tier = submission?.tier ?? 1;
-  const scoreSpreadMaximum = insights ? Math.max(1, ...insights.tierCounts) : 1;
   const activeTheme = rarityThemes.find((choice) => choice.id === theme) ?? rarityThemes[0];
+  const isToday = Boolean(daily && daily.dateKey === todayKey);
+  const archiveRounds = Object.keys(archivePuzzles).sort().reverse().map((dateKey) => {
+    const puzzle = archivePuzzles[dateKey];
+    let stored = null;
+    try { stored = readStoredSubmission(dateKey, progressStorage); } catch { /* Show an unplayed card if storage is unavailable. */ }
+    return {
+      dateKey,
+      puzzle,
+      session: stored ? hydrateRaritySession({ payload: stored, puzzle, puzzleDate: dateKey }) : createRaritySession({ puzzle, puzzleDate: dateKey }),
+    };
+  });
   const themeStyle = {
     "--rarity-accent": activeTheme.accent,
     "--rarity-accent-2": activeTheme.accent2,
@@ -649,7 +741,7 @@ export function RarityGame() {
     "--rarity-border": activeTheme.border,
     "--rarity-text": activeTheme.text,
     "--rarity-muted": activeTheme.muted,
-    "--rarity-score-fill": submission ? `${displayScore}%` : "0%",
+    "--rarity-score-fill": view === "daily" && submission ? `${displayScore}%` : "0%",
     ...Object.fromEntries(activeTheme.tiers.map((color, index) => [`--rarity-tier-${index + 1}`, color])),
   } as React.CSSProperties;
 
@@ -657,6 +749,7 @@ export function RarityGame() {
     <section
       className={`${styles.root} rarity-game-card rarity-tier-${tier}${isRevealing ? " is-revealing" : ""}`}
       data-rarity-theme={theme}
+      data-theme-restored={themeRestored}
       data-rarity-view={view}
       style={themeStyle}
       aria-label={view === "daily" ? "Daily Rarity" : "Rarity"}
@@ -668,10 +761,10 @@ export function RarityGame() {
         items={[
           { label: "home", current: view === "home", onSelect: () => openView("home") },
           { label: "daily", current: view === "daily", onSelect: () => openView("daily") },
+          { label: "archive", current: view === "archive", onSelect: () => openView("archive") },
           { label: "how to play", current: view === "how-to", onSelect: () => openView("how-to") },
           { label: "themes", current: view === "themes", onSelect: () => openView("themes") },
-          { label: "about", current: view === "about", onSelect: () => openView("about") },
-          { label: "insights", current: view === "insights", disabled: !submission, onSelect: () => openView("insights") },
+          { label: "settings", current: view === "settings", onSelect: () => openView("settings") },
         ]}
         onHome={() => openView("home")}
       />
@@ -679,90 +772,90 @@ export function RarityGame() {
         <div className="rarity-home">
           <main className="rarity-home-hero">
             <RarityBrand />
-            <p className="rarity-home-kicker">daily rarity · {displayDate}</p>
-            <h2 ref={viewHeadingRef} tabIndex={-1} aria-label={`Today’s string ${token}`}>{token}</h2>
+            <p className="rarity-home-kicker" suppressHydrationWarning>daily rarity · {displayDate}</p>
             <p>can you find the rarest word containing today’s string?</p>
-            <button className="rarity-primary" onClick={() => openView("daily")}>
-              {submission ? "view today’s result" : "play daily"}
-            </button>
+            <div className="rarity-home-action-slot">
+              {sessionReady ? (
+                <button className="rarity-primary rarity-home-ready-action" onClick={() => openView("daily")}>
+                  {submission ? "view today’s result" : "play daily"}
+                </button>
+              ) : null}
+            </div>
+            {!sessionReady && loadError ? <span className="rarity-startup-status" role="alert">{loadError}</span> : null}
           </main>
 
-          <nav className="rarity-home-actions" aria-label="Rarity menu">
-            <button onClick={() => openView("how-to")}>
-              <b>how to play</b><span>one word. make it count.</span>
-            </button>
-            <button onClick={() => openView("themes")}>
-              <b>themes</b><span>choose your colors</span>
-            </button>
-            <button onClick={() => openView("about")}>
-              <b>about</b><span>the idea behind rarity</span>
-            </button>
-            <button
-              className={submission ? "is-unlocked" : "is-locked"}
-              disabled={!submission}
-              onClick={() => openView("insights")}
-            >
-              <b>daily insights</b>
-              <span>{submission ? "see how your word traveled" : "unlock after playing"}</span>
-            </button>
-          </nav>
         </div>
-      ) : view === "daily" ? (
-        <div className="rarity-daily">
+      ) : view === "daily" ? (!session ? (
+        loadError || restoration.conflict ? (
+          <div className="rarity-daily-pending" aria-busy="false">
+            <h2 ref={viewHeadingRef} tabIndex={-1}>daily rarity</h2>
+            <p role={loadError ? "alert" : "status"}>{loadingMessage}</p>
+            <button className="rarity-primary" type="button" onClick={() => openView("home")}>back to menu</button>
+          </div>
+        ) : <RarityRouteRestoring message={loadingMessage} />
+      ) : (
+        <div className="rarity-daily rarity-route-ready" key={`rarity-play:${session.puzzleDate}`}>
           <main className="rarity-play-layout" aria-label="Today’s challenge">
-            <div className="rarity-daily-tools">
-              <button className="rarity-text-action" onClick={() => openView("home")}>← back</button>
-              {!submission ? <button className="rarity-text-action" onClick={() => openView("how-to")}>how do i play? <span aria-hidden="true">?</span></button> : null}
-            </div>
             <section className={`rarity-daily-panel${submission ? " is-result" : ""}`}>
               {!submission ? (
                 <>
-                  <p className="rarity-panel-kicker">today’s puzzle · {displayDate}</p>
+                  <p className="rarity-panel-kicker">{isToday ? "today’s puzzle" : "archive puzzle"} · {displayDate}</p>
                   <h2 ref={viewHeadingRef} tabIndex={-1} className="rarity-daily-string" aria-label={`Daily string ${token}`}>{token}</h2>
 
-                  <form ref={formRef} className="rarity-entry rarity-entry-minimal" onSubmit={handleSubmit}>
-                    <div className="rarity-input-minimal" onClick={() => inputRef.current?.focus()}>
-                      <div className={`rarity-input-display${guess ? "" : " is-empty"}`} aria-hidden="true">
-                        {guess ? <HighlightedWord word={guess} token={session.puzzle.puzzleString} /> : ""}
+                  {pendingSubmission ? (
+                    <section className="rarity-lock-confirmation" aria-labelledby="rarity-lock-title">
+                      <p className="rarity-panel-kicker">one valid word</p>
+                      <h3 id="rarity-lock-title"><HighlightedWord word={pendingSubmission.submission.word} token={session.puzzle.puzzleString} /></h3>
+                      <p>Once you lock it in, this is your final word for this puzzle.</p>
+                      <div>
+                        <button className="rarity-result-secondary" onClick={cancelPendingSubmission} type="button">keep thinking</button>
+                        <button className="rarity-primary" onClick={commitPendingSubmission} type="button">lock it in</button>
                       </div>
-                      <input
-                        ref={inputRef}
-                        id="rarity-guess"
-                        aria-label="your entry"
-                        value={guess}
-                        onChange={(event) => setGuess(event.target.value.replace(/[^a-z]/gi, ""))}
-                        minLength={4}
-                        autoComplete="off"
-                        autoCapitalize="none"
-                        spellCheck={false}
-                        disabled={isChecking}
-                      />
-                    </div>
-                    <p className="rarity-input-hint">{isChecking ? "checking your word…" : "press enter to submit"}</p>
-                    <div className="rarity-live-score" aria-label="current rarity score"><strong>0.0000</strong><span>points</span></div>
-                    <div className="rarity-keyboard" aria-label="On-screen keyboard">
-                      {keyboardRows.map((row, rowIndex) => (
-                        <div key={rowIndex}>
-                          {row.map((key) => (
-                            <button
-                              key={key}
-                              type="button"
-                              onClick={() => handleKeyboardKey(key)}
-                              disabled={isChecking}
-                              aria-label={key === "backspace" ? "Backspace" : key}
-                            >
-                              {key === "backspace" ? "⌫" : key}
-                            </button>
-                          ))}
+                    </section>
+                  ) : (
+                    <form ref={formRef} className="rarity-entry rarity-entry-minimal" onSubmit={handleSubmit}>
+                      <div className="rarity-input-minimal" onClick={() => inputRef.current?.focus()}>
+                        <div className={`rarity-input-display${guess ? "" : " is-empty"}`} aria-hidden="true">
+                          {guess ? <HighlightedWord word={guess} token={session.puzzle.puzzleString} /> : ""}
                         </div>
-                      ))}
-                    </div>
-                  </form>
+                        <input
+                          ref={inputRef}
+                          id="rarity-guess"
+                          aria-label="your entry"
+                          value={guess}
+                          onChange={(event) => setGuess(event.target.value.replace(/[^a-z]/gi, ""))}
+                          minLength={4}
+                          autoComplete="off"
+                          autoCapitalize="none"
+                          spellCheck={false}
+                          disabled={isChecking}
+                        />
+                      </div>
+                      <p className="rarity-input-hint">{isChecking ? "checking your word…" : "press enter to submit"}</p>
+                      <div className="rarity-keyboard" aria-label="On-screen keyboard">
+                        {keyboardRows.map((row, rowIndex) => (
+                          <div key={rowIndex}>
+                            {row.map((key) => (
+                              <button
+                                key={key}
+                                type="button"
+                                onClick={() => handleKeyboardKey(key)}
+                                disabled={isChecking}
+                                aria-label={key === "backspace" ? "Backspace" : key}
+                              >
+                                {key === "backspace" ? "⌫" : key}
+                              </button>
+                            ))}
+                          </div>
+                        ))}
+                      </div>
+                    </form>
+                  )}
                 </>
               ) : (
                 <div className="rarity-result-summary">
                   <p className="rarity-panel-kicker">your entry</p>
-                  <h2 ref={viewHeadingRef} tabIndex={-1}><HighlightedWord word={submission.word} token={session.puzzle.puzzleString} /></h2>
+                  <h2 ref={viewHeadingRef} tabIndex={-1}><AnimatedResultWord word={submission.word} /></h2>
                   {submission.partOfSpeech || submission.definition ? (
                     <p className="rarity-result-definition">
                       {submission.partOfSpeech ? <em>{submission.partOfSpeech}</em> : null}
@@ -773,114 +866,100 @@ export function RarityGame() {
                     <strong>{formatRarityScore(displayScore)}</strong><span>points</span>
                   </div>
                   <div className="rarity-result-tier">
-                    <b>{RARITY_TIER_LABELS[tier]}</b><span>{tierDescriptions[tier]}</span>
+                    <b>{RARITY_TIER_LABELS[tier]}</b>
                   </div>
                   <div className="rarity-tier-track" aria-label="your rarity tier">
-                    {rarityTierColors.map((color, index) => <span className={index + 1 === tier ? "is-current" : ""} style={{ "--tier-color": color } as React.CSSProperties} key={color} />)}
+                    {rarityTierColors.map((color, index) => <span className={`${index < tier ? "is-earned" : ""}${index + 1 === tier ? " is-current" : ""}`} style={{ "--tier-color": color } as React.CSSProperties} key={color} />)}
                   </div>
                   <p className="rarity-result-message">{tierFeedback[tier]}</p>
                   <div className="rarity-result-actions">
-                    <button className="rarity-insights-invitation rarity-result-primary" onClick={() => openView("insights")}>view your daily insights <span aria-hidden="true">→</span></button>
-                    <button className="rarity-result-secondary" onClick={handleShare}>share result <span aria-hidden="true">↗</span></button>
+                    <button className="rarity-primary rarity-result-primary" onClick={handleShare}>share result <span aria-hidden="true">↗</span></button>
+                    <button className="rarity-result-secondary" onClick={() => openView("archive")}>play the archive</button>
                   </div>
                   <span className="rarity-share-status" role="status">{shareStatus}</span>
                 </div>
               )}
 
-              <p className={`rarity-feedback is-${feedbackTone}`} aria-live="polite" role="status">{submission ? "" : feedback}</p>
+              {!submission && !pendingSubmission ? (
+                <p className={`rarity-feedback is-${feedbackTone}`} aria-live="polite" role="status">{feedback}</p>
+              ) : null}
             </section>
           </main>
         </div>
-      ) : view === "insights" && submission && insights ? (
-        <div className="rarity-insights-view">
-          <main className="rarity-insights-shell">
-            <button className="rarity-insight-arrow is-back" onClick={() => setInsightIndex((current) => Math.max(0, current - 1))} disabled={insightIndex === 0} aria-label="Previous insight">‹</button>
-            <article className="rarity-insight-panel" key={insightIndex} aria-live="polite">
-              <p className="rarity-panel-kicker">daily insights</p>
-              <h2 ref={viewHeadingRef} tabIndex={-1}>{insightTitles[insightIndex]}</h2>
-
-              {insightIndex === 0 ? (
-                <div className="rarity-insight-summary">
-                  <div className="rarity-mini-score" style={{ "--rarity-score": `${submission.exactScore * 3.6}deg` } as React.CSSProperties}>
-                    <strong>{formatRarityScore(submission.exactScore, 1)}</strong><span>/100</span>
-                  </div>
-                  <div>
-                    <h3><HighlightedWord word={submission.word} token={session.puzzle.puzzleString} /></h3>
-                    <p>{submission.definition ?? "definition unavailable."}</p>
-                    <b>{RARITY_TIER_LABELS[tier]}</b>
-                  </div>
-                </div>
-              ) : insightIndex === 1 ? (
-                <div className="rarity-insight-stats">
-                  <div><strong>{insights.percentile ?? "—"}{insights.percentile !== null ? "%" : ""}</strong><span>scores below yours</span></div>
-                  <div><strong>{insights.averageScore !== null ? insights.averageScore.toFixed(1) : "—"}</strong><span>field average</span></div>
-                  <div><strong>{insights.bestScore !== null ? insights.bestScore.toFixed(1) : "—"}</strong><span>best today</span></div>
-                  <div><strong>{insights.entries}</strong><span>{insights.entries === 1 ? "player" : "players"} compared</span></div>
-                </div>
-              ) : insightIndex === 2 ? (
-                <div className="rarity-word-weather">
-                  <div><span>most common answer</span><strong>{insights.mostCommonWord ?? "waiting…"}</strong><small>{insights.mostCommonCount ? `${insights.mostCommonCount} players` : "more entries needed"}</small></div>
-                  <div><span>longest answer</span><strong>{insights.longestWord ?? "waiting…"}</strong><small>{insights.averageLength !== null ? `${insights.averageLength.toFixed(1)} letters on average` : "more entries needed"}</small></div>
-                  <div><span>different answers</span><strong>{insights.distinctWords || "—"}</strong><small>{insights.yourWordCount > 1 ? `${insights.yourWordCount} people found your word` : "your word may be one of a kind"}</small></div>
-                </div>
-              ) : insightIndex === 3 ? (
-                <div className="rarity-spread" aria-label="Today’s entries by rarity tier">
-                  {insights.tierCounts.map((count, index) => (
-                    <div key={index}>
-                      <span style={{ height: `${Math.max(6, (count / scoreSpreadMaximum) * 100)}%`, "--tier-color": rarityTierColors[index] } as React.CSSProperties}><b>{count}</b></span>
-                      <small>{RARITY_TIER_LABELS[index + 1]}</small>
-                    </div>
-                  ))}
-                </div>
-              ) : (
-                <div className="rarity-insight-finale">
-                  <RarityGem />
-                  <p className="rarity-finale-verdict">{insights.bestScore !== null && submission.exactScore >= insights.bestScore ? "you found today’s benchmark." : "every word changes the field."}</p>
-                  <h3>{insights.bestWord ?? submission.word} · {formatRarityScore(insights.bestScore ?? submission.exactScore, 1)}</h3>
-                  <p>{insights.bestWord && insights.bestScore !== null ? `today’s current high is ${insights.bestWord} at ${insights.bestScore.toFixed(1)}. your ${submission.word} adds another path through the puzzle.` : "come back later to see how today’s field develops."}</p>
-                  <div>
-                    <button className="rarity-primary" onClick={handleShare}>share result ↗</button>
-                    <button className="rarity-text-action" onClick={() => openView("home")}>back to rarity</button>
-                  </div>
-                  <span role="status">{shareStatus}</span>
-                </div>
-              )}
-            </article>
-            <button className="rarity-insight-arrow is-next" onClick={() => setInsightIndex((current) => Math.min(insightTitles.length - 1, current + 1))} disabled={insightIndex === insightTitles.length - 1} aria-label="Next insight">›</button>
-            <div className="rarity-insight-progress" aria-label="Insight progress">
-              {insightTitles.map((title, index) => <button key={title} className={index === insightIndex ? "is-current" : ""} onClick={() => setInsightIndex(index)} aria-label={`View ${title}`} />)}
+      )) : view === "archive" ? (
+        <div className="rarity-archive-view">
+          <main className="rarity-archive-shell">
+            <RaritySupportHeader
+              description="play a past puzzle or revisit your previous entries."
+              headingRef={viewHeadingRef}
+              title="past puzzles"
+            />
+            <div className="rarity-archive-grid">
+              {archiveRounds.map((round) => {
+                const played = Boolean(round.session.submission);
+                return (
+                  <button className={played ? "is-played" : "is-unplayed"} key={round.dateKey} onClick={() => openArchiveRound(round.dateKey)} type="button">
+                    <span><small>{round.dateKey === todayKey ? "today" : rarityDisplayDate(round.dateKey, true)}</small><b>{played ? "complete" : "unplayed"}</b></span>
+                    <strong>{round.puzzle.puzzleString.toUpperCase()}</strong>
+                    {round.session.submission ? (
+                      <span className="rarity-archive-result"><b><HighlightedWord word={round.session.submission.word} token={round.puzzle.puzzleString} /></b><small>{formatRarityScore(round.session.submission.exactScore, 1)} · {RARITY_TIER_LABELS[round.session.submission.tier]}</small><RarityTierRating tier={round.session.submission.tier} /></span>
+                    ) : <span className="rarity-archive-result"><b>choose your word</b><small>one chance</small><RarityTierRating tier={0} /></span>}
+                    <i aria-hidden="true">→</i>
+                  </button>
+                );
+              })}
             </div>
           </main>
         </div>
       ) : (
-        <div className="rarity-info-view">
-          <article className="rarity-info-card">
-            <p className="rarity-panel-kicker">rarity</p>
-            <h2 ref={viewHeadingRef} tabIndex={-1}>{view === "how-to" ? "how to play" : view}</h2>
+        <div className="rarity-info-view" key={`rarity-support:${view}`}>
+          <article className={`rarity-info-card${view === "how-to" ? " is-how-to" : ""}${view === "themes" ? " is-themes" : ""}${view === "settings" ? " is-settings" : ""}`}>
+            <RaritySupportHeader
+              description={view === "themes" ? "choose a palette without changing the game." : undefined}
+              headingRef={viewHeadingRef}
+              title={view === "how-to" ? "how to play" : view}
+            />
             {view === "how-to" ? (
               <div className="rarity-how">
-                <p className="rarity-how-intro">one small string. one carefully chosen word. one place in today’s field.</p>
-                <div className="rarity-how-steps">
-                  <section>
-                    <span>01</span><b>find the string</b>
-                    <strong>{token}</strong>
-                    <p>today gives everyone the same letters.</p>
-                  </section>
-                  <section>
-                    <span>02</span><b>choose one word</b>
-                    <strong>your call</strong>
-                    <p>it must contain the string anywhere inside.</p>
-                  </section>
-                  <section>
-                    <span>03</span><b>find its rarity</b>
-                    <strong>72.4</strong>
-                    <p>less familiar words earn a higher score.</p>
-                  </section>
+                <section className="rarity-how-lead">
+                  <p className="rarity-how-intro">one constraint, one carefully chosen word, and one chance to make it count.</p>
+                  <p className="rarity-how-rule">everyone gets the same three-letter string each day. enter one valid word of at least four letters, keeping the string together.</p>
+                </section>
+                <div className="rarity-how-comparison" aria-label="Three valid WEL words with different placements and rarity scores">
+                  <header>
+                    <span><b>example string</b><strong>WEL</strong></span>
+                    <p>place the string anywhere it fits—at the beginning, in the middle, or at the end. then aim for obscurity. here are three examples in play:</p>
+                  </header>
+                  <div className="rarity-how-examples">
+                    <article style={{ "--example-color": rarityTierColors[1] } as React.CSSProperties}>
+                      <span>at the end</span>
+                      <strong>to<mark>wel</mark></strong>
+                      <p><b>37.6</b><small>common</small></p>
+                    </article>
+                    <article style={{ "--example-color": rarityTierColors[2] } as React.CSSProperties}>
+                      <span>at the start</span>
+                      <strong><mark>wel</mark>lness</strong>
+                      <p><b>53.8</b><small>uncommon</small></p>
+                    </article>
+                    <article style={{ "--example-color": rarityTierColors[3] } as React.CSSProperties}>
+                      <span>in the middle</span>
+                      <strong>beje<mark>wel</mark>ed</strong>
+                      <p><b>79.9</b><small>rare</small></p>
+                    </article>
+                  </div>
                 </div>
-                <div className="rarity-how-note"><b>good to know</b><span>invalid attempts never use your turn. your first valid word locks—and is final.</span></div>
-                <div className="rarity-how-tier-track" aria-label="six rarity tiers">
-                  {rarityTierColors.map((color, index) => <span style={{ "--tier-color": color } as React.CSSProperties} key={color}>{RARITY_TIER_LABELS[index + 1]}</span>)}
-                </div>
+                <section className="rarity-how-scale">
+                  <header><h3>the rarity scale</h3><p>higher scores reach higher tiers of obscurity.</p></header>
+                  <div className="rarity-how-tier-track" aria-label="six rarity tiers">
+                    {rarityTierColors.map((color, index) => (
+                      <span style={{ "--tier-color": color } as React.CSSProperties} key={color}>
+                        <i aria-hidden="true" />
+                        <b>{RARITY_TIER_LABELS[index + 1]}</b>
+                        <small>{rarityTierRanges[index]}</small>
+                      </span>
+                    ))}
+                  </div>
+                </section>
                 <button className="rarity-primary" onClick={() => openView("daily")}>play today’s puzzle</button>
               </div>
             ) : view === "themes" ? (
@@ -904,35 +983,28 @@ export function RarityGame() {
                   <div>
                     <span>live preview</span>
                     <h3>{activeTheme.name}</h3>
-                    <p>the whole game changes together.</p>
+                    <p>see how a finished word looks in this palette.</p>
                   </div>
-                  <div className="rarity-theme-live-score">
-                    <i />
-                    <p><strong>ra<em>re</em></strong><small>72.4 points</small></p>
+                  <div className="rarity-theme-live-result">
+                    <small>your entry</small>
+                    <div className="rarity-theme-live-word">
+                      <strong>beje<mark>wel</mark>ed</strong>
+                      <RarityTierRating tier={4} />
+                    </div>
+                    <p><b>79.9</b><span>points</span></p>
+                    <em>rare</em>
                   </div>
                   <div className="rarity-theme-live-tiers" aria-label="theme rarity tiers">
                     {activeTheme.tiers.map((color, index) => <span key={color} style={{ background: color }}>{index + 1}</span>)}
                   </div>
                 </div>
               </div>
-            ) : (
-              <div className="rarity-about">
-                <div className="rarity-about-hero">
-                  <RarityGem />
-                  <div><h3>one word can say a lot.</h3><p>rarity celebrates the strange, specific, and surprising words hiding beyond everyday language.</p></div>
-                </div>
-                <div className="rarity-about-motif" aria-label="the shape of rarity">
-                  <div><b>one</b><span>shared string</span></div>
-                  <div><b>one</b><span>final word</span></div>
-                  <div><b>one</b><span>daily field</span></div>
-                </div>
-                <div className="rarity-about-story">
-                  <p>created by mario gerardi, the game turns vocabulary into a daily act of taste: familiar or peculiar, cautious or ambitious, the choice is yours.</p>
-                  <p>this games hub edition preserves classic rarity’s scoring, tiers, dictionary context, and live comparisons.</p>
-                </div>
-                <button className="rarity-primary" onClick={() => openView("daily")}>play rarity</button>
-              </div>
-            )}
+            ) : view === "settings" ? (
+              <RaritySettings
+                hasProgress={archiveRounds.some((round) => Boolean(round.session.submission))}
+                onClear={clearRarityHistory}
+              />
+            ) : null}
           </article>
         </div>
       )}

@@ -1,7 +1,11 @@
 import type { Metadata } from "next";
-import { headers } from "next/headers";
+import { cookies, headers } from "next/headers";
 import { siteBrand } from "../src/app-shell/site-brand";
+import { AuthProvider } from "../src/app-shell/auth-provider";
+import { GameProgressProvider } from "../src/platform/game-progress-provider";
 import "./globals.css";
+import { themeBootstrap } from "../src/platform/game-theme";
+import { AUTH_PRESENTATION_COOKIE, parseAuthPresentation } from "../src/platform/auth-presentation";
 
 export async function generateMetadata(): Promise<Metadata> {
   const requestHeaders = await headers();
@@ -39,14 +43,17 @@ export async function generateMetadata(): Promise<Metadata> {
   };
 }
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const cookieStore = await cookies();
+  const initialPresentation = parseAuthPresentation(cookieStore.get(AUTH_PRESENTATION_COOKIE)?.value);
   return (
-    <html lang="en">
-      <body>{children}</body>
+    <html lang="en" suppressHydrationWarning>
+      <head><script dangerouslySetInnerHTML={{ __html: themeBootstrap }} /></head>
+      <body><AuthProvider initialPresentation={initialPresentation}><GameProgressProvider>{children}</GameProgressProvider></AuthProvider></body>
     </html>
   );
 }

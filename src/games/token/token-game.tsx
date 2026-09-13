@@ -44,6 +44,10 @@ import {
   tokenDateKey,
   type TokenLibraryEntry,
 } from "./library.mjs";
+import { dailyRunId, sessionRunId, useGameRunPersistence } from "../../platform/game-run-persistence";
+import { useGameRestoration, useProgressStorage } from "../../platform/game-progress-provider";
+import { loadLocalStudioSlot } from "../../authoring/local-runtime";
+import type { GameRun } from "../../platform/runs.mjs";
 
 const RUNS_STORAGE_KEY = gameStorageKey("token", "runs");
 const LIBRARY_STORAGE_KEY = gameStorageKey("token", "library");
@@ -63,11 +67,13 @@ type TokenSubmission = {
 
 type TokenRun = {
   completed: boolean;
+  completedAt: string | null;
   cursor: number;
   phase: TokenPhase;
   puzzleId: string;
   stopCursor: number;
   submissions: TokenSubmission[];
+  startedAt: string;
 };
 
 type TokenView = "menu" | "daily" | "archive" | "play" | "how";
@@ -126,6 +132,8 @@ function initialRun(puzzle: TokenPuzzle = tokenDemoPuzzle): TokenRun {
     stopCursor: 0,
     submissions: [],
     completed: false,
+    completedAt: null,
+    startedAt: new Date().toISOString(),
   };
 }
 
@@ -144,13 +152,15 @@ function selectTokenDailyPuzzle({
   date,
   difficulty,
   localLibrary,
+  studioLibrary = [],
 }: {
   catalog: readonly TokenCatalogPuzzle[];
   date: string;
   difficulty: TokenDifficulty;
   localLibrary: readonly TokenLibraryEntry[];
+  studioLibrary?: readonly TokenLibraryEntry[];
 }): TokenDailySelection {
-  const scheduled = localLibrary.find((entry) => entry.dailyDate === date && entry.puzzle.difficulty === difficulty);
+  const scheduled = [...studioLibrary, ...localLibrary].find((entry) => entry.dailyDate === date && entry.puzzle.difficulty === difficulty);
   if (scheduled) {
     return {
       dateKey: date,
@@ -207,14 +217,20 @@ function TokenWordmark({ compact = false }: { compact?: boolean }) {
 }
 
 export function TokenGame() {
+  const progressStorage = useProgressStorage();
+  const restoration = useGameRestoration();
+  const [hydratedRevision, setHydratedRevision] = useState<typeof restoration.revision | undefined>(undefined);
+  const [starterPuzzle, setStarterPuzzle] = useState<TokenPuzzle | null>(null);
+  const [showLoading, setShowLoading] = useState(false);
+  const hydrated = restoration.ready && hydratedRevision === restoration.revision && starterPuzzle !== null;
   const inputRef = useRef<HTMLInputElement>(null);
   const [puzzle, setPuzzle] = useState<TokenPuzzle>(tokenDemoPuzzle);
   const [run, setRun] = useState<TokenRun>(initialRun(tokenDemoPuzzle));
   const [localLibrary, setLocalLibrary] = useState<TokenLibraryEntry[]>([]);
+  const [studioLibrary, setStudioLibrary] = useState<TokenLibraryEntry[]>([]);
   const [todayKey] = useState(() => tokenDateKey());
   const [entry, setEntry] = useState("");
   const [characterCursor, setCharacterCursor] = useState(0);
-  const [hydrated, setHydrated] = useState(false);
   const [tutorialOpen, setTutorialOpen] = useState(false);
   const [showResults, setShowResults] = useState(false);
   const [resultsDismissed, setResultsDismissed] = useState(false);
@@ -228,8 +244,9 @@ export function TokenGame() {
       date: todayKey,
       difficulty: "easy",
       localLibrary,
+      studioLibrary,
     }),
-    [localLibrary, todayKey],
+    [localLibrary, studioLibrary, todayKey],
   );
   const dailyHard = useMemo(
     () => selectTokenDailyPuzzle({
@@ -237,8 +254,9 @@ export function TokenGame() {
       date: todayKey,
       difficulty: "hard",
       localLibrary,
+      studioLibrary,
     }),
-    [localLibrary, todayKey],
+    [localLibrary, studioLibrary, todayKey],
   );
   const archiveEntries = useMemo<TokenArchiveEntry[]>(() => [
     ...tokenPuzzles.map((catalogPuzzle) => ({
@@ -263,48 +281,106 @@ export function TokenGame() {
   const activeSubmission = run.submissions.at(-1) ?? null;
   const overallScore = useMemo(() => averageTokenScore(run.submissions), [run.submissions]);
   const exactCount = useMemo(() => run.submissions.filter((submission) => submission.exact).length, [run.submissions]);
+  const tokenMode = puzzle.id === dailyEasy?.puzzle.id
+    ? "daily-easy"
+    : puzzle.id === dailyHard?.puzzle.id
+      ? "daily-hard"
+      : "archive";
+  const platformRun = useMemo<GameRun<"token">>(() => ({
+    schemaVersion: 1,
+    runId: tokenMode.startsWith("daily-") ? dailyRunId("token", tokenMode, todayKey) : sessionRunId("token", tokenMode, run.startedAt),
+    playerId: null,
+    gameId: "token",
+    mode: tokenMode,
+    puzzle: {
+      id: puzzle.id,
+      revision: Math.max(1, puzzle.schemaVersion),
+      ...(tokenMode.startsWith("daily-") ? { date: todayKey } : {}),
+    },
+    startedAt: run.startedAt,
+    completedAt: run.completedAt,
+    outcome: run.completed ? "completed" : "in-progress",
+    score: overallScore,
+    checkpoint: { version: 1, state: { native: JSON.parse(serializeTokenRun(run)) } },
+    result: {
+      averageScore: overallScore,
+      exactMatches: exactCount,
+      predictions: run.submissions.map(({ stopIndex, canonical, entry, exact, score, tokenized }) => ({ stopIndex, canonical, entry, exact, score, tokenized })),
+    },
+  }), [exactCount, overallScore, puzzle.id, puzzle.schemaVersion, run, todayKey, tokenMode]);
+  useGameRunPersistence(platformRun, hydrated && view === "play");
 
   useEffect(() => {
     let cancelled = false;
-    queueMicrotask(() => {
+    queueMicrotask(async () => {
       if (cancelled) return;
       try {
         const storedLibrary = parseLocalTokenLibrary(localStorage.getItem(LIBRARY_STORAGE_KEY));
+        setTutorialOpen(localStorage.getItem(TUTORIAL_STORAGE_KEY) !== "complete");
+        const slots = await Promise.all(["daily-easy", "daily-hard"].map((mode) => loadLocalStudioSlot("token", mode, todayKey)));
+        if (cancelled) return;
+        const scheduledLibrary: TokenLibraryEntry[] = slots.flat().flatMap((document) => document.gameId === "token" ? [{
+          schemaVersion: 1, dailyDate: todayKey, savedAt: document.publishedAt, title: document.title,
+          puzzle: { id: document.id, schemaVersion: 1, ...document.payload },
+        }] : []);
+        setStudioLibrary(scheduledLibrary);
         const starter = selectTokenDailyPuzzle({
           catalog: tokenPuzzles,
           date: tokenDateKey(),
           difficulty: "easy",
           localLibrary: storedLibrary,
+          studioLibrary: scheduledLibrary,
         })?.puzzle ?? tokenDemoPuzzle;
-        const storedRuns = parseStoredRuns(localStorage.getItem(RUNS_STORAGE_KEY));
-        const saved = hydrateTokenRun(storedRuns[starter.id], starter) as TokenRun | null;
-        setPuzzle(starter);
-        setRun(saved ?? initialRun(starter));
         setLocalLibrary(storedLibrary);
-        setTutorialOpen(localStorage.getItem(TUTORIAL_STORAGE_KEY) !== "complete");
+        setStarterPuzzle(starter);
       } catch {
-        setPuzzle(tokenDemoPuzzle);
-        setRun(initialRun(tokenDemoPuzzle));
+        if (cancelled) return;
+        setStarterPuzzle(tokenDemoPuzzle);
         setTutorialOpen(true);
-      } finally {
-        setHydrated(true);
       }
     });
     return () => {
       cancelled = true;
     };
+  }, [todayKey]);
+
+  useEffect(() => {
+    let cancelled = false;
+    if (restoration.ready && starterPuzzle) queueMicrotask(() => {
+      if (cancelled) return;
+      let saved: TokenRun | null = null;
+      try {
+        const storedRuns = parseStoredRuns(progressStorage.getItem(RUNS_STORAGE_KEY));
+        saved = hydrateTokenRun(storedRuns[starterPuzzle.id], starterPuzzle) as TokenRun | null;
+      } catch { /* Device storage may be unavailable. */ }
+      setPuzzle(starterPuzzle);
+      setRun(saved ?? initialRun(starterPuzzle));
+      setEntry("");
+      setCharacterCursor(0);
+      setShowResults(false);
+      setResultsDismissed(false);
+      setInspectedStop(null);
+      setView((current) => current === "play" ? "menu" : current);
+      setHydratedRevision(restoration.revision);
+    });
+    return () => { cancelled = true; };
+  }, [restoration.ready, restoration.revision, starterPuzzle, progressStorage]);
+
+  useEffect(() => {
+    const timer = window.setTimeout(() => setShowLoading(true), 700);
+    return () => window.clearTimeout(timer);
   }, []);
 
   useEffect(() => {
-    if (!hydrated) return;
+    if (!hydrated || view !== "play") return;
     try {
-      const storedRuns = parseStoredRuns(localStorage.getItem(RUNS_STORAGE_KEY));
+      const storedRuns = parseStoredRuns(progressStorage.getItem(RUNS_STORAGE_KEY));
       storedRuns[puzzle.id] = JSON.parse(serializeTokenRun(run));
-      localStorage.setItem(RUNS_STORAGE_KEY, JSON.stringify({ schemaVersion: 1, runs: storedRuns }));
+      progressStorage.setItem(RUNS_STORAGE_KEY, JSON.stringify({ schemaVersion: 1, runs: storedRuns }));
     } catch {
       // Local progress is optional when storage is unavailable.
     }
-  }, [hydrated, puzzle, run]);
+  }, [progressStorage, hydrated, puzzle, run, view]);
 
   useEffect(() => {
     if (!hydrated) return;
@@ -326,8 +402,7 @@ export function TokenGame() {
     const nextStop = puzzle.stops[run.stopCursor];
     if (run.cursor >= puzzle.responseTokens.length) {
       const timer = window.setTimeout(() => {
-        setRun((current) => ({ ...transitionTokenRun(current, TOKEN_PHASES.COMPLETE), completed: true }) as TokenRun);
-        window.setTimeout(() => setShowResults(true), 440);
+        setRun((current) => ({ ...transitionTokenRun(current, TOKEN_PHASES.COMPLETE), completed: true, completedAt: new Date().toISOString() }) as TokenRun);
       }, 0);
       return () => window.clearTimeout(timer);
     }
@@ -356,12 +431,13 @@ export function TokenGame() {
   }, [characterCursor, hydrated, puzzle, run.cursor, run.phase, run.stopCursor, view]);
 
   useEffect(() => {
-    if (view !== "play" || run.phase !== TOKEN_PHASES.PREDICTING || tutorialOpen) return;
-    window.requestAnimationFrame(() => inputRef.current?.focus());
-  }, [run.phase, tutorialOpen, view]);
+    if (!hydrated || view !== "play" || run.phase !== TOKEN_PHASES.PREDICTING || tutorialOpen) return;
+    const frame = window.requestAnimationFrame(() => inputRef.current?.focus({ preventScroll: true }));
+    return () => window.cancelAnimationFrame(frame);
+  }, [hydrated, run.phase, tutorialOpen, view]);
 
   useEffect(() => {
-    if (view !== "play" || (run.phase !== TOKEN_PHASES.REVEAL_EXACT && run.phase !== TOKEN_PHASES.REVEAL_MISS)) return;
+    if (!hydrated || view !== "play" || (run.phase !== TOKEN_PHASES.REVEAL_EXACT && run.phase !== TOKEN_PHASES.REVEAL_MISS)) return;
     const delay = run.phase === TOKEN_PHASES.REVEAL_EXACT ? 760 : 1_100;
     const timer = window.setTimeout(() => {
       setEntry("");
@@ -370,19 +446,19 @@ export function TokenGame() {
         const cursor = current.cursor + 1;
         const stopCursor = current.stopCursor + 1;
         if (cursor >= puzzle.responseTokens.length) {
-          return { ...transitionTokenRun(current, TOKEN_PHASES.COMPLETE), cursor, stopCursor, completed: true } as TokenRun;
+          return { ...transitionTokenRun(current, TOKEN_PHASES.COMPLETE), cursor, stopCursor, completed: true, completedAt: new Date().toISOString() } as TokenRun;
         }
         return { ...transitionTokenRun(current, TOKEN_PHASES.GENERATING), cursor, stopCursor } as TokenRun;
       });
     }, delay);
     return () => window.clearTimeout(timer);
-  }, [puzzle.responseTokens.length, run.phase, view]);
+  }, [hydrated, puzzle.responseTokens.length, run.phase, view]);
 
   useEffect(() => {
-    if (view !== "play" || run.phase !== TOKEN_PHASES.COMPLETE || !run.completed || showResults || resultsDismissed) return;
+    if (!hydrated || view !== "play" || run.phase !== TOKEN_PHASES.COMPLETE || !run.completed || showResults || resultsDismissed) return;
     const timer = window.setTimeout(() => setShowResults(true), 420);
     return () => window.clearTimeout(timer);
-  }, [resultsDismissed, run.completed, run.phase, showResults, view]);
+  }, [hydrated, resultsDismissed, run.completed, run.phase, showResults, view]);
 
   useEffect(() => {
     const visualViewport = window.visualViewport;
@@ -413,6 +489,7 @@ export function TokenGame() {
   }
 
   function restart() {
+    if (!hydrated) return;
     setEntry("");
     setCharacterCursor(0);
     setInspectedStop(null);
@@ -423,6 +500,7 @@ export function TokenGame() {
   }
 
   function play() {
+    if (!hydrated) return;
     if (run.completed) {
       restart();
       return;
@@ -436,9 +514,10 @@ export function TokenGame() {
   }
 
   function startPuzzle(nextPuzzle: TokenPuzzle) {
+    if (!hydrated) return;
     let saved: TokenRun | null = null;
     try {
-      const storedRuns = parseStoredRuns(localStorage.getItem(RUNS_STORAGE_KEY));
+      const storedRuns = parseStoredRuns(progressStorage.getItem(RUNS_STORAGE_KEY));
       saved = hydrateTokenRun(storedRuns[nextPuzzle.id], nextPuzzle) as TokenRun | null;
     } catch {
       // Starting a puzzle never depends on storage.
@@ -454,6 +533,7 @@ export function TokenGame() {
   }
 
   function removeFromLocalArchive(puzzleId: string) {
+    if (!hydrated) return;
     setLocalLibrary((current) => current.filter((entry) => entry.puzzle.id !== puzzleId));
     if (puzzle.id === puzzleId) {
       const fallback = dailyEasy?.puzzle ?? tokenDemoPuzzle;
@@ -464,7 +544,7 @@ export function TokenGame() {
   }
 
   function submitPrediction() {
-    if (!activeStop || run.phase !== TOKEN_PHASES.PREDICTING) return;
+    if (!hydrated || !activeStop || run.phase !== TOKEN_PHASES.PREDICTING) return;
     const result = scoreTokenEntry(activeStop, entry, entryLimit);
     if (!result.accepted || result.score === undefined || !result.status || !result.tokenized) {
       inputRef.current?.focus();
@@ -505,7 +585,7 @@ export function TokenGame() {
           { label: "Menu", current: view === "menu", onSelect: () => setView("menu") },
           { label: "Daily", current: view === "daily", onSelect: () => setView("daily") },
           { label: "Archive", current: view === "archive", onSelect: () => setView("archive") },
-          { label: "Play", current: view === "play", onSelect: play },
+          { label: "Play", current: view === "play", disabled: !hydrated, onSelect: play },
           { label: "How to play", current: view === "how", onSelect: () => setView("how") },
         ]}
         onHome={() => setView("menu")}
@@ -513,6 +593,8 @@ export function TokenGame() {
 
       {view === "menu" ? (
         <TokenMenu
+          ready={hydrated}
+          loadingMessage={restoration.conflict ? "Choose which save to continue." : showLoading ? "Getting your puzzles ready…" : ""}
           dailyEasy={dailyEasy}
           dailyHard={dailyHard}
           onArchive={() => setView("archive")}
@@ -522,6 +604,8 @@ export function TokenGame() {
           run={run}
           todayKey={todayKey}
         />
+      ) : !hydrated && view !== "how" ? (
+        <section className="token-startup-pending"><h2>{view === "daily" ? "Daily" : view === "archive" ? "Archive" : "TOKEN"}</h2><p role="status">{restoration.conflict ? "Choose which save to continue." : showLoading ? "Getting your puzzles ready…" : ""}</p><button type="button" onClick={() => setView("menu")}>Back to menu</button></section>
       ) : view === "daily" ? (
         <TokenDaily
           activePuzzleId={puzzle.id}
@@ -617,7 +701,7 @@ export function TokenGame() {
       </main>
       )}
 
-      {view === "play" && tutorialOpen && run.phase === TOKEN_PHASES.PREDICTING && (
+      {hydrated && view === "play" && tutorialOpen && run.phase === TOKEN_PHASES.PREDICTING && (
         <aside className="token-tutorial" aria-label="How TOKEN works">
           <div>
             <p><b>1</b><span>TOKEN streams a frozen response, then stops.</span></p>
@@ -629,7 +713,7 @@ export function TokenGame() {
         </aside>
       )}
 
-      {view === "play" && showResults && (
+      {hydrated && view === "play" && showResults && (
         <div className="token-results-backdrop" onMouseDown={(event) => {
           if (event.target === event.currentTarget) dismissResults();
         }} role="presentation">
@@ -649,7 +733,9 @@ export function TokenGame() {
   );
 }
 
-function TokenMenu({ dailyEasy, dailyHard, onArchive, onDaily, onPlay, puzzle, run, todayKey }: {
+function TokenMenu({ ready, loadingMessage, dailyEasy, dailyHard, onArchive, onDaily, onPlay, puzzle, run, todayKey }: {
+  ready: boolean;
+  loadingMessage: string;
   dailyEasy: TokenDailySelection;
   dailyHard: TokenDailySelection;
   onArchive: () => void;
@@ -659,8 +745,8 @@ function TokenMenu({ dailyEasy, dailyHard, onArchive, onDaily, onPlay, puzzle, r
   run: TokenRun;
   todayKey: string;
 }) {
-  const resumed = run.submissions.length > 0 && !run.completed;
-  const action = run.completed ? "Start a new response" : resumed ? "Continue this response" : "Start predicting";
+  const resumed = ready && run.submissions.length > 0 && !run.completed;
+  const action = ready && run.completed ? "Start a new response" : resumed ? "Continue this response" : "Start predicting";
   return (
     <main className="token-home" aria-label="TOKEN menu">
       <div className="token-home-inner">
@@ -670,16 +756,16 @@ function TokenMenu({ dailyEasy, dailyHard, onArchive, onDaily, onPlay, puzzle, r
           <span>Predict what the machine will generate next.</span>
         </header>
         <div className="token-menu-grid" aria-label="TOKEN menu choices">
-          <button className="token-menu-play" onClick={onPlay} type="button">
-            <span>{puzzle.difficulty} · {resumed ? String(run.submissions.length) + " of " + String(puzzle.stops.length) + " predictions logged" : String(puzzle.stops.length) + " authored predictions"}</span>
+          <button className="token-menu-play" disabled={!ready} onClick={onPlay} type="button">
+            <span>{ready ? `${puzzle.difficulty} · ${resumed ? String(run.submissions.length) + " of " + String(puzzle.stops.length) + " predictions logged" : String(puzzle.stops.length) + " authored predictions"}` : "One response. Your predictions."}</span>
             <strong>{action}</strong>
-            <small>{puzzle.id === dailyEasy?.puzzle.id || puzzle.id === dailyHard?.puzzle.id ? "Today’s selected response is ready." : "TOKEN stops. You supply the next token."}</small>
+            <small role="status">{!ready ? loadingMessage : puzzle.id === dailyEasy?.puzzle.id || puzzle.id === dailyHard?.puzzle.id ? "Today’s selected response is ready." : "TOKEN stops. You supply the next token."}</small>
             <b aria-hidden="true">→</b>
           </button>
           <button className="token-menu-daily" onClick={onDaily} type="button">
-            <span>Daily · {todayKey}</span>
+            <span>{ready ? `Daily · ${todayKey}` : "Daily"}</span>
             <strong>Two ways in.</strong>
-            <small>{dailyEasy ? "Easy words" : "Easy coming soon"} · {dailyHard ? "Hard tokens" : "Hard coming soon"}</small>
+            <small>{ready ? `${dailyEasy ? "Easy words" : "Easy coming soon"} · ${dailyHard ? "Hard tokens" : "Hard coming soon"}` : "Easy words · Hard tokens"}</small>
             <b aria-hidden="true">→</b>
           </button>
           <button className="token-menu-archive" onClick={onArchive} type="button">

@@ -38,6 +38,8 @@ test("placement codes preserve the four legacy rules", () => {
   assert.equal(validateSyllablPlacement("bedraggled", "dra", 3), true);
   assert.equal(validateSyllablPlacement("dradra", "dra", 4), true);
   assert.equal(validateSyllablPlacement("dragon", "dra", 3), false);
+  assert.equal(validateSyllablPlacement("backtrack", "ack", 3), true);
+  assert.equal(validateSyllablPlacement("attack", "ack", 3), false);
 });
 
 test("attempt validation stays ordered and rejected attempts are immutable", () => {

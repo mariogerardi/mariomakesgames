@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, type ReactNode } from "react";
+import { useLayoutEffect, useRef, type ReactNode } from "react";
 
 export type GameLocalBarItem = {
   current?: boolean;
@@ -27,18 +27,28 @@ export function GameLocalBar({
   onHome: () => void;
 }) {
   const navRef = useRef<HTMLElement>(null);
+  const positionedRef = useRef(false);
   const currentLabel = items.find((item) => item.current)?.label;
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     const currentItem = navRef.current?.querySelector<HTMLElement>("[aria-current='page']");
     const nav = navRef.current;
     if (!currentItem || !nav) return;
 
+    const itemBounds = currentItem.getBoundingClientRect();
+    const navBounds = nav.getBoundingClientRect();
+    const fullyVisible = itemBounds.left >= navBounds.left && itemBounds.right <= navBounds.right;
+    if (fullyVisible) {
+      positionedRef.current = true;
+      return;
+    }
+
     const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     nav.scrollTo({
-      behavior: prefersReducedMotion ? "auto" : "smooth",
+      behavior: !positionedRef.current || prefersReducedMotion ? "auto" : "smooth",
       left: currentItem.offsetLeft - (nav.clientWidth - currentItem.offsetWidth) / 2,
     });
+    positionedRef.current = true;
   }, [currentLabel]);
 
   return (

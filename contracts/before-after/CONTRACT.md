@@ -38,4 +38,12 @@ not playable content.
 
 Solved puzzle IDs, attempts, duration, Daily completion dates, current streak,
 and created puzzles restore from namespaced, device-local storage. Shared
-cross-game identity and achievements remain H11 scope.
+cross-game identity and achievements were outside the locked legacy behavior.
+
+## Current production deviations
+
+- Custom puzzle creation moved from the player shell into the
+  administrator-only Puzzle Studio. It is an authoring workflow, not a current
+  player mode.
+- Guest progress remains device-local. Signed-in progress can synchronize to
+  the player's account through the shared Hub progress layer.

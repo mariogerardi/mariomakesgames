@@ -41,7 +41,7 @@ test("headword closure leaves qualifying headwords available beside their inflec
     entry("potatoes", [sense("en", "potato", "potato", "accepted", { surface: "potatoes" })]),
   ];
   assert.deepEqual(buildDualBuilderLexicon(forms).map((item) => item.surface), ["potato", "potatoes"]);
-  assert.equal(calculateDualBuilderMetrics(forms).en.capacity, 1.1);
+  assert.equal(calculateDualBuilderMetrics(forms).en.capacity, 1.25);
 });
 
 test("unrelated homograph analyses remain in separate families", () => {
@@ -578,9 +578,9 @@ test("metrics and suggestions recalculate from the authored playable pool", () =
   ];
   const before = calculateDualBuilderMetrics(forms);
   const after = calculateDualBuilderMetrics(forms, { rugosa: "exclude", rug: "en" });
-  assert.equal(before.totalCapacity, 3.1);
+  assert.equal(before.totalCapacity, 3.25);
   assert.equal(before.duals, 1);
-  assert.equal(after.totalCapacity, 1.1);
+  assert.equal(after.totalCapacity, 1.25);
   assert.equal(after.duals, 0);
   assert.equal(after.es.families, 0);
 });

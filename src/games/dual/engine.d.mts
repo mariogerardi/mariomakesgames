@@ -48,10 +48,14 @@ export type DualProgress = {
   allDualsFound: boolean;
 };
 
-export type DualWordProgress = {
+export type DualFamilyProgress = {
   found: number;
   total: number;
-  allWordsFound: boolean;
+  foundEnglish: number;
+  totalEnglish: number;
+  foundSpanish: number;
+  totalSpanish: number;
+  allFamiliesFound: boolean;
 };
 
 export type DualFamilyDiscovery = {
@@ -76,7 +80,7 @@ export const DUAL_NEW_FAMILY_POINTS: number;
 export const DUAL_ADDITIONAL_FORM_POINTS: number;
 export function createDualSession(input: { puzzle: DualPuzzle; dateKey: string; startedAt?: number }): DualSession;
 export function dualProgress(session: DualSession, puzzle: DualPuzzle): DualProgress;
-export function dualWordProgress(session: DualSession, puzzle: DualPuzzle, lexicon: DualLexicon): DualWordProgress;
+export function dualFamilyProgress(session: DualSession, puzzle: DualPuzzle, lexicon: DualLexicon): DualFamilyProgress;
 export function dualFamilyDiscoveries(input: { session: DualSession; lexicon: DualLexicon; language: DualLanguage }): DualFamilyDiscovery[];
 export function submitDualWord(input: { session: DualSession; puzzle: DualPuzzle; lexicon: DualLexicon; input: string; now?: number }): DualSubmitResult;
 export function finishDualSession(session: DualSession, now?: number): DualSession;

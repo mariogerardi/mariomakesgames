@@ -9,10 +9,10 @@ import {
 
 export const DUAL_SESSION_VERSION = 2;
 export const DUAL_NEW_FAMILY_POINTS = 1;
-export const DUAL_ADDITIONAL_FORM_POINTS = 0.1;
+export const DUAL_ADDITIONAL_FORM_POINTS = 0.25;
 
 function roundPoints(value) {
-  return Math.round((value + Number.EPSILON) * 10) / 10;
+  return Math.round((value + Number.EPSILON) * 100) / 100;
 }
 
 export function createDualSession({ puzzle, dateKey, startedAt = Date.now() }) {
@@ -51,19 +51,31 @@ export function dualProgress(session, puzzle) {
   };
 }
 
-export function dualWordProgress(session, puzzle, lexicon) {
-  const playableSurfaces = new Set();
+export function dualFamilyProgress(session, puzzle, lexicon) {
+  const possibleFamilies = new Set();
   for (const entry of lexicon.entries) {
     if (!canonicalContainsSequence(entry.surface, puzzle.sequence)) continue;
     const resolution = resolveDualInput(lexicon, entry.surface);
     if (resolution.status !== "resolved" || !resolution.entry) continue;
-    playableSurfaces.add(normalizeDualInput(resolution.entry.surface));
+    for (const language of dualEntryLanguages(resolution.entry)) {
+      possibleFamilies.add(`${language}:${dualEntryFamily(resolution.entry, language)}`);
+    }
   }
-  const found = new Set(session.submissions
-    .map((submission) => normalizeDualInput(submission.surface))
-    .filter((surface) => playableSurfaces.has(surface))).size;
-  const total = playableSurfaces.size;
-  return { found, total, allWordsFound: total > 0 && found >= total };
+
+  const foundFamilies = new Set(session.seenFamilies.filter((family) => possibleFamilies.has(family)));
+  const totalEnglish = [...possibleFamilies].filter((family) => family.startsWith("en:")).length;
+  const totalSpanish = possibleFamilies.size - totalEnglish;
+  const foundEnglish = [...foundFamilies].filter((family) => family.startsWith("en:")).length;
+  const foundSpanish = foundFamilies.size - foundEnglish;
+  return {
+    found: foundFamilies.size,
+    total: possibleFamilies.size,
+    foundEnglish,
+    totalEnglish,
+    foundSpanish,
+    totalSpanish,
+    allFamiliesFound: possibleFamilies.size > 0 && foundFamilies.size >= possibleFamilies.size,
+  };
 }
 
 export function dualFamilyDiscoveries({ session, lexicon, language }) {

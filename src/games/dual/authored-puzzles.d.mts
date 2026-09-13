@@ -3,6 +3,7 @@ import type { DualLexicalEntry } from "./lexicon.mjs";
 
 export type AuthoredDualPuzzle = {
   version: 1;
+  revision: number;
   dateKey: string;
   createdAt: string;
   puzzle: DualPuzzle;
@@ -16,7 +17,7 @@ export function parseAuthoredDualPuzzles(payload: unknown): AuthoredDualPuzzleLi
 export function scheduleAuthoredDualPuzzle(
   library: AuthoredDualPuzzleLibrary | unknown,
   dateKey: string,
-  draft: { puzzle: DualPuzzle; lexicon: DualLexicalEntry[] },
+  draft: { puzzle: DualPuzzle; lexicon: DualLexicalEntry[]; revision?: number },
   createdAt?: string,
 ): AuthoredDualPuzzleLibrary;
 export function removeAuthoredDualPuzzle(library: AuthoredDualPuzzleLibrary | unknown, dateKey: string): AuthoredDualPuzzleLibrary;

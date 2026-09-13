@@ -1,8 +1,19 @@
 .root {
+  --rarity-enter-duration: 360ms;
+  --rarity-enter-ease: cubic-bezier(.22, 1, .36, 1);
+  --rarity-enter-delay-1: 55ms;
+  --rarity-enter-delay-2: 110ms;
+  --rarity-enter-delay-3: 165ms;
+  --rarity-enter-delay-4: 220ms;
   --rarity-success: #248653;
   --rarity-error: #c3153e;
   --rarity-button-text: #fff;
   --rarity-tier-color: var(--rarity-tier-1);
+  --rarity-field-gradient: linear-gradient(
+    90deg,
+    color-mix(in srgb, var(--rarity-tier-1) 70%, var(--rarity-bg)),
+    color-mix(in srgb, var(--rarity-tier-1) 82%, var(--rarity-bg))
+  );
   position: relative;
   min-height: var(--game-room-height);
   overflow: hidden;
@@ -17,26 +28,53 @@
   --rarity-button-text: #2f2414;
 }
 
-.root:global(.rarity-tier-2) { --rarity-tier-color: var(--rarity-tier-2); }
-.root:global(.rarity-tier-3) { --rarity-tier-color: var(--rarity-tier-3); }
-.root:global(.rarity-tier-4) { --rarity-tier-color: var(--rarity-tier-4); }
-.root:global(.rarity-tier-5) { --rarity-tier-color: var(--rarity-tier-5); }
-.root:global(.rarity-tier-6) { --rarity-tier-color: var(--rarity-tier-6); }
+.root:global(.rarity-tier-2) {
+  --rarity-tier-color: var(--rarity-tier-2);
+  --rarity-field-gradient: linear-gradient(90deg,
+    color-mix(in srgb, var(--rarity-tier-1) 70%, var(--rarity-bg)) 0%,
+    color-mix(in srgb, var(--rarity-tier-2) 72%, var(--rarity-bg)) 100%);
+}
+.root:global(.rarity-tier-3) {
+  --rarity-tier-color: var(--rarity-tier-3);
+  --rarity-field-gradient: linear-gradient(90deg,
+    color-mix(in srgb, var(--rarity-tier-1) 70%, var(--rarity-bg)) 0%,
+    color-mix(in srgb, var(--rarity-tier-2) 72%, var(--rarity-bg)) 50%,
+    color-mix(in srgb, var(--rarity-tier-3) 74%, var(--rarity-bg)) 100%);
+}
+.root:global(.rarity-tier-4) {
+  --rarity-tier-color: var(--rarity-tier-4);
+  --rarity-field-gradient: linear-gradient(90deg,
+    color-mix(in srgb, var(--rarity-tier-1) 70%, var(--rarity-bg)) 0%,
+    color-mix(in srgb, var(--rarity-tier-2) 72%, var(--rarity-bg)) 33.333%,
+    color-mix(in srgb, var(--rarity-tier-3) 74%, var(--rarity-bg)) 66.667%,
+    color-mix(in srgb, var(--rarity-tier-4) 76%, var(--rarity-bg)) 100%);
+}
+.root:global(.rarity-tier-5) {
+  --rarity-tier-color: var(--rarity-tier-5);
+  --rarity-field-gradient: linear-gradient(90deg,
+    color-mix(in srgb, var(--rarity-tier-1) 70%, var(--rarity-bg)) 0%,
+    color-mix(in srgb, var(--rarity-tier-2) 72%, var(--rarity-bg)) 25%,
+    color-mix(in srgb, var(--rarity-tier-3) 74%, var(--rarity-bg)) 50%,
+    color-mix(in srgb, var(--rarity-tier-4) 76%, var(--rarity-bg)) 75%,
+    color-mix(in srgb, var(--rarity-tier-5) 78%, var(--rarity-bg)) 100%);
+}
+.root:global(.rarity-tier-6) {
+  --rarity-tier-color: var(--rarity-tier-6);
+  --rarity-field-gradient: linear-gradient(90deg,
+    color-mix(in srgb, var(--rarity-tier-1) 70%, var(--rarity-bg)) 0%,
+    color-mix(in srgb, var(--rarity-tier-2) 72%, var(--rarity-bg)) 20%,
+    color-mix(in srgb, var(--rarity-tier-3) 74%, var(--rarity-bg)) 40%,
+    color-mix(in srgb, var(--rarity-tier-4) 76%, var(--rarity-bg)) 60%,
+    color-mix(in srgb, var(--rarity-tier-5) 78%, var(--rarity-bg)) 80%,
+    color-mix(in srgb, var(--rarity-tier-6) 80%, var(--rarity-bg)) 100%);
+}
 
 .root::before {
   position: absolute;
   z-index: 0;
   inset: 62px 0 0;
   width: var(--rarity-score-fill, 0%);
-  background: linear-gradient(
-    90deg,
-    color-mix(in srgb, var(--rarity-tier-1) 70%, var(--rarity-bg)) 0%,
-    color-mix(in srgb, var(--rarity-tier-2) 72%, var(--rarity-bg)) 22%,
-    color-mix(in srgb, var(--rarity-tier-3) 74%, var(--rarity-bg)) 42%,
-    color-mix(in srgb, var(--rarity-tier-4) 76%, var(--rarity-bg)) 63%,
-    color-mix(in srgb, var(--rarity-tier-5) 78%, var(--rarity-bg)) 82%,
-    color-mix(in srgb, var(--rarity-tier-6) 80%, var(--rarity-bg)) 100%
-  );
+  background: var(--rarity-field-gradient);
   content: "";
   opacity: 0;
   pointer-events: none;
@@ -116,24 +154,27 @@
 }
 
 .root :global(.rarity-brand b) {
-  font-size: clamp(2.4rem, 5vw, 3.6rem);
-  font-weight: 600;
-  letter-spacing: 0.02em;
+  font-family: "Kalam", cursive;
+  font-size: clamp(2.7rem, 5.4vw, 4.1rem);
+  font-weight: 700;
+  letter-spacing: 0;
   line-height: 1;
   text-transform: lowercase;
 }
 
 .root :global(.rarity-brand.is-compact) { gap: 9px; }
-.root :global(.rarity-brand.is-compact b) { font-size: 1.35rem; }
+.root :global(.rarity-brand.is-compact b) { font-size: 1.62rem; }
 
 .root :global(.rarity-home),
 .root :global(.rarity-daily),
 .root :global(.rarity-info-view),
-.root :global(.rarity-insights-view) {
-  min-height: calc(var(--game-room-height) - 62px);
+.root :global(.rarity-archive-view) {
+  min-height: var(--game-screen-height);
 }
 
 .root :global(.rarity-home) {
+  position: relative;
+  top: -10px;
   display: grid;
   grid-template-columns: 1fr;
   gap: clamp(18px, 3.5vh, 30px);
@@ -152,7 +193,7 @@
   background: transparent;
   box-shadow: none;
   text-align: center;
-  animation: rarity-rise 420ms both;
+  animation: rarity-view-enter var(--rarity-enter-duration) var(--rarity-enter-ease) both;
 }
 
 .root :global(.rarity-home-kicker),
@@ -167,15 +208,43 @@
 
 .root :global(.rarity-home-kicker) { margin-top: 24px; }
 
-.root :global(.rarity-home-hero h2) {
-  margin: 10px 0 0;
-  color: var(--rarity-text);
-  font-size: clamp(2.8rem, 7vw, 4.35rem);
-  font-weight: 700;
-  letter-spacing: 0.15em;
-  line-height: 1;
-  transform: translateX(0.09em);
+.root :global(.rarity-startup-status) {
+  display: block;
+  height: 1.5em;
+  margin-top: 10px;
+  color: var(--rarity-muted);
+  font-size: .78rem;
 }
+
+.root :global(.rarity-daily-pending) {
+  display: grid;
+  min-height: var(--game-screen-height);
+  align-content: center;
+  justify-items: center;
+  gap: 16px;
+  padding: 32px;
+  text-align: center;
+}
+
+.root :global(.rarity-daily-pending p) { min-height: 1.5em; margin: 0; }
+
+.root :global(.rarity-route-restoring) {
+  position: relative;
+  pointer-events: none;
+}
+
+.root :global(.rarity-route-status) {
+  position: absolute;
+  right: 0;
+  bottom: 12px;
+  left: 0;
+  min-height: 1em;
+  color: var(--rarity-muted);
+  font-size: .72rem;
+  text-align: center;
+}
+
+.root :global(.rarity-route-ready) { opacity: 1; }
 
 .root :global(.rarity-home-hero > p:last-of-type) {
   max-width: 440px;
@@ -205,7 +274,21 @@
   transition: transform 170ms ease, box-shadow 170ms ease;
 }
 
-.root :global(.rarity-home-hero .rarity-primary) { margin-top: 24px; }
+.root :global(.rarity-home-action-slot) {
+  position: relative;
+  width: 100%;
+  height: 46px;
+  margin-top: 24px;
+}
+.root :global(.rarity-home-action-slot .rarity-home-ready-action) {
+  position: absolute;
+  inset: 0 0 auto;
+  box-sizing: border-box;
+  width: max-content;
+  height: 46px;
+  margin: 0 auto;
+  animation: rarity-home-action-ready var(--rarity-enter-duration) var(--rarity-enter-ease) both;
+}
 .root :global(.rarity-primary:hover) { box-shadow: 0 14px 24px color-mix(in srgb, var(--rarity-accent) 28%, transparent); transform: translateY(-2px); }
 
 .root :global(.rarity-home-actions) {
@@ -250,19 +333,11 @@
 .root :global(.rarity-play-layout) {
   display: grid;
   grid-template-columns: 1fr;
-  grid-template-rows: auto minmax(0, 1fr);
+  grid-template-rows: minmax(0, 1fr);
   width: min(580px, calc(100% - 32px));
-  height: calc(var(--game-room-height) - 62px);
+  height: var(--game-screen-height);
   margin: 0 auto;
   padding: 10px 0 16px;
-}
-
-.root :global(.rarity-daily-tools) {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  min-height: 35px;
-  padding: 0 10px;
 }
 
 .root :global(.rarity-text-action) {
@@ -296,6 +371,7 @@
   background: transparent;
   box-shadow: none;
   text-align: center;
+  translate: 0 -30px;
 }
 
 .root :global(.rarity-daily-panel.is-result) {
@@ -315,7 +391,7 @@
   letter-spacing: 0.16em;
   line-height: 1;
   transform: translateX(0.08em);
-  animation: rarity-token-in 500ms both;
+  animation: rarity-token-in var(--rarity-enter-duration) var(--rarity-enter-ease) var(--rarity-enter-delay-1) both;
 }
 
 .root :global(.rarity-entry-minimal) {
@@ -338,7 +414,7 @@
   box-shadow: none;
   place-items: center;
   cursor: text;
-  animation: rarity-rise 350ms 180ms both;
+  animation: rarity-view-enter var(--rarity-enter-duration) var(--rarity-enter-ease) var(--rarity-enter-delay-2) both;
 }
 
 .root :global(.rarity-entry > .rarity-input-minimal:focus-within) {
@@ -395,30 +471,13 @@
   text-transform: uppercase;
 }
 
-.root :global(.rarity-entry > .rarity-live-score) {
-  display: inline-flex;
-  gap: 7px;
-  align-items: baseline;
-  min-height: 30px;
-  margin-top: 3px;
-  animation: rarity-rise 350ms 260ms both;
-  overflow: visible;
-  border: 0;
-  border-radius: 0;
-  background: transparent;
-  box-shadow: none;
-}
-
-.root :global(.rarity-live-score strong) { font-size: 1.24rem; font-weight: 600; font-variant-numeric: tabular-nums; }
-.root :global(.rarity-live-score span) { color: var(--rarity-muted); font-size: 0.65rem; letter-spacing: 0.14em; text-transform: uppercase; }
-
 .root :global(.rarity-entry > .rarity-keyboard) {
   display: grid;
   grid-template-columns: 1fr;
   gap: 6px;
   width: min(520px, 100%);
   margin-top: 8px;
-  animation: rarity-keyboard-in 450ms 380ms both;
+  animation: rarity-keyboard-in var(--rarity-enter-duration) var(--rarity-enter-ease) var(--rarity-enter-delay-4) both;
   overflow: visible;
   border: 0;
   border-radius: 0;
@@ -468,23 +527,29 @@
 .root :global(.rarity-result-summary) {
   display: grid;
   width: min(560px, 100%);
+  min-height: 390px;
+  align-content: center;
   justify-items: center;
 }
 
 .root :global(.rarity-result-summary h2) {
   max-width: 100%;
-  margin: 9px 0 0;
+  margin: 17px 0 0;
   overflow-wrap: anywhere;
   color: var(--rarity-text);
-  font-size: clamp(2rem, 5vw, 2.85rem);
-  font-weight: 600;
-  letter-spacing: 0.1em;
+  font-family: "Kalam", cursive;
+  font-size: clamp(2.35rem, 5.5vw, 3.4rem);
+  font-weight: 700;
+  letter-spacing: 0.035em;
   line-height: 1.05;
   text-transform: lowercase;
 }
 
-.root:global(.is-revealing) :global(.rarity-result-summary h2) {
-  animation: rarity-word-type 700ms 100ms steps(8, end) both;
+.root :global(.rarity-result-word > span) { display: inline-flex; }
+.root :global(.rarity-result-word > span > span) { display: inline-block; }
+.root:global(.is-revealing) :global(.rarity-result-word > span > span) {
+  animation: rarity-result-letter-in 300ms cubic-bezier(.2, .8, .25, 1.2) both;
+  animation-delay: var(--letter-delay);
 }
 
 .root :global(.rarity-result-definition) {
@@ -518,13 +583,35 @@
   margin-top: 16px;
 }
 
-.root :global(.rarity-tier-track span) { height: 7px; border-radius: 999px; background: color-mix(in srgb, var(--tier-color) 28%, var(--rarity-border)); }
-.root :global(.rarity-tier-track span.is-current) { background: var(--tier-color); box-shadow: 0 0 0 2px color-mix(in srgb, var(--rarity-surface) 88%, var(--rarity-bg)); }
+.root :global(.rarity-tier-track span) { height: 7px; border-radius: 999px; background: color-mix(in srgb, var(--rarity-muted) 34%, var(--rarity-border)); }
+.root :global(.rarity-tier-track span.is-earned) { background: var(--tier-color); }
+.root :global(.rarity-tier-track span.is-current) { box-shadow: 0 0 0 2px color-mix(in srgb, var(--rarity-surface) 88%, var(--rarity-bg)); }
 .root :global(.rarity-result-message) { min-height: 38px; max-width: 470px; margin: 13px 0 0; color: var(--rarity-muted); font-size: 0.88rem; line-height: 1.45; }
-.root:global(.is-revealing) :global(.rarity-tier-track) { animation: rarity-rise 280ms 1120ms both; }
+.root:global(.is-revealing) :global(.rarity-tier-track span) {
+  transform-origin: center;
+  animation: rarity-tier-pop 360ms cubic-bezier(.2, .8, .25, 1.25) both;
+}
+.root:global(.is-revealing) :global(.rarity-tier-track span.is-earned) { animation-name: rarity-tier-earned-pop; }
+.root:global(.is-revealing) :global(.rarity-tier-track span:nth-child(1)) { animation-delay: 720ms; }
+.root:global(.is-revealing) :global(.rarity-tier-track span:nth-child(2)) { animation-delay: 810ms; }
+.root:global(.is-revealing) :global(.rarity-tier-track span:nth-child(3)) { animation-delay: 900ms; }
+.root:global(.is-revealing) :global(.rarity-tier-track span:nth-child(4)) { animation-delay: 990ms; }
+.root:global(.is-revealing) :global(.rarity-tier-track span:nth-child(5)) { animation-delay: 1080ms; }
+.root:global(.is-revealing) :global(.rarity-tier-track span:nth-child(6)) { animation-delay: 1170ms; }
 .root:global(.is-revealing) :global(.rarity-result-message) { animation: rarity-rise 300ms 1200ms both; }
 
 .root :global(.rarity-result-actions) { display: flex; gap: 9px; align-items: center; margin-top: 13px; }
+.root :global(.rarity-result-actions > button),
+.root :global(.rarity-lock-confirmation > div > button) {
+  box-sizing: border-box;
+  min-width: 156px;
+  height: 46px;
+  min-height: 46px;
+  margin-top: 0;
+  padding: 0 20px;
+  font-size: .8rem;
+  line-height: 1;
+}
 .root :global(.rarity-insights-invitation) { display: inline-flex; gap: 8px; align-items: center; justify-content: center; min-height: 42px; padding: 0 16px; border: 1px solid color-mix(in srgb, var(--rarity-accent) 72%, var(--rarity-border)); border-radius: 999px; color: var(--rarity-button-text); background: linear-gradient(135deg, color-mix(in srgb, var(--rarity-accent) 86%, white), color-mix(in srgb, var(--rarity-accent) 90%, black)); box-shadow: 0 8px 16px color-mix(in srgb, var(--rarity-accent) 18%, transparent); font-size: 0.78rem; font-weight: 600; letter-spacing: 0.02em; text-transform: lowercase; cursor: pointer; transition: transform 160ms ease, box-shadow 160ms ease; }
 .root :global(.rarity-insights-invitation span) { transition: transform 160ms ease; }
 .root :global(.rarity-insights-invitation:hover) { color: var(--rarity-button-text); box-shadow: 0 11px 20px color-mix(in srgb, var(--rarity-accent) 24%, transparent); transform: translateY(-1px); }
@@ -534,6 +621,93 @@
 .root:global(.is-revealing) :global(.rarity-insights-invitation) { animation: rarity-rise 350ms 1350ms both; }
 .root:global(.is-revealing) :global(.rarity-insights-invitation span) { animation: rarity-arrow-nudge 850ms 1550ms ease-in-out infinite; }
 .root :global(.rarity-share-status) { display: block; min-height: 16px; margin-top: 5px; color: var(--rarity-muted); font-size: 0.68rem; }
+
+.root[data-rarity-view="archive"] {
+  height: var(--game-room-height);
+  overflow-y: auto;
+}
+
+.root :global(.rarity-archive-view) {
+  padding: clamp(28px, 5vh, 48px) 0 42px;
+}
+
+.root :global(.rarity-archive-shell) {
+  width: min(860px, calc(100% - 40px));
+  margin: 0 auto;
+}
+
+.root :global(.rarity-archive-grid) {
+  display: grid;
+  gap: 9px;
+  margin-top: 25px;
+  animation: rarity-view-enter var(--rarity-enter-duration) var(--rarity-enter-ease) var(--rarity-enter-delay-1) both;
+}
+
+.root :global(.rarity-archive-grid > button) {
+  display: grid;
+  grid-template-columns: 130px 92px minmax(0, 1fr) auto;
+  gap: 20px;
+  min-width: 0;
+  min-height: 94px;
+  padding: 15px 18px;
+  border: 1px solid color-mix(in srgb, var(--rarity-accent) 34%, var(--rarity-border));
+  border-radius: 10px;
+  align-items: center;
+  color: var(--rarity-text);
+  background: color-mix(in srgb, var(--rarity-surface) 84%, var(--rarity-bg));
+  box-shadow: 0 7px 16px rgb(6 12 24 / .065);
+  text-align: left;
+  cursor: pointer;
+  transition: border-color 160ms ease, box-shadow 160ms ease, transform 160ms ease;
+}
+
+.root :global(.rarity-archive-grid > button.is-unplayed) {
+  border-style: dashed;
+  background: color-mix(in srgb, var(--rarity-surface) 38%, transparent);
+  box-shadow: none;
+}
+
+.root :global(.rarity-archive-grid > button:hover) {
+  border-color: var(--rarity-accent);
+  box-shadow: 0 10px 21px color-mix(in srgb, var(--rarity-accent) 12%, transparent);
+  transform: translateY(-2px);
+}
+
+.root :global(.rarity-archive-grid > button > span:first-child),
+.root :global(.rarity-archive-result) { display: grid; gap: 5px; min-width: 0; }
+.root :global(.rarity-archive-grid small) { color: var(--rarity-muted); font-size: .62rem; letter-spacing: .09em; text-transform: uppercase; }
+.root :global(.rarity-archive-grid > button > span:first-child small) {
+  width: fit-content;
+  padding: 4px 7px;
+  border-radius: 5px;
+  color: var(--rarity-text);
+  background: color-mix(in srgb, var(--rarity-accent) 11%, var(--rarity-surface));
+  font-size: .76rem;
+  font-weight: 700;
+  letter-spacing: .055em;
+  line-height: 1;
+}
+.root :global(.rarity-archive-grid > button > span:first-child b) { font-size: .7rem; font-weight: 600; text-transform: lowercase; }
+.root :global(.rarity-archive-grid > button > strong) { color: var(--rarity-accent); font-size: 1.7rem; font-weight: 650; letter-spacing: .13em; }
+.root :global(.rarity-archive-result b) { overflow: hidden; font-size: 1.05rem; font-weight: 600; letter-spacing: .05em; text-overflow: ellipsis; text-transform: lowercase; white-space: nowrap; }
+.root :global(.rarity-archive-result mark) { color: var(--rarity-accent); background: transparent; }
+.root :global(.rarity-tier-gems) {
+  display: flex;
+  gap: 5px;
+  align-items: center;
+  margin-top: 2px;
+}
+.root :global(.rarity-tier-gems > span) {
+  width: 17px;
+  height: 17px;
+  flex: 0 0 auto;
+  background: color-mix(in srgb, var(--rarity-muted) 38%, var(--rarity-border));
+  -webkit-mask: url("/hub/rarity-gem.png") center / contain no-repeat;
+  mask: url("/hub/rarity-gem.png") center / contain no-repeat;
+}
+.root :global(.rarity-tier-gems > span.is-earned) { background: var(--tier-color); }
+.root :global(.rarity-archive-grid > button > i) { color: var(--rarity-accent); font-size: 1.2rem; font-style: normal; transition: transform 160ms ease; }
+.root :global(.rarity-archive-grid > button:hover > i) { transform: translateX(3px); }
 
 .root :global(.rarity-insights-shell) {
   position: relative;
@@ -604,8 +778,25 @@
 .root :global(.rarity-insight-finale > span) { min-height: 17px; margin-top: 7px; color: var(--rarity-muted); font-size: 0.68rem; }
 
 .root :global(.rarity-info-view) { display: grid; padding: 22px 0 30px; align-content: start; }
-.root :global(.rarity-info-card) { width: min(660px, calc(100% - 40px)); margin: 0 auto; padding: 26px 10px 30px; border: 0; border-radius: 0; color: var(--rarity-text); background: transparent; box-shadow: none; animation: rarity-rise 320ms both; }
-.root :global(.rarity-info-card > h2) { margin: 5px 0 20px; color: var(--rarity-text); font-size: clamp(1.75rem, 3.7vw, 2.25rem); font-weight: 600; text-transform: lowercase; }
+.root :global(.rarity-info-card) { width: min(660px, calc(100% - 40px)); margin: 0 auto; padding: 26px 10px 30px; border: 0; border-radius: 0; color: var(--rarity-text); background: transparent; box-shadow: none; }
+.root :global(.rarity-info-card.is-how-to) { width: min(820px, calc(100% - 40px)); }
+.root[data-rarity-view="themes"] :global(.rarity-info-view) { padding-block: 0; align-content: center; }
+.root :global(.rarity-info-card.is-themes) { width: min(820px, calc(100% - 40px)); padding-block: 18px; }
+.root :global(.rarity-info-card.is-settings) { width: min(760px, calc(100% - 40px)); }
+.root :global(.rarity-support-header) {
+  display: grid;
+  max-width: 680px;
+  text-align: left;
+  animation: rarity-view-enter var(--rarity-enter-duration) var(--rarity-enter-ease) both;
+}
+.root :global(.rarity-support-header h2) { margin: 5px 0 0; color: var(--rarity-text); font-family: "Kalam", cursive; font-size: clamp(2.55rem, 5.4vw, 3.8rem); font-weight: 700; line-height: 1; text-transform: lowercase; }
+.root :global(.rarity-support-header > span) { max-width: 560px; margin-top: 11px; color: var(--rarity-muted); font-size: clamp(.78rem, 1.4vw, .88rem); line-height: 1.5; }
+.root :global(.rarity-info-card > .rarity-how),
+.root :global(.rarity-info-card > .rarity-theme-picker),
+.root :global(.rarity-info-card > .rarity-settings) {
+  margin-top: 20px;
+  animation: rarity-view-enter var(--rarity-enter-duration) var(--rarity-enter-ease) var(--rarity-enter-delay-1) both;
+}
 .root :global(.rarity-prose) { display: grid; gap: 14px; }
 .root :global(.rarity-prose p) { max-width: 620px; margin: 0; color: var(--rarity-text); font-size: 0.88rem; line-height: 1.55; }
 .root :global(.rarity-rule-example) { display: flex; gap: 20px; align-items: center; padding: 14px 17px; border-radius: 8px; color: var(--rarity-button-text); background: linear-gradient(135deg, var(--rarity-accent), color-mix(in srgb, var(--rarity-accent) 88%, black)); }
@@ -613,21 +804,66 @@
 .root :global(.rarity-rule-example span) { font-size: 0.82rem; }
 .root :global(.rarity-prose .rarity-primary) { justify-self: start; margin-top: 3px; }
 .root :global(.rarity-how) { display: grid; gap: 16px; }
-.root :global(.rarity-how-intro) { max-width: 500px; color: var(--rarity-muted); font-size: 0.94rem; line-height: 1.5; }
-.root :global(.rarity-how-steps) { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; }
-.root :global(.rarity-how-steps section) { display: grid; min-height: 170px; padding: 15px; border: 1px solid var(--rarity-border); border-top: 4px solid var(--step-color, var(--rarity-accent)); border-radius: 10px; align-content: start; background: color-mix(in srgb, var(--rarity-surface) 76%, transparent); }
-.root :global(.rarity-how-steps section:nth-child(1)) { --step-color: var(--rarity-tier-1); }
-.root :global(.rarity-how-steps section:nth-child(2)) { --step-color: var(--rarity-tier-3); }
-.root :global(.rarity-how-steps section:nth-child(3)) { --step-color: var(--rarity-tier-5); }
-.root :global(.rarity-how-steps section > span) { color: var(--step-color); font-size: 0.58rem; font-weight: 700; letter-spacing: 0.14em; }
-.root :global(.rarity-how-steps section > b) { margin-top: 13px; font-size: 0.74rem; font-weight: 600; }
-.root :global(.rarity-how-steps section > strong) { margin-top: 6px; color: var(--step-color); font-size: 1.45rem; font-weight: 650; letter-spacing: 0.04em; line-height: 1.05; }
-.root :global(.rarity-how-steps section > p) { margin-top: auto; padding-top: 14px; color: var(--rarity-muted); font-size: 0.69rem; line-height: 1.42; }
-.root :global(.rarity-how-note) { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 13px; padding: 12px 14px; border-left: 3px solid var(--rarity-accent); border-radius: 0 8px 8px 0; align-items: baseline; background: color-mix(in srgb, var(--rarity-accent) 8%, transparent); }
-.root :global(.rarity-how-note b) { font-size: 0.7rem; white-space: nowrap; }
-.root :global(.rarity-how-note span) { color: var(--rarity-muted); font-size: 0.73rem; line-height: 1.45; }
-.root :global(.rarity-how-tier-track) { display: grid; grid-template-columns: repeat(6, 1fr); gap: 5px; }
-.root :global(.rarity-how-tier-track span) { padding: 8px 3px; border-top: 5px solid var(--tier-color); color: var(--rarity-muted); font-size: 0.56rem; text-align: center; text-transform: lowercase; }
+.root :global(.rarity-how-lead) {
+  display: grid;
+  grid-template-columns: minmax(0, .9fr) minmax(0, 1.1fr);
+  gap: 28px;
+  padding: 5px 0 15px;
+  border-bottom: 1px solid var(--rarity-border);
+  align-items: start;
+}
+.root :global(.rarity-how-intro) { margin: 0; color: var(--rarity-text); font-size: 1.02rem; font-weight: 550; line-height: 1.45; }
+.root :global(.rarity-how-rule) { margin: 0; padding-left: 17px; border-left: 3px solid var(--rarity-accent); color: var(--rarity-muted); font-size: .84rem; line-height: 1.5; }
+.root :global(.rarity-how-comparison) { display: grid; gap: 10px; background: transparent; }
+.root :global(.rarity-how-comparison > header) {
+  display: grid;
+  grid-template-columns: 134px minmax(0, 1fr);
+  gap: 22px;
+  padding: 13px 16px;
+  border: 1px solid var(--rarity-border);
+  border-radius: 10px;
+  align-items: center;
+  background: color-mix(in srgb, var(--rarity-surface) 88%, transparent);
+  box-shadow: 0 5px 14px color-mix(in srgb, var(--rarity-text) 5%, transparent);
+}
+.root :global(.rarity-how-comparison > header > span) { display: grid; gap: 5px; align-items: start; }
+.root :global(.rarity-how-comparison > header b) { color: var(--rarity-muted); font-size: .66rem; font-weight: 650; letter-spacing: .11em; text-transform: uppercase; }
+.root :global(.rarity-how-comparison > header strong) { color: var(--rarity-tier-1); font-size: 1.62rem; font-weight: 700; letter-spacing: .12em; line-height: 1; }
+.root :global(.rarity-how-comparison > header p) { margin: 0; color: var(--rarity-muted); font-size: .82rem; line-height: 1.5; }
+.root :global(.rarity-how-examples) { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; }
+.root :global(.rarity-how-examples article) {
+  position: relative;
+  display: grid;
+  min-width: 0;
+  min-height: 124px;
+  padding: 14px 16px;
+  border: 1px solid var(--rarity-border);
+  border-top: 4px solid var(--example-color);
+  border-radius: 9px;
+  align-content: center;
+  justify-items: center;
+  background: color-mix(in srgb, var(--rarity-surface) 82%, transparent);
+  text-align: center;
+}
+.root :global(.rarity-how-examples article > span) { color: var(--rarity-muted); font-size: .64rem; font-weight: 650; letter-spacing: .1em; text-transform: uppercase; }
+.root :global(.rarity-how-examples article > strong) { margin-top: 8px; overflow-wrap: anywhere; color: var(--rarity-text); font-family: "Kalam", cursive; font-size: clamp(1.85rem, 3.3vw, 2.3rem); font-weight: 700; letter-spacing: .01em; line-height: 1.05; }
+.root :global(.rarity-how-examples mark) { color: inherit; background: transparent; text-decoration: underline 3px var(--example-color); text-decoration-skip-ink: none; text-underline-offset: 7px; }
+.root :global(.rarity-how-examples article > p) { display: flex; gap: 8px; align-items: baseline; justify-content: center; margin: 13px 0 0; }
+.root :global(.rarity-how-examples article > p b) { color: var(--example-color); font-size: 1.18rem; font-weight: 700; }
+.root :global(.rarity-how-examples article > p small) { color: var(--rarity-muted); font-size: .65rem; font-weight: 600; letter-spacing: .05em; text-transform: uppercase; }
+.root :global(.rarity-how-note) { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 16px; padding: 14px 16px; border-left: 4px solid var(--rarity-accent); border-radius: 0 9px 9px 0; align-items: baseline; background: color-mix(in srgb, var(--rarity-accent) 8%, transparent); }
+.root :global(.rarity-how-note b) { font-size: 0.78rem; white-space: nowrap; }
+.root :global(.rarity-how-note span) { color: var(--rarity-muted); font-size: 0.82rem; line-height: 1.48; }
+.root :global(.rarity-how-scale) { display: grid; gap: 11px; padding-top: 14px; border-top: 1px solid var(--rarity-border); }
+.root :global(.rarity-how-scale > header) { display: flex; gap: 14px; align-items: baseline; }
+.root :global(.rarity-how-scale > header h3) { margin: 0; color: var(--rarity-text); font-size: 1.05rem; font-weight: 650; line-height: 1.2; text-transform: lowercase; }
+.root :global(.rarity-how-scale > header p) { margin: 0; color: var(--rarity-muted); font-size: .76rem; line-height: 1.4; }
+.root :global(.rarity-how-tier-track) { display: grid; grid-template-columns: repeat(6, 1fr); gap: 7px; }
+.root :global(.rarity-how-tier-track > span) { display: grid; gap: 5px; min-width: 0; text-align: center; }
+.root :global(.rarity-how-tier-track small) { color: var(--rarity-muted); font-size: .67rem; font-weight: 600; }
+.root :global(.rarity-how-tier-track i) { display: block; height: 7px; border-radius: 999px; background: var(--tier-color); }
+.root :global(.rarity-how-tier-track b) { margin-top: 2px; color: var(--rarity-text); font-size: .8rem; font-weight: 650; line-height: 1.2; text-transform: lowercase; }
+.root :global(.rarity-how > .rarity-primary) { justify-self: end; min-width: 210px; }
 
 .root :global(.rarity-about) { display: grid; gap: 18px; }
 .root :global(.rarity-about-hero) { display: grid; grid-template-columns: 76px minmax(0, 1fr); gap: 19px; padding: 18px; border-radius: 10px; align-items: center; background: color-mix(in srgb, var(--rarity-surface) 78%, transparent); }
@@ -645,32 +881,76 @@
 .root :global(.rarity-about-story p) { color: var(--rarity-muted); font-size: 0.78rem; line-height: 1.55; }
 .root :global(.rarity-about .rarity-primary) { justify-self: start; }
 
-.root :global(.rarity-theme-picker) { display: grid; grid-template-columns: minmax(190px, 0.75fr) minmax(0, 1.35fr); gap: 18px; align-items: stretch; }
+.root :global(.rarity-theme-picker) { display: grid; grid-template-columns: minmax(230px, 0.78fr) minmax(0, 1.35fr); gap: 24px; align-items: stretch; }
 .root :global(.rarity-theme-list) { display: grid; border-top: 1px solid var(--rarity-border); }
-.root :global(.rarity-theme-list > button) { display: grid; grid-template-columns: 68px minmax(0, 1fr) auto; gap: 10px; min-width: 0; padding: 10px 4px; border: 0; border-bottom: 1px solid var(--rarity-border); color: var(--rarity-text); background: transparent; align-items: center; text-align: left; cursor: pointer; transition: color 150ms ease, padding 150ms ease; }
+.root :global(.rarity-theme-list > button) { display: grid; grid-template-columns: 78px minmax(0, 1fr) auto; gap: 12px; min-width: 0; padding: 12px 5px; border: 0; border-bottom: 1px solid var(--rarity-border); color: var(--rarity-text); background: transparent; align-items: center; text-align: left; cursor: pointer; transition: color 150ms ease, padding 150ms ease; }
 .root :global(.rarity-theme-list > button:hover) { padding-left: 8px; color: var(--rarity-accent); }
 .root :global(.rarity-theme-list > button.is-selected) { color: var(--rarity-accent); }
-.root :global(.rarity-theme-list > button > b) { font-size: 0.78rem; font-weight: 600; }
+.root :global(.rarity-theme-list > button > b) { font-size: 0.86rem; font-weight: 600; }
 .root :global(.rarity-theme-list > button > span) { display: flex; gap: 3px; }
 .root :global(.rarity-theme-list > button > span i) { display: block; height: 5px; flex: 1; border-radius: 999px; }
-.root :global(.rarity-theme-list > button > small) { color: var(--rarity-muted); font-size: 0.5rem; letter-spacing: 0.08em; text-transform: uppercase; }
-.root :global(.rarity-theme-live) { display: grid; grid-template-rows: auto 1fr auto; min-height: 330px; padding: 22px; border-radius: 10px; color: var(--rarity-text); background: var(--rarity-surface); box-shadow: 0 10px 22px rgb(6 12 24 / 0.1); }
+.root :global(.rarity-theme-list > button > small) { color: var(--rarity-muted); font-size: 0.55rem; letter-spacing: 0.08em; text-transform: uppercase; }
+.root :global(.rarity-theme-live) { display: grid; grid-template-rows: auto 1fr auto; min-height: 390px; padding: 26px; border-radius: 12px; color: var(--rarity-text); background: var(--rarity-surface); box-shadow: 0 12px 26px rgb(6 12 24 / 0.11); }
 .root :global(.rarity-theme-live > div:first-child > span) { color: var(--rarity-muted); font-size: 0.56rem; font-weight: 600; letter-spacing: 0.15em; text-transform: uppercase; }
-.root :global(.rarity-theme-live h3) { margin: 3px 0 0; font-size: 1.35rem; font-weight: 600; }
-.root :global(.rarity-theme-live > div:first-child p) { margin: 3px 0 0; color: var(--rarity-muted); font-size: 0.72rem; }
-.root :global(.rarity-theme-live-score) { display: flex; gap: 18px; align-items: center; justify-content: center; }
-.root :global(.rarity-theme-live-score > i) { display: block; width: 76px; aspect-ratio: 1; border: 10px solid color-mix(in srgb, var(--rarity-tier-4) 22%, var(--rarity-border)); border-top-color: var(--rarity-tier-4); border-right-color: var(--rarity-tier-4); border-radius: 50%; transform: rotate(18deg); }
-.root :global(.rarity-theme-live-score p) { display: grid; margin: 0; }
-.root :global(.rarity-theme-live-score strong) { font-size: 1.8rem; letter-spacing: 0.06em; }
-.root :global(.rarity-theme-live-score em) { color: var(--rarity-tier-4); font-style: normal; }
-.root :global(.rarity-theme-live-score small) { color: var(--rarity-muted); font-size: 0.68rem; }
+.root :global(.rarity-theme-live h3) { margin: 4px 0 0; font-size: 1.5rem; font-weight: 600; }
+.root :global(.rarity-theme-live > div:first-child p) { margin: 4px 0 0; color: var(--rarity-muted); font-size: 0.78rem; }
+.root :global(.rarity-theme-live-result) { display: grid; align-content: center; justify-items: center; text-align: center; }
+.root :global(.rarity-theme-live-result > small) { color: var(--rarity-muted); font-size: .58rem; font-weight: 650; letter-spacing: .14em; text-transform: uppercase; }
+.root :global(.rarity-theme-live-word) { display: flex; gap: 16px; align-items: center; justify-content: center; margin-top: 20px; }
+.root :global(.rarity-theme-live-word > strong) { overflow-wrap: anywhere; font-family: "Kalam", cursive; font-size: clamp(2.3rem, 4.8vw, 3rem); font-weight: 700; letter-spacing: .01em; line-height: 1; }
+.root :global(.rarity-theme-live-word mark) { color: var(--rarity-tier-4); background: transparent; }
+.root :global(.rarity-theme-live-word .rarity-tier-gems) { gap: 4px; margin-top: 0; }
+.root :global(.rarity-theme-live-word .rarity-tier-gems > span) { width: 15px; height: 15px; }
+.root :global(.rarity-theme-live-result > p) { display: flex; gap: 7px; align-items: baseline; margin: 18px 0 0; }
+.root :global(.rarity-theme-live-result > p b) { font-size: 2.1rem; font-weight: 650; line-height: 1; }
+.root :global(.rarity-theme-live-result > p span) { color: var(--rarity-muted); font-size: .63rem; letter-spacing: .12em; text-transform: uppercase; }
+.root :global(.rarity-theme-live-result > em) { margin-top: 7px; color: var(--rarity-tier-4); font-size: .7rem; font-style: normal; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; }
 .root :global(.rarity-theme-live-tiers) { display: grid; grid-template-columns: repeat(6, 1fr); gap: 5px; }
 .root :global(.rarity-theme-live-tiers span) { display: grid; height: 24px; border-radius: 3px; color: transparent; place-items: center; }
+
+.root :global(.rarity-settings) { display: grid; gap: 12px; }
+.root :global(.rarity-settings-row) {
+  display: flex;
+  min-height: 96px;
+  gap: 24px;
+  padding: 18px 20px;
+  border: 1px solid var(--rarity-border);
+  border-radius: 10px;
+  align-items: center;
+  justify-content: space-between;
+  background: color-mix(in srgb, var(--rarity-surface) 84%, transparent);
+  box-shadow: 0 7px 18px color-mix(in srgb, var(--rarity-text) 5%, transparent);
+}
+.root :global(.rarity-settings-row > span:first-child) { display: grid; gap: 5px; }
+.root :global(.rarity-settings-row > span:first-child b) { font-size: .93rem; font-weight: 650; text-transform: lowercase; }
+.root :global(.rarity-settings-row > span:first-child small) { color: var(--rarity-muted); font-size: .75rem; line-height: 1.45; }
+.root :global(.rarity-settings-action),
+.root :global(.rarity-settings-confirm button) {
+  min-height: 40px;
+  padding: 9px 14px;
+  border: 1px solid var(--rarity-border);
+  border-radius: 999px;
+  color: var(--rarity-text);
+  background: var(--rarity-input);
+  font: 650 .68rem "Inter", sans-serif;
+  white-space: nowrap;
+  cursor: pointer;
+}
+.root :global(.rarity-settings-action:hover),
+.root :global(.rarity-settings-confirm button:hover) { border-color: var(--rarity-accent); color: var(--rarity-accent); }
+.root :global(.rarity-settings-action:disabled) { opacity: .42; cursor: default; }
+.root :global(.rarity-settings-confirm) { display: flex; gap: 7px; }
+.root :global(.rarity-settings-confirm button.is-danger) { border-color: var(--rarity-accent); color: var(--rarity-button-text); background: var(--rarity-accent); }
+.root :global(.rarity-settings-note) { padding: 15px 18px; border-left: 4px solid var(--rarity-accent); color: var(--rarity-muted); background: color-mix(in srgb, var(--rarity-accent) 7%, transparent); }
+.root :global(.rarity-settings-note b) { color: var(--rarity-text); font-size: .72rem; text-transform: lowercase; }
+.root :global(.rarity-settings-note p) { margin: 5px 0 0; font-size: .72rem; line-height: 1.5; }
 
 .root :global(.rarity-primary:focus-visible),
 .root :global(.rarity-text-action:focus-visible),
 .root :global(.rarity-home-actions button:focus-visible),
+.root :global(.rarity-archive-grid > button:focus-visible),
 .root :global(.rarity-theme-list button:focus-visible),
+.root :global(.rarity-settings button:focus-visible),
 .root :global(.rarity-insight-arrow:focus-visible),
 .root :global(.rarity-insight-progress button:focus-visible),
 .root :global(.rarity-keyboard button:focus-visible),
@@ -680,11 +960,21 @@
 }
 .root :global(.rarity-result-secondary:focus-visible) { outline: 3px solid var(--rarity-accent); outline-offset: 3px; }
 
+@media (max-width: 620px) {
+  .root :global(.rarity-settings-row) { display: grid; gap: 14px; }
+  .root :global(.rarity-settings-action) { justify-self: start; }
+  .root :global(.rarity-settings-confirm) { display: grid; grid-template-columns: 1fr 1fr; }
+}
+
+@keyframes rarity-view-enter { from { opacity: 0; transform: translate3d(0, 9px, 0); } to { opacity: 1; transform: translate3d(0, 0, 0); } }
 @keyframes rarity-rise { from { opacity: 0; transform: translateY(9px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes rarity-home-action-ready { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
 @keyframes rarity-token-in { from { opacity: 0; transform: perspective(700px) rotateX(-18deg) translateY(8px) translateX(0.08em); } to { opacity: 1; transform: perspective(700px) rotateX(0) translateY(0) translateX(0.08em); } }
 @keyframes rarity-keyboard-in { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
-@keyframes rarity-word-type { from { clip-path: inset(0 100% 0 0); } to { clip-path: inset(0 0 0 0); } }
+@keyframes rarity-result-letter-in { from { opacity: 0; transform: translateY(8px) rotateX(-35deg); } to { opacity: 1; transform: translateY(0) rotateX(0); } }
 @keyframes rarity-score-pop { 0%, 100% { transform: scale(1); } 55% { transform: scale(1.12); } }
+@keyframes rarity-tier-pop { from { opacity: 0; transform: scaleX(.28) scaleY(.65); } 70% { opacity: 1; transform: scaleX(1.06) scaleY(1.4); } to { opacity: 1; transform: scale(1); } }
+@keyframes rarity-tier-earned-pop { from { opacity: 0; filter: saturate(.5); transform: scaleX(.28) scaleY(.65); } 65% { opacity: 1; filter: saturate(1.65) brightness(1.12); transform: scaleX(1.08) scaleY(1.65); } to { opacity: 1; filter: none; transform: scale(1); } }
 @keyframes rarity-arrow-nudge { 0%, 100% { transform: translateX(0); } 50% { transform: translateX(3px); } }
 @keyframes rarity-insight-in { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
 @keyframes rarity-blink { 0%, 48% { opacity: 1; } 49%, 100% { opacity: 0; } }
@@ -696,8 +986,8 @@
   .root :global(.rarity-home),
   .root :global(.rarity-daily),
   .root :global(.rarity-info-view),
-  .root :global(.rarity-insights-view) { min-height: calc(var(--game-room-height) - 100px); }
-  .root :global(.rarity-play-layout) { height: calc(var(--game-room-height) - 100px); }
+  .root :global(.rarity-insights-view) { min-height: var(--game-screen-height); }
+  .root :global(.rarity-play-layout) { height: var(--game-screen-height); }
 }
 
 @media (max-width: 680px) {
@@ -707,6 +997,7 @@
   .root :global(.rarity-home-actions) { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .root :global(.rarity-play-layout) { width: calc(100% - 22px); padding-top: 6px; }
   .root :global(.rarity-daily-panel) { padding: 18px 12px 12px; }
+  .root :global(.rarity-daily-panel) { translate: 0 -12px; }
   .root :global(.rarity-daily-panel.is-result) { border-radius: 10px; }
   .root :global(.rarity-keyboard) { gap: 4px; }
   .root :global(.rarity-keyboard > div) { gap: 3px; }
@@ -714,6 +1005,17 @@
   .root :global(.rarity-result-actions) { flex-direction: column; gap: 9px; }
   .root :global(.rarity-result-primary),
   .root :global(.rarity-result-secondary) { width: 100%; }
+  .root :global(.rarity-archive-view) { padding-top: 24px; }
+  .root :global(.rarity-archive-shell) { width: calc(100% - 24px); }
+  .root :global(.rarity-archive-grid > button) {
+    grid-template-columns: 1fr auto;
+    gap: 9px 16px;
+    min-height: 112px;
+  }
+  .root :global(.rarity-archive-grid > button > span:first-child) { grid-column: 1; grid-row: 1; }
+  .root :global(.rarity-archive-grid > button > strong) { grid-column: 2; grid-row: 1; }
+  .root :global(.rarity-archive-result) { grid-column: 1; grid-row: 2; }
+  .root :global(.rarity-archive-grid > button > i) { grid-column: 2; grid-row: 2; }
   .root :global(.rarity-insights-shell) { grid-template-columns: 1fr; width: calc(100% - 24px); padding-top: 18px; }
   .root :global(.rarity-insight-panel) { grid-column: 1; min-height: 430px; padding: 24px 20px; }
   .root :global(.rarity-insight-arrow) { position: absolute; z-index: 2; top: 50%; width: 34px; transform: translateY(-50%); }
@@ -730,8 +1032,12 @@
   .root :global(.rarity-theme-picker) { grid-template-columns: 1fr; }
   .root :global(.rarity-theme-live) { min-height: 250px; }
   .root :global(.rarity-rule-example) { align-items: flex-start; flex-direction: column; gap: 4px; }
-  .root :global(.rarity-how-steps) { grid-template-columns: 1fr; }
-  .root :global(.rarity-how-steps section) { min-height: 138px; }
+  .root :global(.rarity-how-lead) { grid-template-columns: 1fr; gap: 11px; }
+  .root :global(.rarity-how-comparison > header) { grid-template-columns: 1fr; gap: 8px; }
+  .root :global(.rarity-how-examples) { grid-template-columns: 1fr; }
+  .root :global(.rarity-how-examples article) { min-height: 108px; }
+  .root :global(.rarity-how-scale > header) { display: grid; gap: 3px; }
+  .root :global(.rarity-how > .rarity-primary) { width: 100%; }
   .root :global(.rarity-how-note) { grid-template-columns: 1fr; gap: 5px; }
   .root :global(.rarity-about-hero) { grid-template-columns: 58px minmax(0, 1fr); padding: 14px; }
   .root :global(.rarity-about-hero .rarity-gem) { width: 52px; }
@@ -741,7 +1047,6 @@
 
 @media (max-height: 720px) and (min-width: 681px) {
   .root :global(.rarity-play-layout) { padding-top: 6px; padding-bottom: 8px; }
-  .root :global(.rarity-daily-tools) { min-height: 30px; }
   .root :global(.rarity-daily-panel) { padding-block: 14px 10px; }
   .root :global(.rarity-entry-minimal) { margin-top: 12px; }
   .root :global(.rarity-keyboard button) { min-height: 36px; }

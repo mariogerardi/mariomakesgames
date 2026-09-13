@@ -3,8 +3,8 @@ import test from "node:test";
 import {
   createDualSession,
   dualFamilyDiscoveries,
+  dualFamilyProgress,
   dualProgress,
-  dualWordProgress,
   finishDualSession,
   hydrateDualSession,
   serializeDualSession,
@@ -68,7 +68,7 @@ function submit(session, puzzle, input, now = 2_000) {
   return submitDualWord({ session, puzzle, lexicon, input, now });
 }
 
-test("the first submitted form establishes a game-family and later forms score +0.1", () => {
+test("the first submitted form establishes a game-family and later forms score +0.25", () => {
   let session = createDualSession({ puzzle: familyPuzzle, dateKey: "2026-08-30", startedAt: 1_000 });
   const first = submit(session, familyPuzzle, "treated");
   assert.equal(first.accepted, true);
@@ -78,9 +78,9 @@ test("the first submitted form establishes a game-family and later forms score +
 
   const headword = submit(session, familyPuzzle, "treat", 3_000);
   assert.equal(headword.submission.kind, "inflection");
-  assert.equal(headword.submission.points, 0.1);
+  assert.equal(headword.submission.points, 0.25);
   const another = submit(headword.state, familyPuzzle, "treating", 4_000);
-  assert.equal(another.submission.points, 0.1);
+  assert.equal(another.submission.points, 0.25);
 });
 
 test("family presentation follows recency and promotes a played headword", () => {
@@ -90,7 +90,7 @@ test("family presentation follows recency and promotes a played headword", () =>
   session = submit(session, familyPuzzle, "treating", 4_000).state;
 
   let groups = dualFamilyDiscoveries({ session, lexicon, language: "en" });
-  assert.deepEqual(groups.map((group) => group.family), ["treat", "treatment"], "a +0.1 form bumps its family to the origin");
+  assert.deepEqual(groups.map((group) => group.family), ["treat", "treatment"], "a +0.25 form bumps its family to the origin");
   assert.equal(groups[0].anchor.surface, "treated", "the first discovered form anchors the family initially");
   assert.deepEqual(groups[0].forms.map((submission) => submission.surface), ["treating"]);
 
@@ -100,11 +100,15 @@ test("family presentation follows recency and promotes a played headword", () =>
   assert.deepEqual(groups[0].forms.map((submission) => submission.surface), ["treated", "treating"]);
 });
 
-test("requirements, Duals, and every playable word remain independent milestones", () => {
+test("requirements, Duals, and every playable family remain independent milestones", () => {
   let session = createDualSession({ puzzle: familyPuzzle, dateKey: "2026-08-30" });
-  assert.deepEqual(dualWordProgress(session, familyPuzzle, lexicon), { found: 0, total: 4, allWordsFound: false });
+  assert.deepEqual(dualFamilyProgress(session, familyPuzzle, lexicon), {
+    found: 0, total: 2, foundEnglish: 0, totalEnglish: 2, foundSpanish: 0, totalSpanish: 0, allFamiliesFound: false,
+  });
   for (const word of ["treated", "treating", "treat", "treatment"]) session = submit(session, familyPuzzle, word).state;
-  assert.deepEqual(dualWordProgress(session, familyPuzzle, lexicon), { found: 4, total: 4, allWordsFound: true });
+  assert.deepEqual(dualFamilyProgress(session, familyPuzzle, lexicon), {
+    found: 2, total: 2, foundEnglish: 2, totalEnglish: 2, foundSpanish: 0, totalSpanish: 0, allFamiliesFound: true,
+  });
   assert.equal(dualProgress(session, familyPuzzle).allDualsFound, false);
 });
 
@@ -140,10 +144,10 @@ test("a Dual scores each language side from its own previously seen family state
   session = submit(session, otaPuzzle, "totaled").state;
   const dual = submit(session, otaPuzzle, "TOTAL");
   assert.equal(dual.submission.kind, "dual");
-  assert.equal(dual.submission.enPoints, 0.1);
+  assert.equal(dual.submission.enPoints, 0.25);
   assert.equal(dual.submission.esPoints, 1);
-  assert.equal(dual.submission.points, 1.1);
-  assert.equal(dual.state.score, 2.1);
+  assert.equal(dual.submission.points, 1.25);
+  assert.equal(dual.state.score, 2.25);
 });
 
 test("duplicate canonical surfaces do not score again and matching ignores case", () => {
@@ -207,8 +211,8 @@ test("serialized sessions reconstruct score and lemma state by replaying submiss
   session = submit(session, familyPuzzle, "treating", 3_000).state;
   const stored = serializeDualSession(session);
   const restored = hydrateDualSession({ payload: JSON.stringify(stored), puzzle: familyPuzzle, lexicon, dateKey: "2026-08-30" });
-  assert.equal(restored.score, 1.1);
-  assert.equal(restored.enScore, 1.1);
+  assert.equal(restored.score, 1.25);
+  assert.equal(restored.enScore, 1.25);
   assert.deepEqual(restored.submissions.map((submission) => submission.surface), ["treated", "treating"]);
 
   const wrongPuzzle = hydrateDualSession({ payload: stored, puzzle: { ...familyPuzzle, id: "other" }, lexicon, dateKey: "2026-08-30" });

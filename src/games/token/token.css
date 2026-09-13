@@ -74,7 +74,7 @@
   position: relative;
   display: grid;
   grid-template-rows: auto minmax(0, 1fr);
-  height: calc(var(--game-room-height) - 62px);
+  height: var(--game-screen-height);
   min-height: 0;
   overflow: hidden;
 }
@@ -478,7 +478,7 @@
     padding: 0;
   }
 
-  .token-surface { height: calc(var(--game-room-height) - 62px); }
+  .token-surface { height: var(--game-screen-height); }
   .token-prompt { width: min(100% - 34px, 780px); padding-top: 19px; }
   .token-response { width: min(100% - 34px, 780px); padding-top: 7vh; padding-bottom: 0; font-size: clamp(1.03rem, 5.1vw, 1.32rem); line-height: 1.72; }
   .token-inspection { right: 0; bottom: 0; width: 100%; max-width: none; padding: 19px 20px calc(20px + env(safe-area-inset-bottom)); border-right: 0; border-bottom: 0; border-left: 0; border-radius: 11px 11px 0 0; }
@@ -570,13 +570,42 @@
 .token-home,
 .token-how {
   display: grid;
-  min-height: calc(var(--game-room-height) - 62px);
+  min-height: var(--game-screen-height);
   padding: clamp(38px, 8vh, 92px) 24px 42px;
   color: #eceae3;
   background: #0b0c0e;
 }
 
 .token-home { place-items: start center; }
+
+.token-home-heading,
+.token-menu-grid > button {
+  animation: token-menu-enter 420ms ease-out backwards;
+}
+.token-menu-grid > button:nth-child(1) { animation-delay: 90ms; }
+.token-menu-grid > button:nth-child(2) { animation-delay: 160ms; }
+.token-menu-grid > button:nth-child(3) { animation-delay: 230ms; }
+.token-menu-grid small[role="status"] { min-height: 1.5em; }
+
+.token-startup-pending {
+  display: grid;
+  place-content: center;
+  justify-items: center;
+  min-height: var(--game-screen-height);
+  padding: 24px;
+  color: #eceae3;
+  background: #0b0c0e;
+}
+.token-startup-pending p { min-height: 1.5em; }
+
+@keyframes token-menu-enter {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .token-home-heading,
+  .token-menu-grid > button { animation: none; }
+}
 
 .token-home-inner {
   display: grid;
@@ -700,7 +729,7 @@
 
 .token-library {
   box-sizing: border-box;
-  height: calc(var(--game-room-height) - 62px);
+  height: var(--game-screen-height);
   padding: clamp(34px, 6vh, 68px) max(24px, calc((100% - 980px) / 2)) 54px;
   overflow: auto;
   color: #eceae3;
@@ -1461,7 +1490,7 @@
 
 @media (max-width: 760px) {
   .token-home,
-  .token-how { min-height: calc(var(--game-room-height) - 62px); padding: 36px 16px; }
+  .token-how { min-height: var(--game-screen-height); padding: 36px 16px; }
   .token-menu-grid { grid-template-columns: 1fr; }
   .token-menu-grid > button { min-height: 142px; }
   .token-menu-daily,

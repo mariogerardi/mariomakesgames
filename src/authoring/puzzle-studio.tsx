@@ -224,6 +224,8 @@ export function PuzzleStudio({ gameId }: { gameId: AuthorableGameId }) {
   const [loading, setLoading] = useState(true);
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
+  const [pasteJsonOpen, setPasteJsonOpen] = useState(false);
+  const [pasteJson, setPasteJson] = useState("");
   const [legacyBeforeAfterPuzzles, setLegacyBeforeAfterPuzzles] = useState<LegacyBeforeAfterPuzzle[]>([]);
   const importInput = useRef<HTMLInputElement>(null);
 
@@ -429,7 +431,7 @@ export function PuzzleStudio({ gameId }: { gameId: AuthorableGameId }) {
   }
 
   async function save(checkDuplicates = true): Promise<AnyPuzzleDraft | null> {
-    if (!draft || !isMeaningfulPuzzleDraft(draft) || !validation?.valid) return null;
+    if (!draft || !isMeaningfulPuzzleDraft(draft)) return null;
     if (checkDuplicates && !duplicateCheck()) return null;
     try {
       const payload = await studioRequest({ action: "save", draft });
@@ -674,22 +676,28 @@ export function PuzzleStudio({ gameId }: { gameId: AuthorableGameId }) {
     }
   }
 
-  async function importFile(event: React.ChangeEvent<HTMLInputElement>) {
-    const file = event.target.files?.[0];
-    event.target.value = "";
-    if (!file) return;
+  async function importDraftText(text: string) {
     try {
-      const candidate = JSON.parse(await file.text()) as unknown;
+      const candidate = JSON.parse(text) as unknown;
       const result = validatePuzzleDraft(candidate);
       if (!result.valid) throw new Error(result.errors.map((item) => `${item.path}: ${item.message}`).join("; "));
       if ((candidate as AnyPuzzleDraft).gameId !== gameId) throw new Error(`This is the ${GAME_NAMES[gameId]} workspace. Import that puzzle from its own game workspace.`);
       const payload = await studioRequest({ action: "import", draft: candidate });
+      setPasteJson("");
+      setPasteJsonOpen(false);
       setDirty(false);
       setMessage("Imported and saved to disk.");
       await refresh(payload.draft);
     } catch (cause) {
-      setError(cause instanceof Error ? cause.message : "Could not import this file.");
+      setError(cause instanceof Error ? cause.message : "Could not import this JSON.");
     }
+  }
+
+  async function importFile(event: React.ChangeEvent<HTMLInputElement>) {
+    const file = event.target.files?.[0];
+    event.target.value = "";
+    if (!file) return;
+    await importDraftText(await file.text());
   }
 
   async function importLegacyBeforeAfter() {
@@ -790,7 +798,7 @@ export function PuzzleStudio({ gameId }: { gameId: AuthorableGameId }) {
                 <header className="studio-editor-commandbar">
                   <div className="studio-editor-identity"><small>{scheduleReferences(schedule, draft.id).length ? "Scheduled" : diskSaved ? "Draft" : "New puzzle"}</small><strong>{currentLabel}</strong><span>{dirty ? "Unsaved changes" : diskSaved ? "Saved locally" : "Start typing to create a recoverable draft"}</span></div>
                   <div className="studio-editor-actions">
-                    <button className="studio-control-button" disabled={!meaningfulDraft || !validation?.valid} onClick={() => void save()} type="button">Save draft</button>
+                    <button className="studio-control-button" disabled={!meaningfulDraft} onClick={() => void save()} type="button">Save draft</button>
                     {draft.gameId === "decode" && decodeAuthoringType(draft.payload) === "bank" ? <button className="studio-control-button" disabled={!meaningfulDraft || !validation?.valid} onClick={publishToBanks} type="button">Publish to banks</button> : <details className="studio-schedule-menu"><summary className="studio-control-button">Schedule</summary><div>
                       <label>Date<input onChange={(event) => setScheduleDate(event.target.value)} type="date" value={scheduleDate} /></label>
                       <button className="is-secondary" onClick={chooseNextOpenDate} type="button">Use next open date</button>
@@ -798,7 +806,7 @@ export function PuzzleStudio({ gameId }: { gameId: AuthorableGameId }) {
                       {currentMode.puzzleCount > 1 && <label>Position<select onChange={(event) => setScheduleSlot(Number(event.target.value))} value={scheduleSlot}>{Array.from({ length: currentMode.puzzleCount }, (_, index) => <option key={index} value={index}>Puzzle {index + 1} of {currentMode.puzzleCount}</option>)}</select></label>}
                       <button disabled={!scheduleDate || !meaningfulDraft || !validation?.valid} onClick={saveAndSchedule} type="button">Save &amp; schedule</button>
                     </div></details>}
-                    <details className="studio-overflow-menu"><summary aria-label="More puzzle actions" className="studio-control-button">More</summary><div><button disabled={!diskSaved || dirty} onClick={duplicate} type="button">Duplicate</button><button onClick={() => downloadDraft(draft)} type="button">Export JSON</button><button className="is-danger" onClick={remove} type="button">{diskSaved ? "Delete draft" : "Discard canvas"}</button></div></details>
+                    <details className="studio-overflow-menu"><summary aria-label="More puzzle actions" className="studio-control-button">More</summary><div><button disabled={!diskSaved || dirty} onClick={duplicate} type="button">Duplicate</button><button onClick={() => { setError(""); setPasteJsonOpen(true); }} type="button">Paste JSON</button><button onClick={() => downloadDraft(draft)} type="button">Export JSON</button><button className="is-danger" onClick={remove} type="button">{diskSaved ? "Delete draft" : "Discard canvas"}</button></div></details>
                   </div>
                 </header>
                 <section className={`studio-native-creator is-${gameId}`} data-authoring-mode={authoringMode}>
@@ -811,6 +819,14 @@ export function PuzzleStudio({ gameId }: { gameId: AuthorableGameId }) {
                   <section className="studio-common-fields"><label className="is-wide">Private notes<textarea maxLength={10000} onChange={(event) => edit({ ...draft, notes: event.target.value } as AnyPuzzleDraft)} value={draft.notes} /></label><p className="studio-record-line is-wide"><span>ID: {draft.id}</span><span>Revisions: {publishedPuzzles.filter((item) => item.id === draft.id).length}</span></p></section>
                 </details>
                 <footer className="studio-status" aria-live="polite">{error ? <p className="is-error">{error}</p> : message ? <p>{message}</p> : null}{validation && !validation.valid && isMeaningfulPuzzleDraft(draft) ? <details><summary>{validation.errors.length} issue{validation.errors.length === 1 ? "" : "s"} to fix before saving</summary><ul>{validation.errors.map((item, index) => <li key={`${item.path}:${index}`}><code>{item.path}</code> {item.message}</li>)}</ul></details> : null}</footer>
+                <dialog className="studio-json-paste" onClose={() => setPasteJsonOpen(false)} open={pasteJsonOpen}>
+                  <form onSubmit={(event) => { event.preventDefault(); void importDraftText(pasteJson); }}>
+                    <h2>Paste puzzle JSON</h2>
+                    <p>Import a complete draft for this workspace.</p>
+                    <textarea autoFocus={pasteJsonOpen} onChange={(event) => setPasteJson(event.target.value)} placeholder="Paste JSON here" value={pasteJson} />
+                    <div><button onClick={() => setPasteJsonOpen(false)} type="button">Cancel</button><button disabled={!pasteJson.trim()} type="submit">Import JSON</button></div>
+                  </form>
+                </dialog>
               </>
             )}
           </section>

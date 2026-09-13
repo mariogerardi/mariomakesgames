@@ -25,7 +25,7 @@ export default function Home() {
                 <span aria-hidden="true">↗</span>
               </Link>
               <a className="text-link" href="#games">
-                All games
+                All Games
                 <span aria-hidden="true">↓</span>
               </a>
             </div>
@@ -41,7 +41,7 @@ export default function Home() {
         <section className="collection page-width" id="games">
           <div className="section-heading">
             <div>
-              <p className="eyebrow">All games</p>
+              <p className="eyebrow">All Games</p>
               <h2>Choose your next one.</h2>
             </div>
           </div>

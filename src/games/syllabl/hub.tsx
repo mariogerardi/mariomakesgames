@@ -16,10 +16,11 @@ export function SyllablHubPreview({ instance, phase, registerCard, typedAnswer }
   return (
     <div className={`preview-card preview-card-syllabl is-${phase}`} data-preview-game="syllabl" data-preview-phase={phase} ref={cardRef}>
       <div className="preview-syllabl-wordmark"><span>sy</span><i>·</i><b>lla</b><i>·</i><span>bl</span></div>
-      <div className="preview-syllabl-progress"><i /><i /><i /><i className="is-current" /><i /><i /></div>
       <div className="preview-syllabl-panel">
-        <div className="preview-syllabl-token"><small>today’s letters</small><strong>PRO</strong></div>
-        <p>find a word that <b>begins with PRO</b><br aria-hidden="true" /> and has <b>5 syllables</b>.</p>
+        <div className="preview-syllabl-challenge">
+          <div className="preview-syllabl-token"><small>today’s letters</small><strong>PRO</strong></div>
+          <p>find a word that <b>begins with PRO</b><br aria-hidden="true" /> and has <b>5 syllables</b>.</p>
+        </div>
         <div className="preview-entry-stack">
           <div className="preview-syllabl-entry"><span className="preview-entry-value" data-preview-entry>{typedAnswer || "enter your word…"}</span><b>{phase === "feedback" ? "✓" : "→"}</b></div>
           <small className="preview-live-feedback">{phase === "submitted" ? "checking…" : phase === "feedback" ? "valid · 5 syllables" : "enter your word…"}</small>

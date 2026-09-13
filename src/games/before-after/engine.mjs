@@ -1,5 +1,4 @@
 export const BEFORE_AFTER_ANSWER_LIMIT = 15;
-export const BEFORE_AFTER_DAILY_SECONDS = 60;
 
 export function normalizeBridgeAnswer(value) {
   return String(value ?? "").trim().toLowerCase();
@@ -14,24 +13,32 @@ export function createBridgeSession({ puzzle, mode, startedAt = Date.now() }) {
     attempts: 0,
     status: "active",
     startedAt,
+    activeElapsedMs: 0,
+    resumedAt: startedAt,
     completedAt: null,
     durationMs: null,
   };
 }
 
+function activeBridgeDurationMs(session, now = Date.now()) {
+  const accumulated = Math.max(0, Number(session.activeElapsedMs) || 0);
+  if (session.status !== "active" || !Number.isFinite(session.resumedAt)) return accumulated;
+  return accumulated + Math.max(0, now - session.resumedAt);
+}
+
+export function pauseBridgeSession(session, now = Date.now()) {
+  if (session.status !== "active" || !Number.isFinite(session.resumedAt)) return session;
+  return { ...session, activeElapsedMs: activeBridgeDurationMs(session, now), resumedAt: null };
+}
+
+export function resumeBridgeSession(session, now = Date.now()) {
+  if (session.status !== "active" || Number.isFinite(session.resumedAt)) return session;
+  return { ...session, resumedAt: now };
+}
+
 export function submitBridgeAnswer(session, answer, now = Date.now()) {
   if (session.status !== "active") {
     return { accepted: false, correct: session.status === "solved", state: session };
-  }
-  if (
-    session.mode === "daily" &&
-    now - session.startedAt >= BEFORE_AFTER_DAILY_SECONDS * 1000
-  ) {
-    return {
-      accepted: false,
-      correct: false,
-      state: expireBridgeSession(session, now),
-    };
   }
   const normalized = normalizeBridgeAnswer(answer);
   if (!normalized) {
@@ -40,31 +47,38 @@ export function submitBridgeAnswer(session, answer, now = Date.now()) {
   const correct =
     normalized === normalizeBridgeAnswer(session.puzzle.answer);
   const attempts = session.attempts + 1;
+  const durationMs = activeBridgeDurationMs(session, now);
   const state = {
     ...session,
     answerText: correct ? session.puzzle.answer.toLowerCase() : normalized,
     attempts,
     status: correct ? "solved" : "active",
+    activeElapsedMs: durationMs,
+    resumedAt: correct ? null : now,
     completedAt: correct ? now : null,
-    durationMs: correct ? Math.max(0, now - session.startedAt) : null,
+    durationMs: correct ? durationMs : null,
   };
   return { accepted: true, correct, state };
 }
 
-export function expireBridgeSession(session, now = Date.now()) {
-  if (session.status !== "active" || session.mode !== "daily") return session;
+export function revealBridgeAnswer(session, now = Date.now()) {
+  if (session.status !== "active") return session;
   return {
     ...session,
-    status: "expired",
+    answerText: session.puzzle.answer.toLowerCase(),
+    status: "revealed",
+    activeElapsedMs: activeBridgeDurationMs(session, now),
+    resumedAt: null,
     completedAt: now,
-    durationMs: Math.max(0, now - session.startedAt),
+    durationMs: activeBridgeDurationMs(session, now),
   };
 }
 
-export function remainingBridgeSeconds(session, now = Date.now()) {
-  if (session.mode !== "daily") return Number.POSITIVE_INFINITY;
-  const elapsed = Math.floor(Math.max(0, now - session.startedAt) / 1000);
-  return Math.max(0, BEFORE_AFTER_DAILY_SECONDS - elapsed);
+export function elapsedBridgeSeconds(session, now = Date.now()) {
+  const duration = session.status === "active"
+    ? activeBridgeDurationMs(session, now)
+    : Number.isFinite(session.durationMs) ? session.durationMs : activeBridgeDurationMs(session, now);
+  return Math.floor(Math.max(0, duration) / 1000);
 }
 
 export function bridgePhrases(puzzle, answer = puzzle.answer) {
@@ -123,27 +137,31 @@ export function hydrateBridgeSession({ payload, puzzle, mode, now = Date.now() }
   ) {
     return fresh;
   }
-  const status = ["active", "solved", "expired"].includes(payload.status)
-    ? payload.status
-    : "active";
+  const wasExpired = payload.status === "expired";
+  const status = payload.status === "solved"
+    ? "solved"
+    : payload.status === "revealed" || payload.status === "abandoned"
+      ? "revealed"
+      : "active";
+  const completedDuration = Number.isFinite(payload.durationMs) ? Math.max(0, payload.durationMs) : null;
+  const storedElapsed = Number.isFinite(payload.activeElapsedMs)
+    ? Math.max(0, payload.activeElapsedMs)
+    : status === "active"
+      ? Math.max(0, now - payload.startedAt)
+      : completedDuration ?? 0;
   const session = {
     ...fresh,
     answerText: typeof payload.answerText === "string" ? payload.answerText : "",
     attempts: Math.max(0, Number(payload.attempts) || 0),
     status,
-    startedAt: payload.startedAt,
-    completedAt: Number.isFinite(payload.completedAt)
+    startedAt: wasExpired ? now : payload.startedAt,
+    activeElapsedMs: wasExpired ? 0 : storedElapsed,
+    resumedAt: status === "active" && !wasExpired && Number.isFinite(payload.resumedAt) ? payload.resumedAt : null,
+    completedAt: status !== "active" && Number.isFinite(payload.completedAt)
       ? payload.completedAt
       : null,
-    durationMs: Number.isFinite(payload.durationMs) ? payload.durationMs : null,
+    durationMs: status !== "active" ? completedDuration : null,
   };
-  if (
-    mode === "daily" &&
-    session.status === "active" &&
-    remainingBridgeSeconds(session, now) === 0
-  ) {
-    return expireBridgeSession(session, now);
-  }
   return session;
 }
 
@@ -156,6 +174,8 @@ export function serializeBridgeSession(session) {
     attempts: session.attempts,
     status: session.status,
     startedAt: session.startedAt,
+    activeElapsedMs: session.activeElapsedMs,
+    resumedAt: session.resumedAt,
     completedAt: session.completedAt,
     durationMs: session.durationMs,
   };
