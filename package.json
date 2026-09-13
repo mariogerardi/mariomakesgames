@@ -29,18 +29,18 @@
     "node": ">=22.13.0"
   },
   "dependencies": {
-    "@aws-sdk/client-dynamodb": "^3.1126.0",
-    "@aws-sdk/lib-dynamodb": "^3.1126.0",
-    "next": "16.3.3",
-    "react": "19.2.8",
-    "react-dom": "19.2.8"
+    "@aws-sdk/client-dynamodb": "^3.1129.0",
+    "@aws-sdk/lib-dynamodb": "^3.1129.0",
+    "next": "16.3.4",
+    "react": "19.3.0",
+    "react-dom": "19.3.0"
   },
   "devDependencies": {
     "@cloudflare/vite-plugin": "1.54.0",
     "@types/aws-lambda": "^8.10.163",
     "@types/node": "26.3.0",
-    "@types/react": "19.2.18",
-    "@types/react-dom": "19.2.5",
+    "@types/react": "19.3.0",
+    "@types/react-dom": "19.3.0",
     "@vitejs/plugin-react": "6.1.0",
     "@vitejs/plugin-rsc": "0.5.34",
     "aws-cdk": "^2.1139.0",
