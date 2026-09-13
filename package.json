@@ -31,30 +31,30 @@
   "dependencies": {
     "@aws-sdk/client-dynamodb": "^3.1126.0",
     "@aws-sdk/lib-dynamodb": "^3.1126.0",
-    "next": "16.3.2",
+    "next": "16.3.3",
     "react": "19.2.8",
     "react-dom": "19.2.8"
   },
   "devDependencies": {
-    "@cloudflare/vite-plugin": "1.53.1",
+    "@cloudflare/vite-plugin": "1.54.0",
     "@types/aws-lambda": "^8.10.163",
-    "@types/node": "22.19.19",
+    "@types/node": "26.3.0",
     "@types/react": "19.2.18",
-    "@types/react-dom": "19.2.4",
+    "@types/react-dom": "19.2.5",
     "@vitejs/plugin-react": "6.1.0",
     "@vitejs/plugin-rsc": "0.5.34",
     "aws-cdk": "^2.1139.0",
     "aws-cdk-lib": "^2.268.0",
     "constructs": "^10.8.1",
     "esbuild": "^0.28.2",
-    "eslint": "9.39.4",
-    "eslint-config-next": "16.3.2",
+  "eslint": "10.9.1",
+  "eslint-config-next": "16.3.3",
     "react-server-dom-webpack": "19.2.8",
     "sst": "^4.17.1",
     "tsx": "^4.23.13",
-    "typescript": "5.9.3",
+  "typescript": "7.0.2",
     "vinext": "1.0.0-beta.8",
     "vite": "8.2.2",
-    "wrangler": "4.125.0"
+    "wrangler": "4.126.0"
   }
 }
