@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { createRunSync, scopedProgressStorage } from "../../src/platform/run-sync.mjs";
+import { createRunSync, runContent, runSyncResetKey, scopedProgressStorage } from "../../src/platform/run-sync.mjs";
 import { prepareRunWrite } from "../../src/platform/run-write.mjs";
 import { restoreRunCheckpoints, legacyNativeCheckpoint } from "../../src/platform/run-checkpoints.mjs";
 import { createSyllablSession, serializeSyllablSession, hydrateSyllablSession } from "../../src/games/syllabl/engine.mjs";
@@ -23,6 +23,13 @@ function pristineDualRun(puzzleId, revision = 1) {
 function playedDualRun(score, submissions, syncRevision) {
   return { ...pristineDualRun("dual-puzzle"), score, syncRevision,
     result: { ...pristineDualRun("dual-puzzle").result, score, submissions } };
+}
+function decodeRun(score, syncRevision, outcome = "in-progress") {
+  return { ...run(score), gameId: "decode", mode: "daily-5", runId: `decode:daily-5:${date}`,
+    puzzle: { id: "decode-daily", revision: 1, date }, syncRevision,
+    completedAt: outcome === "completed" ? startedAt : null, outcome,
+    result: { score, signalsCompleted: score, elapsedSeconds: score * 10 },
+    checkpoint: { version: 1, state: { native: { run: { mode: "daily-5", status: "playing", score, dailyIndex: score, elapsedSeconds: score * 10 } } } } };
 }
 function remote() {
   const runs = new Map();
@@ -81,6 +88,86 @@ test("failed saves do not report success and idle polls do not clear read errors
   assert.equal(state.savedCount, 0);
 });
 
+test("permanent cloud rejections are retained locally without retrying every checkpoint", async () => {
+  let attempts = 0, state;
+  const queue = sync(store(), {
+    ...remote(),
+    save: async () => { attempts += 1; const error = new Error("invalid run"); error.status = 400; throw error; },
+  }, "mario", (value) => { state = value; });
+  queue.stage(run(1));
+  await queue.flush();
+  assert.equal(attempts, 1);
+  assert.equal(state.status, "rejected");
+  assert.equal(state.pending, 0);
+  queue.stage(run(2));
+  await queue.flush();
+  assert.equal(attempts, 1);
+  assert.equal(queue.list()[0].score, 2);
+  assert.equal(state.status, "rejected");
+});
+
+test("a stale conditional write can recreate a run after its server record disappears", async () => {
+  const cloud = remote(); let attempts = 0;
+  const queue = sync(store(), {
+    ...cloud,
+    save: async (candidate) => {
+      attempts += 1;
+      if (attempts === 1) { const error = new Error("Progress changed on another device."); error.status = 409; throw error; }
+      return cloud.save(candidate);
+    },
+  });
+  queue.stage(run(2));
+  await queue.flush();
+  await queue.flush();
+  assert.equal(attempts, 2);
+  assert.equal(queue.list()[0].score, 2);
+  assert.equal((await cloud.list()).length, 1);
+});
+
+test("active clock ticks do not count as cloud progress changes", () => {
+  const bridge = {
+    ...run(), gameId: "before-after", mode: "packs", runId: "before-after:packs:clock",
+    puzzle: { id: "clock", revision: 1 }, result: { attempts: 0, durationMs: 0, status: "active" },
+    checkpoint: { version: 1, state: { native: { activeElapsedMs: 1000, resumedAt: 1000, answerText: "" } } },
+  };
+  const laterBridge = { ...bridge, checkpoint: { ...bridge.checkpoint, state: { native: { ...bridge.checkpoint.state.native, activeElapsedMs: 9000, resumedAt: 9000 } } } };
+  assert.equal(runContent(bridge), runContent(laterBridge));
+
+  const decode = {
+    ...run(), gameId: "decode", mode: "daily-5", runId: "decode:daily-5:clock",
+    puzzle: { id: "clock", revision: 1, date }, result: { score: 1, signalsCompleted: 1, elapsedSeconds: 2 },
+    checkpoint: { version: 1, state: { native: { run: { status: "playing", score: 1, elapsedSeconds: 2 }, puzzle: {} } } },
+  };
+  const laterDecode = { ...decode, result: { ...decode.result, elapsedSeconds: 18 }, checkpoint: { ...decode.checkpoint, state: { native: { ...decode.checkpoint.state.native, run: { ...decode.checkpoint.state.native.run, elapsedSeconds: 18 } } } } };
+  assert.equal(runContent(decode), runContent(laterDecode));
+});
+
+test("an account deletion marker disables older in-memory queues", async () => {
+  const storage = store(); const cloud = remote();
+  const queue = sync(storage, cloud);
+  storage.setItem(runSyncResetKey("mario"), String(Date.now() + 1000));
+  queue.stage(run(2));
+  await queue.flush();
+  assert.equal(queue.list().length, 0);
+  assert.equal((await cloud.list()).length, 0);
+});
+
+test("an account deletion marker also discards an in-flight save response", async () => {
+  const storage = store(); const cloud = remote(); let release;
+  const saveStarted = new Promise((resolve) => { release = resolve; });
+  const queue = sync(storage, {
+    ...cloud,
+    save: async (candidate) => { await saveStarted; return cloud.save(candidate); },
+  });
+  queue.stage(run(2));
+  const flushing = queue.flush();
+  storage.setItem(runSyncResetKey("mario"), String(Date.now() + 1000));
+  release();
+  await flushing;
+  assert.equal(queue.list().length, 0);
+  assert.equal((await cloud.list()).length, 1, "the already-started request may finish remotely");
+});
+
 test("account storage and queues never borrow guest or another player's progress", async () => {
   const storage = store(), cloud = remote();
   scopedProgressStorage(storage, null).setItem("daily", "guest");
@@ -127,7 +214,10 @@ test("stale writes require a choice; losing save is retained for recovery", asyn
   const a = sync(store(), cloud), b = sync(storage, cloud, "mario", (value) => { state = value; });
   a.stage(run(1)); b.stage(run(2)); await a.flush(); await b.flush();
   assert.equal(state.conflicts.length, 1); assert.equal(cloud.runs.values().next().value.score, 1);
-  b.resolve(run().runId, "device"); await b.flush(); assert.equal(cloud.runs.values().next().value.score, 2);
+  assert.equal(state.pending, 0, "a conflicted snapshot must stop retrying until a choice is made");
+  b.stage(run(3)); await b.flush();
+  assert.equal(state.pending, 0, "clock or checkpoint updates must not requeue a conflict");
+  b.resolve(run().runId, "device"); await b.flush(); assert.equal(cloud.runs.values().next().value.score, 3);
   assert.equal(JSON.parse(storage.getItem("mg-games:run-sync:v1:mario")).recovery[0].run.score, 1);
 });
 
@@ -143,6 +233,30 @@ test("append-only DUAL progress rebases without surfacing a false conflict", asy
   assert.equal(queue.list()[0].score, 3);
   await queue.flush();
   assert.equal(cloud.runs.values().next().value.score, 3);
+});
+
+test("append-only DECODE Daily progress rebases without surfacing a false conflict", async () => {
+  const cloud = remote(), storage = store(); let state;
+  await cloud.save(decodeRun(1));
+  const queue = sync(storage, cloud, "mario", (value) => { state = value; });
+  queue.stage(decodeRun(2));
+  await queue.flush();
+  assert.equal(state.conflicts.length, 0);
+  assert.equal(queue.list()[0].score, 2);
+  await queue.flush();
+  assert.equal(cloud.runs.values().next().value.score, 2);
+});
+
+test("DECODE Daily completion rebases over a stale in-progress cloud run", async () => {
+  const cloud = remote(), storage = store(); let state;
+  await cloud.save(decodeRun(4));
+  const queue = sync(storage, cloud, "mario", (value) => { state = value; });
+  queue.stage(decodeRun(5, undefined, "completed"));
+  await queue.flush();
+  assert.equal(state.conflicts.length, 0);
+  await queue.flush();
+  assert.equal(cloud.runs.values().next().value.score, 5);
+  assert.equal(cloud.runs.values().next().value.outcome, "completed");
 });
 
 test("divergent DUAL submissions still require a progress choice", async () => {

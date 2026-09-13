@@ -5,7 +5,7 @@ import type { AnyGameRun, CloudGameId, RunQuery, RunRepository } from "./runs.mj
 import { createLocalRunRepository } from "./local-repositories.mjs";
 import { createCloudRunRepository } from "./cloud-run-repository";
 import { browserAuthClient } from "./auth-client";
-import { useGameProgress } from "./game-progress-provider";
+import { useGameProgress, useGameRestoration } from "./game-progress-provider";
 import { restoreRunCheckpoints } from "./run-checkpoints.mjs";
 
 export async function gameRunRepository(): Promise<RunRepository> {
@@ -33,14 +33,15 @@ export async function saveGameRun(run: AnyGameRun) {
 
 export function useGameRunPersistence(run: AnyGameRun | null, enabled = true) {
   const progress = useGameProgress();
+  const restoration = useGameRestoration();
   const fingerprint = useMemo(() => run ? JSON.stringify(run) : "", [run]);
   useEffect(() => {
-    if (!enabled || !fingerprint || !progress) return;
+    if (!enabled || !fingerprint || !progress || !restoration.ready) return;
     const candidate = JSON.parse(fingerprint) as AnyGameRun;
     progress.sync.stage(candidate);
     try { restoreRunCheckpoints(progress.storage, progress.sync.list({ gameId: candidate.gameId }).filter((saved) => saved.runId === candidate.runId)); }
     catch { /* The durable journal still contains the native checkpoint. */ }
-  }, [enabled, fingerprint, progress]);
+  }, [enabled, fingerprint, progress, restoration.ready]);
 }
 
 export function dailyRunId(gameId: CloudGameId, mode: string, puzzleId: string) {

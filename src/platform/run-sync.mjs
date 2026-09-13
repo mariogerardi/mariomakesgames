@@ -9,10 +9,34 @@ export function scopedProgressStorage(storage, ownerId) {
   };
 }
 
+export function runSyncResetKey(ownerId) {
+  return `mg-games:run-sync:reset:${ownerId ? encodeURIComponent(ownerId) : "guest"}`;
+}
+
 export function runContent(run) {
   if (!run) return "";
   const { syncRevision, updatedAt, ...content } = run;
   void syncRevision; void updatedAt;
+  // Clock ticks are useful for local resume but should not create a new cloud
+  // revision. Keeping them out of the comparison prevents active Before&After
+  // and DECODE sessions from racing another device every few seconds.
+  if (content.outcome === "in-progress" && content.gameId === "before-after") {
+    const native = content.checkpoint?.state?.native;
+    if (native && typeof native === "object") {
+      content.checkpoint = { ...content.checkpoint, state: { ...content.checkpoint.state, native: { ...native } } };
+      delete content.checkpoint.state.native.activeElapsedMs;
+      delete content.checkpoint.state.native.resumedAt;
+    }
+  }
+  if (content.outcome === "in-progress" && content.gameId === "decode") {
+    if (content.result && typeof content.result === "object") content.result = { ...content.result };
+    if (content.result) delete content.result.elapsedSeconds;
+    const native = content.checkpoint?.state?.native;
+    if (native?.run && typeof native.run === "object") {
+      content.checkpoint = { ...content.checkpoint, state: { ...content.checkpoint.state, native: { ...native, run: { ...native.run } } } };
+      delete content.checkpoint.state.native.run.elapsedSeconds;
+    }
+  }
   // DynamoDB does not retain object key order.
   const sort = (value) => Array.isArray(value) ? value.map(sort)
     : value && typeof value === "object" ? Object.fromEntries(Object.keys(value).sort().map((key) => [key, sort(value[key])])) : value;
@@ -41,10 +65,25 @@ function isDualContinuation(earlier, later) {
   return before.every((submission, index) => runContent(submission) === runContent(after[index]));
 }
 
+function isDecodeContinuation(earlier, later) {
+  if (earlier?.gameId !== "decode" || later?.gameId !== "decode" ||
+    earlier.runId !== later.runId || earlier.mode !== "daily-5" || later.mode !== "daily-5" ||
+    earlier.startedAt !== later.startedAt || earlier.puzzle?.id !== later.puzzle?.id ||
+    earlier.puzzle?.revision !== later.puzzle?.revision ||
+    earlier.outcome !== "in-progress" || !["in-progress", "completed"].includes(later.outcome)) return false;
+  const earlierRun = earlier.checkpoint?.state?.native?.run;
+  const laterRun = later.checkpoint?.state?.native?.run;
+  if (!earlierRun || !laterRun || Number(later.score) < Number(earlier.score) ||
+    Number(laterRun.dailyIndex) < Number(earlierRun.dailyIndex)) return false;
+  return Number(later.score) > Number(earlier.score) || Number(laterRun.dailyIndex) > Number(earlierRun.dailyIndex);
+}
+
 /** Account-bound write-ahead journal. No tokens and no cross-account migration. */
 export function createRunSync({ storage, ownerId, remote, onChange = () => {} }) {
   const key = `mg-games:run-sync:v1:${ownerId ? encodeURIComponent(ownerId) : "guest"}`;
-  const blankJournal = () => ({ runs: {}, pending: {}, conflicts: {}, recovery: [], changes: {} });
+  const resetKey = runSyncResetKey(ownerId);
+  const instanceStartedAt = Date.now();
+  const blankJournal = () => ({ runs: {}, pending: {}, rejected: {}, conflicts: {}, recovery: [], changes: {} });
   const parseJournal = (raw) => {
     const next = blankJournal();
     const parsed = JSON.parse(raw ?? "null");
@@ -54,6 +93,9 @@ export function createRunSync({ storage, ownerId, remote, onChange = () => {} })
     }
     for (const [id, pending] of Object.entries(parsed.pending ?? {})) {
       if (next.runs[id] && pending.run?.playerId === ownerId) next.pending[id] = pending;
+    }
+    for (const [id, rejection] of Object.entries(parsed.rejected ?? {})) {
+      if (next.runs[id] && rejection?.playerId === ownerId) next.rejected[id] = rejection;
     }
     next.conflicts = parsed.conflicts ?? {};
     next.recovery = Array.isArray(parsed.recovery) ? parsed.recovery : [];
@@ -68,12 +110,26 @@ export function createRunSync({ storage, ownerId, remote, onChange = () => {} })
   let active = true;
   let flushing = false;
   let savedCount = 0;
+  const rebasedMissingRuns = new Set();
   let logicalClock = Date.now();
   const instanceId = globalThis.crypto?.randomUUID?.() ?? `${Date.now()}-${Math.random().toString(36).slice(2)}`;
   try {
     journal = parseJournal(storage.getItem(key));
   } catch { storageFailed = true; }
-  const ids = (value) => new Set([...Object.keys(value.runs), ...Object.keys(value.pending), ...Object.keys(value.conflicts), ...Object.keys(value.changes)]);
+  function invalidated() {
+    try {
+      const resetAt = Number.parseInt(storage.getItem(resetKey) ?? "", 10);
+      if (Number.isFinite(resetAt) && resetAt >= instanceStartedAt) {
+        // A different tab deleted this account's data. Stop this old tab from
+        // re-uploading its in-memory timer/checkpoint state.
+        active = false;
+        journal = blankJournal();
+        return true;
+      }
+    } catch { /* Storage failures are handled by the normal persistence path. */ }
+    return false;
+  }
+  const ids = (value) => new Set([...Object.keys(value.runs), ...Object.keys(value.pending), ...Object.keys(value.rejected), ...Object.keys(value.conflicts), ...Object.keys(value.changes)]);
   const legacyStamp = (value, id) => {
     const candidates = [value.runs[id], value.pending[id]?.run, value.conflicts[id]?.local, value.conflicts[id]?.remote];
     const time = Math.max(0, ...candidates.map((run) => Date.parse(run?.updatedAt ?? run?.startedAt ?? "") || 0));
@@ -86,7 +142,7 @@ export function createRunSync({ storage, ownerId, remote, onChange = () => {} })
     journal.changes[id] = `${String(logicalClock).padStart(16, "0")}:${instanceId}`;
   };
   const adoptRecord = (source, id) => {
-    for (const field of ["runs", "pending", "conflicts"]) {
+    for (const field of ["runs", "pending", "rejected", "conflicts"]) {
       if (source[field][id] === undefined) delete journal[field][id];
       else journal[field][id] = source[field][id];
     }
@@ -142,6 +198,21 @@ export function createRunSync({ storage, ownerId, remote, onChange = () => {} })
         touch(run.runId);
         return;
       }
+      if (isDecodeContinuation(run, pending.run)) {
+        pending.baseRevision = run.syncRevision ?? 0;
+        pending.run.syncRevision = run.syncRevision;
+        journal.runs[run.runId] = pending.run;
+        delete journal.conflicts[run.runId];
+        touch(run.runId);
+        return;
+      }
+      if (isDecodeContinuation(pending.run, run)) {
+        journal.runs[run.runId] = run;
+        delete journal.pending[run.runId];
+        delete journal.conflicts[run.runId];
+        touch(run.runId);
+        return;
+      }
       // Older DUAL clients keyed authored dailies by date alone. Replacing a
       // same-day draft could therefore look like conflicting progress even
       // when neither puzzle had been played. Preserve the discarded device
@@ -154,30 +225,38 @@ export function createRunSync({ storage, ownerId, remote, onChange = () => {} })
         touch(run.runId);
         return;
       }
-      if ((run.syncRevision ?? 0) !== pending.baseRevision || run.outcome === "completed") {
-        journal.conflicts[run.runId] = { local: pending.run, remote: run };
-        touch(run.runId);
-      }
+      // Any divergent non-append-only snapshot needs an explicit choice,
+      // even when both copies happen to carry the same revision. Leaving it
+      // pending would resend the stale snapshot on every checkpoint tick.
+      journal.conflicts[run.runId] = { local: pending.run, remote: run };
+      delete journal.pending[run.runId];
+      touch(run.runId);
       return;
     }
     journal.runs[run.runId] = run;
     delete journal.pending[run.runId];
+    delete journal.rejected[run.runId];
     delete journal.conflicts[run.runId];
     touch(run.runId);
   }
   async function flush() {
+    if (invalidated()) return;
     reconcileStored();
     if (!active || !ownerId || flushing || !Object.keys(journal.pending).length) return;
     flushing = true;
     try {
       for (const id of Object.keys(journal.pending)) {
         if (!active) break;
+        if (journal.rejected[id]) continue;
         if (journal.conflicts[id]) continue;
         const pending = journal.pending[id];
         notify("saving");
         try {
           const saved = await remote.save({ ...pending.run, syncRevision: pending.baseRevision });
-          if (!active) break;
+          // Account deletion can invalidate this queue while the request is
+          // in flight. Do not merge or persist the response from that stale
+          // request when it returns after the reset marker was written.
+          if (!active || invalidated()) break;
           reconcileStored();
           savedCount += 1;
           const latest = journal.pending[id];
@@ -193,7 +272,7 @@ export function createRunSync({ storage, ownerId, remote, onChange = () => {} })
           touch(id);
           persist();
         } catch (error) {
-          if (!active) break;
+          if (!active || invalidated()) break;
           reconcileStored();
           if (!journal.pending[id]) continue;
           if (error.status === 409) {
@@ -209,6 +288,11 @@ export function createRunSync({ storage, ownerId, remote, onChange = () => {} })
                   journal.runs[id] = server;
                   delete journal.pending[id];
                 }
+              } else if (isDecodeContinuation(server, journal.pending[id].run)) {
+                journal.pending[id].baseRevision = server.syncRevision ?? 0;
+                journal.pending[id].run.syncRevision = server.syncRevision;
+                journal.runs[id] = journal.pending[id].run;
+                delete journal.conflicts[id];
               } else if (isDualContinuation(server, journal.pending[id].run)) {
                 journal.pending[id].baseRevision = server.syncRevision ?? 0;
                 journal.pending[id].run.syncRevision = server.syncRevision;
@@ -218,17 +302,46 @@ export function createRunSync({ storage, ownerId, remote, onChange = () => {} })
                 journal.runs[id] = server;
                 delete journal.pending[id];
                 delete journal.conflicts[id];
-              } else journal.conflicts[id] = { local: journal.pending[id].run, remote: server };
+              } else {
+                journal.conflicts[id] = { local: journal.pending[id].run, remote: server };
+                delete journal.pending[id];
+              }
+              touch(id);
+              persist();
+              continue;
+            }
+            // A deleted server record can still race an old conditional PUT.
+            // Rebase once so a valid local snapshot can be created again
+            // instead of turning the missing record into an endless warning.
+            if (!rebasedMissingRuns.has(id) && journal.pending[id]) {
+              rebasedMissingRuns.add(id);
+              journal.pending[id].baseRevision = 0;
+              delete journal.pending[id].run.syncRevision;
               touch(id);
               persist();
               continue;
             }
           }
-          notify(error.status === 401 ? "auth-required" : error.status >= 400 && error.status < 500 ? "rejected" : "offline");
+          if (error.status >= 400 && error.status < 500 && error.status !== 401) {
+            const rejectedRun = journal.pending[id]?.run ?? journal.runs[id];
+            delete journal.pending[id];
+            journal.rejected[id] = {
+              playerId: ownerId,
+              outcome: rejectedRun?.outcome,
+              status: error.status,
+              message: error.message ?? "Cloud save rejected",
+              savedAt: new Date().toISOString(),
+            };
+            touch(id);
+            persist();
+            notify("rejected");
+            continue;
+          }
+          notify(error.status === 401 ? "auth-required" : "offline");
           return;
         }
       }
-      notify(Object.keys(journal.conflicts).length ? "conflict" : Object.keys(journal.pending).length ? "pending" : "saved");
+      notify(Object.keys(journal.conflicts).length ? "conflict" : Object.keys(journal.pending).length ? "pending" : Object.keys(journal.rejected).length ? "rejected" : "saved");
     } catch { notify("offline"); }
     finally { flushing = false; }
   }
@@ -236,11 +349,13 @@ export function createRunSync({ storage, ownerId, remote, onChange = () => {} })
     ownerId,
     storageKey: key,
     list(query = {}) {
+      if (!active || invalidated()) return [];
       reconcileStored();
       return Object.values(journal.runs).filter((run) => Object.entries(query).every(([field, value]) => value === undefined || (field === "puzzleId" ? run.puzzle.id : run[field]) === value))
         .sort((a, b) => (b.updatedAt ?? b.startedAt).localeCompare(a.updatedAt ?? a.startedAt));
     },
     async prepare(gameId) {
+      if (invalidated()) return;
       reconcileStored();
       if (ownerId) {
         try {
@@ -253,7 +368,7 @@ export function createRunSync({ storage, ownerId, remote, onChange = () => {} })
       } else notify("local");
     },
     stage(candidate) {
-      if (!active) return;
+      if (!active || invalidated()) return;
       reconcileStored();
       const previous = journal.runs[candidate.runId];
       // Completed records are final, including when reopened on another device.
@@ -263,19 +378,43 @@ export function createRunSync({ storage, ownerId, remote, onChange = () => {} })
         completedAt: previous?.completedAt ?? candidate.completedAt,
       });
       assertGameRun(run);
-      if (runContent(previous) === runContent(run)) return;
+      const rejection = journal.rejected[run.runId];
+      if (rejection && rejection.outcome === run.outcome) {
+        journal.runs[run.runId] = run;
+        touch(run.runId);
+        persist();
+        notify("rejected");
+        return;
+      }
+      if (rejection) delete journal.rejected[run.runId];
+      if (runContent(previous) === runContent(run)) {
+        // Keep the freshest local checkpoint (especially the elapsed clock),
+        // but leave it out of the cloud queue unless a meaningful game field
+        // changed as well.
+        run.updatedAt = new Date().toISOString();
+        journal.runs[run.runId] = run;
+        if (journal.pending[run.runId]) journal.pending[run.runId].run = run;
+        touch(run.runId);
+        persist();
+        notify(journal.conflicts[run.runId] ? "conflict" : journal.pending[run.runId] ? "pending" : ownerId ? "saved" : "local");
+        return;
+      }
       run.updatedAt = new Date().toISOString();
       journal.runs[run.runId] = run;
-      if (ownerId) journal.pending[run.runId] = {
+      if (journal.conflicts[run.runId]) {
+        // A conflicted run must stay out of the retry queue until the player
+        // explicitly chooses a copy. Keep the newest device snapshot visible
+        // in the conflict dialog while the clock or UI continues to update.
+        journal.conflicts[run.runId].local = run;
+      } else if (ownerId) journal.pending[run.runId] = {
         run, baseRevision: journal.pending[run.runId]?.baseRevision ?? previous?.syncRevision ?? 0,
       };
-      if (journal.conflicts[run.runId]) journal.conflicts[run.runId].local = run;
       touch(run.runId);
       persist();
-      notify(ownerId ? "pending" : "local");
+      notify(journal.conflicts[run.runId] ? "conflict" : ownerId ? "pending" : "local");
     },
     async clearGame(gameId) {
-      if (!active) return;
+      if (!active || invalidated()) return;
       reconcileStored();
       notify(ownerId ? "saving" : "local");
       try {
@@ -291,6 +430,7 @@ export function createRunSync({ storage, ownerId, remote, onChange = () => {} })
         for (const id of matchingIds) {
           delete journal.runs[id];
           delete journal.pending[id];
+          delete journal.rejected[id];
           delete journal.conflicts[id];
           touch(id);
         }
@@ -303,6 +443,7 @@ export function createRunSync({ storage, ownerId, remote, onChange = () => {} })
       }
     },
     resolve(runId, choice) {
+      if (invalidated()) return;
       reconcileStored();
       const conflict = journal.conflicts[runId];
       if (!conflict) return;
@@ -316,14 +457,15 @@ export function createRunSync({ storage, ownerId, remote, onChange = () => {} })
         journal.runs[runId] = journal.pending[runId].run;
       }
       delete journal.conflicts[runId];
+      delete journal.rejected[runId];
       touch(runId);
       persist();
       notify("pending");
     },
     refresh() {
-      if (!active) return;
+      if (!active || invalidated()) return;
       reconcileStored();
-      notify(Object.keys(journal.conflicts).length ? "conflict" : Object.keys(journal.pending).length ? "pending" : ownerId ? "saved" : "local");
+      notify(Object.keys(journal.conflicts).length ? "conflict" : Object.keys(journal.pending).length ? "pending" : Object.keys(journal.rejected).length ? "rejected" : ownerId ? "saved" : "local");
     },
     flush,
     dispose() { active = false; },

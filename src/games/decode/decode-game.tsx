@@ -6,6 +6,7 @@ import { gameStorageKey } from "../../platform/storage";
 import { GameLocalBar } from "../../app-shell/game-local-bar";
 import {
   decodeModePuzzleBank,
+  decodeDailyOnlyAnswers,
   selectDecodePuzzleFromPool,
   selectDailyDecodePuzzles,
   type DecodePuzzle,
@@ -34,7 +35,12 @@ import { useGameTheme } from "../../platform/game-theme-provider";
 
 const PROGRESS_KEY = gameStorageKey("decode", "progress");
 const MODES = ["daily-5", "timed", "zen"] as const;
-const DECODE_VIEWS = ["home", "daily-5", "timed", "zen", "how-to", "themes"] as const;
+const DECODE_VIEWS = ["home", "daily-5", "timed", "zen", "how-to", "themes", "settings"] as const;
+const DECODE_KEYBOARD_ROWS = [
+  ["q", "w", "e", "r", "t", "y", "u", "i", "o", "p"],
+  ["a", "s", "d", "f", "g", "h", "j", "k", "l"],
+  ["backspace", "z", "x", "c", "v", "b", "n", "m", "enter"],
+] as const;
 type DecodeView = (typeof DECODE_VIEWS)[number];
 
 const DECODE_THEMES = [
@@ -227,6 +233,7 @@ export function DecodeGame({ initialRoute }: { initialRoute?: { view?: string } 
   const locallyStartedRun = useRef(false);
   const approvedTimedExit = useRef(false);
   const recordedExpiry = useRef(false);
+  const [previousTimedBest, setPreviousTimedBest] = useState<number | null>(null);
   const transitionTimer = useRef<number | null>(null);
   const dailyResultTimer = useRef<number | null>(null);
   const [runMeta, setRunMeta] = useState(() => ({ startedAt: new Date().toISOString(), puzzleId: "decode-run" }));
@@ -252,7 +259,7 @@ export function DecodeGame({ initialRoute }: { initialRoute?: { view?: string } 
   const [timedExit, setTimedExit] = useState<{ next?: DecodeView; href?: string } | null>(null);
   const [progress, setProgress] = useState<DecodeProgress>(EMPTY_PROGRESS);
   const active = run?.status === "playing";
-  const interactive = Boolean(active && !transitioning);
+  const interactive = Boolean(active && progressReady && !transitioning);
   const platformRun = useMemo<GameRun<"decode"> | null>(() => {
     if (!run || !puzzle) return null;
     const date = run.mode === "daily-5" ? localDateKey(new Date(runMeta.startedAt)) : undefined;
@@ -513,19 +520,33 @@ export function DecodeGame({ initialRoute }: { initialRoute?: { view?: string } 
   }
 
   function focusInput() {
+    if (!window.matchMedia("(min-width: 761px)").matches) return;
     window.requestAnimationFrame(() => inputRef.current?.focus({ preventScroll: true }));
   }
 
+  function handleKeyboardKey(key: (typeof DECODE_KEYBOARD_ROWS)[number][number]) {
+    if (!puzzle || !interactive) return;
+    if (key === "backspace") {
+      setAnswer((current) => current.slice(0, -1));
+    } else if (key === "enter") {
+      handleSubmit();
+    } else {
+      setAnswer((current) => normalizeDecodeInput(`${current}${key}`, puzzle.answer.length));
+    }
+  }
+
   function selectModePuzzle(length: 4 | 5 | 6 | 7, selectedMode: "timed" | "zen") {
-    const authored = localModePuzzles[selectedMode].filter((entry) => entry.answer.length === length);
+    const authored = localModePuzzles[selectedMode].filter((entry) => entry.answer.length === length && !decodeDailyOnlyAnswers.has(entry.answer));
     const combined = [...decodeModePuzzleBank(length), ...authored];
     return selectDecodePuzzleFromPool(combined)!;
   }
 
   function handleBegin(nextMode: DecodeMode = mode) {
+    if (!progressReady) return;
     locallyStartedRun.current = true;
     clearTransition();
     recordedExpiry.current = false;
+    setPreviousTimedBest(progress.bestTimedScore);
     setMode(nextMode);
     setView(nextMode);
     setShowDailyResult(false);
@@ -658,6 +679,23 @@ export function DecodeGame({ initialRoute }: { initialRoute?: { view?: string } 
 
   function handleHome() { navigate("home"); }
 
+  async function deleteDecodeData() {
+    if (!window.confirm("Delete your DECODE progress from this device and your account? This cannot be undone.")) return;
+    try {
+      await gameProgress?.sync.clearGame("decode");
+      progressStorage.removeItem(PROGRESS_KEY);
+      progressStorage.removeItem("mg-games:v1:decode:resume-daily-5");
+      progressStorage.removeItem("mg-games:v1:decode:resume-timed");
+      progressStorage.removeItem("mg-games:v1:decode:resume-zen");
+      // Rebuild from the server/device store so a completed run cannot remain
+      // visible through the current React tree after it has been deleted.
+      window.location.reload();
+    } catch {
+      setFeedback("Could not delete DECODE data. Check your connection and try again.");
+      setTone("error");
+    }
+  }
+
   function handleResultHome() {
     // Timed and Zen are session modes: returning from a finished result should
     // reveal their landing screen next time, not reopen the previous result.
@@ -754,6 +792,7 @@ export function DecodeGame({ initialRoute }: { initialRoute?: { view?: string } 
           })),
           { label: "Themes", current: view === "themes", onSelect: () => navigate("themes") },
           { label: "How to play", current: view === "how-to", onSelect: () => navigate("how-to") },
+          { label: "Settings", current: view === "settings", onSelect: () => navigate("settings") },
         ]}
         onHome={handleHome}
       />
@@ -762,6 +801,8 @@ export function DecodeGame({ initialRoute }: { initialRoute?: { view?: string } 
         <HowToPlay />
       ) : view === "themes" ? (
         <DecodeThemes selected={theme} onSelect={setTheme} />
+      ) : view === "settings" ? (
+        <DecodeSettings onDelete={deleteDecodeData} />
       ) : puzzle && run && run.mode === view && !(run.mode === "daily-5" && dailyPaused) ? (
         <>
           <main className="decode-play-layout">
@@ -781,7 +822,7 @@ export function DecodeGame({ initialRoute }: { initialRoute?: { view?: string } 
                   aria-label="Focus answer entry"
                   className={`decode-answer-grid${wrongPulse ? " is-wrong" : ""}${correctPulse ? " is-correct" : ""}`}
                   disabled={!interactive}
-                  onClick={() => inputRef.current?.focus()}
+                  onClick={focusInput}
                   type="button"
                 >
                   {Array.from({ length: puzzle.answer.length }, (_, index) => (
@@ -795,6 +836,7 @@ export function DecodeGame({ initialRoute }: { initialRoute?: { view?: string } 
                   className="decode-native-input"
                   disabled={!interactive}
                   id="decode-answer"
+                  inputMode="none"
                   maxLength={puzzle.answer.length}
                   onChange={(event) => setAnswer(normalizeDecodeInput(event.target.value, puzzle.answer.length))}
                   onKeyDown={(event) => {
@@ -807,6 +849,24 @@ export function DecodeGame({ initialRoute }: { initialRoute?: { view?: string } 
                   spellCheck={false}
                   value={answer}
                 />
+                <div className="decode-keyboard" aria-label="On-screen keyboard">
+                  {DECODE_KEYBOARD_ROWS.map((row, rowIndex) => (
+                    <div key={rowIndex}>
+                      {row.map((key) => (
+                        <button
+                          aria-label={key === "backspace" ? "Backspace" : key}
+                          className={key === "backspace" ? "is-delete" : key === "enter" ? "is-submit" : undefined}
+                          disabled={!interactive || (key === "enter" && answer.length !== puzzle.answer.length)}
+                          key={key}
+                          onClick={() => handleKeyboardKey(key)}
+                          type="button"
+                        >
+                          {key === "backspace" ? "⌫" : key}
+                        </button>
+                      ))}
+                    </div>
+                  ))}
+                </div>
               </div>
               <p className={`decode-feedback is-${tone}`} id="decode-feedback" aria-live="polite">{feedback}</p>
             </section>
@@ -815,12 +875,12 @@ export function DecodeGame({ initialRoute }: { initialRoute?: { view?: string } 
       ) : view === "home" ? (
         <Welcome onMode={(nextMode) => navigate(nextMode)} />
       ) : (
-        <ModeLanding key={view} mode={view} onBegin={() => beginModeLanding(view)} onZenLength={setZenLength} progress={progress} resumable={view === "daily-5" && (dailyResumeAvailable || (run?.mode === "daily-5" && run.status === "playing"))} zenLength={zenLength} />
+        <ModeLanding key={view} mode={view} onBegin={() => beginModeLanding(view)} onZenLength={setZenLength} progress={progress} ready={progressReady} resumable={view === "daily-5" && (dailyResumeAvailable || (run?.mode === "daily-5" && run.status === "playing"))} zenLength={zenLength} />
       )}
 
       {!timedExit && run && puzzle && run.mode === view && run.status !== "playing" && (run.mode !== "daily-5" || showDailyResult) && (
         <div className="decode-result-modal" role="dialog" aria-modal="true" aria-labelledby="decode-result-title">
-          <ResultPanel dailyPuzzles={dailyPuzzles} mode={run.mode} onAgain={() => handleBegin()} onDismiss={() => setShowDailyResult(false)} onHome={handleResultHome} progress={progress} puzzle={puzzle} run={run} />
+          <ResultPanel previousTimedBest={previousTimedBest} dailyPuzzles={dailyPuzzles} mode={run.mode} onAgain={() => handleBegin()} onDismiss={() => setShowDailyResult(false)} onHome={handleResultHome} progress={progress} puzzle={puzzle} run={run} />
         </div>
       )}
 
@@ -850,7 +910,7 @@ function RunRail({ clock, onRestart, progress, run, urgent }: {
         <div><span>Mode</span><strong>Zen</strong></div>
         <div><span>Solved</span><strong>{run.score}</strong></div>
         <div><span>Clock</span><strong>Off</strong></div>
-        <button onClick={onRestart} type="button">restart</button>
+        <button onClick={onRestart} type="button">restart run</button>
       </section>
     );
   }
@@ -863,8 +923,8 @@ function RunRail({ clock, onRestart, progress, run, urgent }: {
         {timed && <i><span style={{ width: `${meter}%` }} /></i>}
       </div>
       <div className="decode-run-progress">
-        <span>{timed ? "Score" : "Puzzle"}</span>
-        <strong>{timed ? run.score : `${Math.min(run.dailyIndex + 1, 5)}/5`}</strong>
+        <span>{timed ? "Score" : "Solved"}</span>
+        <strong>{timed ? run.score : `${run.score}/5`}</strong>
         {!timed && (
           <i className="decode-mini-daily-track" aria-hidden="true">
             {Array.from({ length: 5 }, (_, index) => (
@@ -873,7 +933,7 @@ function RunRail({ clock, onRestart, progress, run, urgent }: {
           </i>
         )}
       </div>
-      <div><span>Best</span><strong>{timed ? progress.bestTimedScore : progress.bestDailySeconds === null ? "—" : formatDecodeTime(progress.bestDailySeconds)}</strong></div>
+      <div title={timed ? "Most signals decoded in a Timed run" : "Fastest completed Daily 5 across your saved results"}><span>{timed ? "Best score" : "Best time"}</span><strong>{timed ? progress.bestTimedScore : progress.bestDailySeconds === null ? "—" : formatDecodeTime(progress.bestDailySeconds)}</strong></div>
       {timed && <button onClick={onRestart} type="button">restart run</button>}
     </section>
   );
@@ -895,7 +955,8 @@ function ClueWord({ feedback, puzzle }: { feedback: DecodeFeedback[]; puzzle: De
   );
 }
 
-function ResultPanel({ dailyPuzzles, mode, progress, puzzle, run, onAgain, onDismiss, onHome }: {
+function ResultPanel({ previousTimedBest, dailyPuzzles, mode, progress, puzzle, run, onAgain, onDismiss, onHome }: {
+  previousTimedBest: number | null;
   dailyPuzzles: DecodePuzzle[];
   mode: DecodeMode;
   progress: DecodeProgress;
@@ -905,6 +966,7 @@ function ResultPanel({ dailyPuzzles, mode, progress, puzzle, run, onAgain, onDis
   onDismiss: () => void;
   onHome: () => void;
 }) {
+  const revealedTheme = dailyPuzzles.length > 0 && dailyPuzzles.every((entry) => entry.theme && entry.theme === dailyPuzzles[0]?.theme) ? dailyPuzzles[0].theme : null;
   const actionRef = useRef<HTMLButtonElement>(null);
   const dialogRef = useRef<HTMLElement>(null);
   useModalFocus(dialogRef, actionRef, mode === "daily-5" ? onDismiss : onHome);
@@ -915,6 +977,12 @@ function ResultPanel({ dailyPuzzles, mode, progress, puzzle, run, onAgain, onDis
       <section className="decode-result is-expired" ref={dialogRef}>
         <span>Transmission ended</span><strong>{run.score}</strong><h2 id="decode-result-title">signals decoded</h2>
         <div><p><small>Tier reached</small><b>{length} letters</b></p><p><small>Personal best</small><b>{progress.bestTimedScore}</b></p></div>
+        <p className="decode-performance" role="status">{previousTimedBest !== null && run.score > previousTimedBest
+          ? `New personal best · ${run.score - previousTimedBest} more signals than your previous best.`
+          : run.score > 0 && run.score === (previousTimedBest ?? progress.bestTimedScore)
+            ? "Personal best matched. Can you decode one more next time?"
+            : run.score === 0 ? "No signals decoded this time. Read both clues before entering your answer."
+              : `${(previousTimedBest ?? progress.bestTimedScore) - run.score} more signals to match your personal best.`}</p>
         <p className="decode-final-answer">Final answer <b>{puzzle.answer}</b></p>
         <div className="decode-result-actions">
           <button onClick={onAgain} ref={actionRef} type="button">start a new run</button>
@@ -924,8 +992,8 @@ function ResultPanel({ dailyPuzzles, mode, progress, puzzle, run, onAgain, onDis
     );
   }
   return (
-    <section className="decode-result" ref={dialogRef}>
-      <span>Sequence decoded</span><strong>{run.mode === "daily-5" ? formatDecodeTime(run.elapsedSeconds) : "0:00"}</strong><h2 id="decode-result-title">{dailyPuzzles.every((entry) => entry.theme && entry.theme === dailyPuzzles[0]?.theme) ? dailyPuzzles[0]?.theme : "Daily 5"}</h2>
+    <section className="decode-result is-daily-complete" ref={dialogRef}>
+      <span>All 5 signals decoded</span><strong>{run.mode === "daily-5" ? formatDecodeTime(run.elapsedSeconds) : "0:00"}</strong>{revealedTheme && <p className="decode-theme-reveal-label">Theme revealed</p>}<h2 id="decode-result-title">{revealedTheme ?? "Daily 5"}</h2>
       <div className="decode-result-answers">{dailyPuzzles.map((entry) => <b key={entry.id}>{entry.answer}</b>)}</div>
       <p className="decode-final-answer">Best time <b>{progress.bestDailySeconds === null ? "--" : formatDecodeTime(progress.bestDailySeconds)}</b></p>
       <div className="decode-result-actions">
@@ -936,11 +1004,12 @@ function ResultPanel({ dailyPuzzles, mode, progress, puzzle, run, onAgain, onDis
   );
 }
 
-function ModeLanding({ mode, onBegin, onZenLength, progress, resumable = false, zenLength }: {
+function ModeLanding({ mode, onBegin, onZenLength, progress, ready, resumable = false, zenLength }: {
   mode: DecodeMode;
   onBegin: () => void;
   onZenLength: (length: 4 | 5 | 6 | 7) => void;
   progress: DecodeProgress;
+  ready: boolean;
   resumable?: boolean;
   zenLength: 4 | 5 | 6 | 7;
 }) {
@@ -964,7 +1033,7 @@ function ModeLanding({ mode, onBegin, onZenLength, progress, resumable = false, 
             <b>{progress.bestTimedScore ? `${progress.bestTimedScore} signals` : "No run yet"}</b>
           </div>
         )}
-        <button className="decode-mode-start" onClick={onBegin} type="button">{resumable ? "resume today’s sequence" : copy.action}</button>
+        <button className="decode-mode-start" disabled={!ready} onClick={onBegin} type="button">{resumable ? "resume today’s sequence" : copy.action}</button>
       </section>
     </main>
   );
@@ -1041,6 +1110,21 @@ function DecodeThemes({ selected, onSelect }: {
             </button>
           ))}
         </div>
+      </section>
+    </main>
+  );
+}
+
+function DecodeSettings({ onDelete }: { onDelete: () => void | Promise<void> }) {
+  return (
+    <main className="decode-settings-page" aria-labelledby="decode-settings-title">
+      <section>
+        <header><span>Player data</span><h1 id="decode-settings-title">Settings</h1><p>Manage the DECODE progress saved on this device and, when signed in, in your account.</p></header>
+        <article>
+          <h2>Delete DECODE data</h2>
+          <p>This removes Daily, Timed, and Zen runs, checkpoints, and DECODE statistics. Your theme preference stays available.</p>
+          <button type="button" onClick={() => void onDelete()}>Delete my DECODE data</button>
+        </article>
       </section>
     </main>
   );

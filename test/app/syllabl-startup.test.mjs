@@ -50,7 +50,7 @@ test("save notifications skip routine writes, retain failures, and delay transie
   }));
   for (const status of ["saved", "saving", "pending", "offline", "auth-required", "conflict"]) assert.equal(notice(status), "");
   assert.match(notice("storage-error", null), /role="alert"/);
-  assert.match(notice("rejected"), /device copy retained/);
+  assert.equal(notice("rejected"), "", "a stale rejection should not pin a banner to every game");
 });
 
 test("saved game palettes are present in server HTML, with allowlisted legacy migration", () => {
@@ -116,7 +116,7 @@ test("before&after renders its real navigation and animated menu without startin
   assert.match(source, /if \(!playReady \|\| \(mode === "archive" && !archiveReady\)\) return/);
 });
 
-test("DECODE shows live mode controls and permits built-in runs before restoration", () => {
+test("DECODE shows live mode controls without permitting runs before restoration", () => {
   const html = render(true, "decode");
   assert.match(html, /game-local-bar--decode/);
   for (const mode of ["Daily 5", "Timed", "Zen"]) assert.ok(html.includes(mode));
@@ -125,7 +125,9 @@ test("DECODE shows live mode controls and permits built-in runs before restorati
   const cards = html.split('class="decode-mode-cards"')[1].split('class="decode-zen-selector"')[0];
   assert.equal((cards.match(/<button disabled=""/g) ?? []).length, 0);
   const source = readFileSync(`${repositoryRoot}/src/games/decode/decode-game.tsx`, "utf8");
-  assert.doesNotMatch(source, /if \(!canStart\(nextMode\)\) return/);
+  assert.match(source, /if \(!progressReady\) return/);
+  assert.match(source, /disabled=\{!ready\}/);
+  assert.match(source, /const interactive = Boolean\(active && progressReady/);
   assert.match(source, /locallyStartedRun\.current = true/);
   assert.match(source, /const \[run, setRun\] = useState<DecodeState \| null>\(null\)/);
   assert.match(source, /setDailyResumeAvailable\(saved\?\.run\.status === "playing"\)/);
@@ -138,6 +140,8 @@ test("DECODE shows live mode controls and permits built-in runs before restorati
   assert.match(source, /setTimeout\(\(\) => \{[\s\S]*?setShowDailyResult\(true\);[\s\S]*?\}, 650\)/);
   assert.match(source, /view completed puzzle/);
   assert.doesNotMatch(source, />decode again</);
+  const persistenceSource = readFileSync(`${repositoryRoot}/src/platform/game-run-persistence.ts`, "utf8");
+  assert.match(persistenceSource, /if \(!enabled \|\| !fingerprint \|\| !progress \|\| !restoration\.ready\) return/);
 });
 
 test("Rarity renders its real menu before progress or the Daily API, without a playable entry", () => {

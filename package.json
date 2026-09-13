@@ -21,7 +21,9 @@
     "dual:data:download": "node scripts/dual/download-kaikki.mjs",
     "dual:data:frequency": "node scripts/dual/prepare-wordfreq.mjs",
     "dual:data:build": "node --expose-gc --max-old-space-size=4096 scripts/dual/build-kaikki-index.mjs",
-    "dual:data": "npm run dual:data:download && npm run dual:data:frequency && npm run dual:data:build"
+    "dual:data": "npm run dual:data:download && npm run dual:data:frequency && npm run dual:data:build",
+    "build:next": "next build",
+    "deploy:aws": "node scripts/deploy-production.mjs"
   },
   "engines": {
     "node": ">=22.13.0"
@@ -48,6 +50,7 @@
     "eslint": "9.39.4",
     "eslint-config-next": "16.3.2",
     "react-server-dom-webpack": "19.2.8",
+    "sst": "^4.17.1",
     "tsx": "^4.23.13",
     "typescript": "5.9.3",
     "vinext": "1.0.0-beta.8",
